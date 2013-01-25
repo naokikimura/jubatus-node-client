@@ -1,0 +1,17 @@
+{
+    "name": "jubatus-node-client"
+  , "version": "0.4.0"
+  , "private": true
+  , "homepage": "https://github.com/naokikimura/jubatus-node-client"
+  , "main": "./index.js"
+  , "directories": {
+        "lib": "lib"
+    }
+  , "repository" : {
+        "type": "git"
+      , "url": "https://github.com/naokikimura/jubatus-node-client.git"
+    }
+  , "dependencies": {
+        "msgpack": "*"
+    }
+}
