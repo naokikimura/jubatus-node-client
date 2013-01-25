@@ -29,9 +29,20 @@ function createConstructor(className) {
         return client;
     }
     api[className].methods.forEach(function(method) {
-        constructor.prototype[method] = function(params, callback) {
+        constructor.prototype[method] = function() {
+            var params = toArray(arguments)
+              , hasCallback = (typeof params[params.length -1] === 'function')
+              , callback = hasCallback ? params.pop() : undefined
             this.call(method, params, callback)
         }
     })
     return constructor
+}
+
+function toArray(args) {
+    var a = []
+    for(var i = 0; i < args.length; i++) {
+        a.push(args[i])
+    }
+    return a;
 }
