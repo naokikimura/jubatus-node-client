@@ -29,11 +29,12 @@ function createConstructor(className) {
         return client;
     }
     api[className].methods.forEach(function(method) {
-        constructor.prototype[method] = function() {
+        var methodName = method.name || method
+        constructor.prototype[methodName] = function() {
             var params = toArray(arguments)
               , hasCallback = (typeof params[params.length -1] === 'function')
               , callback = hasCallback ? params.pop() : undefined
-            this.call(method, params, callback)
+            this.call(methodName, params, callback)
         }
     })
     return constructor
