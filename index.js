@@ -1,4 +1,4 @@
-/*jslint forin: true, sloppy: true, passfail: false, node: true */
+/*jslint node: true */
 
 var api = require('./api'),
     rpc = require('./lib/msgpack-rpc');
@@ -21,6 +21,7 @@ function createConstructor(className) {
             client = rpc.createClient(port, host),
             propertyName;
         for (propertyName in this) {
+            /*jslint forin: true */
             debug(propertyName);
             client[propertyName] = this[propertyName];
         }
