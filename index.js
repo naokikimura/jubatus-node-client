@@ -27,6 +27,11 @@ function createConstructor(className) {
         }
         return client;
     };
+
+    constructor.prototype.get_client = function () {
+        return this;
+    };
+
     api[className].methods.forEach(function (method) {
         debug(method);
         var methodName = method.name || method;
@@ -34,7 +39,9 @@ function createConstructor(className) {
             var params = toArray(arguments),
                 hasCallback = (typeof params[params.length - 1] === 'function'),
                 callback = hasCallback ? params.pop() : undefined;
-            this.call(methodName, params, callback);
+            this.call(methodName, params, function (error, result, msgid) {
+                callback(error && new Error(error.message || error), result, msgid);
+            });
         };
     });
     return constructor;

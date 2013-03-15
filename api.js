@@ -29,6 +29,13 @@ var common = {
             "args": [
                 { "name": "name", "type": "string"}
             ]
+        },
+        {
+            "name": "clear",
+            "return": { "type": "boolean" },
+            "args": [
+                { "name": "name", "type": "string"}
+            ]
         }
     ],
     types: [
