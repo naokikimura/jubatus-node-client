@@ -1,17 +1,26 @@
 {
-    "name": "jubatus-node-client"
-  , "version": "0.4.2"
-  , "private": true
-  , "homepage": "https://github.com/naokikimura/jubatus-node-client"
-  , "main": "./index.js"
-  , "directories": {
-        "lib": "lib"
-    }
-  , "repository" : {
-        "type": "git"
-      , "url": "https://github.com/naokikimura/jubatus-node-client.git"
-    }
-  , "dependencies": {
-        "msgpack": "*"
-    }
+  "name": "jubatus-node-client",
+  "version": "0.4.2",
+  "homepage": "https://github.com/naokikimura/jubatus-node-client",
+  "main": "./index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naokikimura/jubatus-node-client.git"
+  },
+  "dependencies": {
+    "msgpack": "*"
+  },
+  "readmeFilename": "README.md",
+  "gitHead": "22a1b0a18ef09251569dd77a4c65089a01d5e36f",
+  "description": "Jubatus client for Node.js",
+  "devDependencies": {},
+  "scripts": {},
+  "keywords": [
+    "jubatus"
+  ],
+  "author": "Naoki Kimura",
+  "license": "MIT"
 }
