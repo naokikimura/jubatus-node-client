@@ -52,3 +52,8 @@ See also <http://jubat.us/en/api.html>
             console.log("estimate = %j", mostLikely);
         });
     });
+
+Tutorial
+--------
+
+see <https://github.com/naokikimura/jubatus-tutorial-node>
