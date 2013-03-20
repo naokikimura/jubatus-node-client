@@ -31,7 +31,7 @@ See also <http://jubat.us/en/api.html>
 #### Classify
 
     var name = "sample",
-        stringValues = [ ["qux", "quux"] ],
+        stringValues = [ ["foo", "qux"] ],
         numValues = [],
         datum = [stringValues, numValues],
         data = [datum];
