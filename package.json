@@ -15,7 +15,7 @@
   },
   "readmeFilename": "README.md",
   "gitHead": "22a1b0a18ef09251569dd77a4c65089a01d5e36f",
-  "description": "Jubatus client for Node.js",
+  "description": "Jubatus client for Node.js (unofficial)",
   "devDependencies": {},
   "scripts": {},
   "keywords": [
