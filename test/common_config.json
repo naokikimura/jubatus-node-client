@@ -1,0 +1,21 @@
+{
+  "parameter": {},
+  "converter": {
+    "num_rules": [],
+    "num_types": {},
+    "string_rules": [
+      {
+        "global_weight": "bin",
+        "sample_weight": "bin",
+        "type": "str",
+        "key": "*"
+      }
+    ],
+    "string_types": {},
+    "num_filter_rules": [],
+    "num_filter_types": {},
+    "string_filter_rules": [],
+    "string_filter_types": {}
+  },
+  "method": "PA"
+}
