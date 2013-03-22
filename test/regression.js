@@ -10,39 +10,39 @@ var isDebugEnabled = process.env.NODE_DEBUG && (/test/).test(process.env.NODE_DE
 module.exports = {
     setUp: function (callback) {
         var self = this,
-            config = 'classifier_config.json',
+            config = 'regression_config.json',
             port = process.env.npm_package_config_test_port || 9199,
             host = 'localhost';
         self.name = 'test';
         async.series([
             function (callback) {
                 /*jslint nomen: true */
-                var command = 'jubaclassifier',
+                var command = 'jubaregression',
                     args = ['-p', port, '-n', self.name, '-f', config],
                     options = { cwd: __dirname },
-                    jubaclassifier = spawn(command, args, options);
-                jubaclassifier.on('exit', function (code, signal) {
+                    jubaregression = spawn(command, args, options);
+                jubaregression.on('exit', function (code, signal) {
                     debug({ code: code, signal: signal });
                     if (code === null) {
                         callback(new Error(signal));
                         callback = function () {};
                     }
                 });
-                jubaclassifier.stderr.on('data', function (data) {
+                jubaregression.stderr.on('data', function (data) {
                     if (/RPC server startup/.test(data.toString())) {
                         callback(null);
                         callback = function () {};
                     }
                 });
                 if (isDebugEnabled) {
-                    jubaclassifier.stderr.on('data', function (data) {
+                    jubaregression.stderr.on('data', function (data) {
                         process.stderr.write(data);
                     });
                 }
-                self.jubaclassifier = jubaclassifier;
+                self.jubaregression = jubaregression;
             },
             function (callback) {
-                self.classifier = new jubatus.classifier.client.Classifier(port, host);
+                self.regression = new jubatus.regression.client.Regression(port, host);
                 callback(null);
             }
         ], function (error) {
@@ -53,28 +53,28 @@ module.exports = {
         });
     },
     tearDown: function (callback) {
-        this.classifier.get_client().close();
-        this.jubaclassifier.kill();
+        this.regression.get_client().close();
+        this.jubaregression.kill();
         callback();
     },
     train: function (test) {
         var datum = [ [ ["foo", "bar"] ], [] ],
-            label = "baz",
-            data = [ [label, datum] ];
-        this.classifier.train(this.name, data, function (error, result) {
+            value = 1.01,
+            data = [ [value, datum] ];
+        this.regression.train(this.name, data, function (error, result) {
             debug({ error: error, result: result });
             test.equal(error, null, error);
-            test.equal(result, 1);
+            test.equal(result, data.length);
             test.done();
         });
     },
-    classify: function (test) {
+    estimate: function (test) {
         var self = this;
         async.series([
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
                     data = [ datum ];
-                self.classifier.classify(self.name, data, function (error, result) {
+                self.regression.estimate(self.name, data, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result.length, data.length);
@@ -83,20 +83,19 @@ module.exports = {
             },
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
-                    label = "baz",
-                    data = [ [label, datum] ];
-                self.classifier.train(self.name, data, callback);
+                    value = 1.2,
+                    data = [ [value, datum] ];
+                self.regression.train(self.name, data, callback);
             },
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
                     data = [ datum ];
-                self.classifier.classify(self.name, data, function (error, result) {
+                self.regression.estimate(self.name, data, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result.length, data.length);
-                    result.forEach(function (estimates) {
-                        test.equal("string", typeof estimates[0][0]);
-                        test.equal("number", typeof estimates[0][1]);
+                    result.forEach(function (estimate) {
+                        test.equal("number", typeof estimate);
                     });
                     callback(error, result);
                 });

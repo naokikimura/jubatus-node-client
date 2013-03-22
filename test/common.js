@@ -60,8 +60,8 @@ module.exports = {
     save: function (test) {
         var id = 'test';
         this.classifier.save(this.name, id, function (error, result) {
-            debug(result);
-            test.equal(error, null, result);
+            debug({ error: error, result: result });
+            test.equal(error, null, error);
             test.ok(result);
             test.done();
         });
@@ -69,32 +69,32 @@ module.exports = {
     load: function (test) {
         var id = 'test';
         this.classifier.load(this.name, id, function (error, result) {
-            debug(result);
-            test.equal(error, null, result);
+            debug({ error: error, result: result });
+            test.equal(error, null, error);
             test.ok(result);
             test.done();
         });
     },
     clear: function (test) {
         this.classifier.clear(this.name, function (error, result) {
-            debug(result);
-            test.equal(error, null, result);
+            debug({ error: error, result: result });
+            test.equal(error, null, error);
             test.ok(result);
             test.done();
         });
     },
     get_config: function (test) {
         this.classifier.get_config(this.name, function (error, result) {
-            debug(result);
-            test.equal(error, null, result);
+            debug({ error: error, result: result });
+            test.equal(error, null, error);
             test.ok(result);
             test.done();
         });
     },
     get_status: function (test) {
         this.classifier.get_status(this.name, function (error, result) {
-            debug(result);
-            test.equal(error, null, result);
+            debug({ error: error, result: result });
+            test.equal(error, null, error);
             test.ok(result);
             test.done();
         });
