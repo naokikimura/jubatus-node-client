@@ -40,7 +40,7 @@ function createConstructor(className) {
                 hasCallback = (typeof params[params.length - 1] === 'function'),
                 callback = hasCallback ? params.pop() : undefined;
             this.call(methodName, params, function (error, result, msgid) {
-                callback(error && new Error(error.message || error), result, msgid);
+                callback(error && new Error(result + ' (' + error + ')'), error ? null : result, msgid);
             });
         };
     });
