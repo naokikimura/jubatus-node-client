@@ -1,9 +1,13 @@
 /*jslint node: true */
 
-var api = require('./api'),
+var assert = require('assert'),
+    util = require('util'),
+    validate = require('json-schema').validate,
+    api = require('./api'),
     rpc = require('./lib/msgpack-rpc');
 
 var isDebugEnabled = process.env.NODE_DEBUG && (/jubatus/).test(process.env.NODE_DEBUG),
+    isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV),
     debug = isDebugEnabled ? function (x) { console.error('JUBATUS:', x); } : function () {};
 
 function toArray(args) {
@@ -34,11 +38,18 @@ function createConstructor(className) {
 
     api[className].methods.forEach(function (method) {
         debug(method);
-        var methodName = method.name || method;
+        var methodName = method.name || method,
+            assertParams = !isProduct && method.args ? function (params) {
+                debug({ params: params, args: method.args });
+                var schema = { type: 'array', items: method.args, minItems: method.args.length, maxItems: method.args.length },
+                    result = validate(params, schema);
+                assert.ok(result.valid, util.format('%j', result.errors));
+            } : function () {};
         constructor.prototype[methodName] = function () {
             var params = toArray(arguments),
                 hasCallback = (typeof params[params.length - 1] === 'function'),
                 callback = hasCallback ? params.pop() : undefined;
+            assertParams(params);
             this.call(methodName, params, function (error, result, msgid) {
                 callback(error && new Error(result + ' (' + error + ')'), error ? null : result, msgid);
             });

@@ -73,8 +73,22 @@ var common = {
 module.exports = {
     Classifier: {
         methods: common.methods.concat([
-            'train',
-            'classify'
+            {
+                "name": "train",
+                "return": { "type": "array", "items": { "type": "number" } },
+                "args": [
+                    { "name": "name", "type": "string" },
+                    { "name": "data", "type": "array", "items": { "type": "object" } }
+                ]
+            },
+            {
+                "name": "classify",
+                "return": { "type": "array", "items": "object" },
+                "args": [
+                    { "name": "name", "type": "string" },
+                    { "name": "data", "type": "array", "items": { "type": "object" } }
+                ]
+            }
         ]),
         types: common.types.concat([
             {
@@ -95,8 +109,22 @@ module.exports = {
     },
     Regression: {
         methods: common.methods.concat([
-            'train',
-            'estimate'
+            {
+                "name": "train",
+                "return": { "type": "array", "items": { "type": "number" } },
+                "args": [
+                    { "name": "name", "type": "string" },
+                    { "name": "data", "type": "array", "items": { "type": "object" } }
+                ]
+            },
+            {
+                "name": "estimate",
+                "return": { "type": "array", "items": { "type": "number" } },
+                "args": [
+                    { "name": "name", "type": "string" },
+                    { "name": "data", "type": "array", "items": { "type": "object" } }
+                ]
+            }
         ]),
         types: common.types.concat([])
     },
