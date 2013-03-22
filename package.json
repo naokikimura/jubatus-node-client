@@ -11,7 +11,8 @@
     "url": "https://github.com/naokikimura/jubatus-node-client.git"
   },
   "dependencies": {
-    "msgpack": "*"
+    "msgpack": "*",
+    "json-schema": "*"
   },
   "readmeFilename": "README.md",
   "gitHead": "22a1b0a18ef09251569dd77a4c65089a01d5e36f",
