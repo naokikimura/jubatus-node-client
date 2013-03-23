@@ -15,24 +15,18 @@ function toArray(args) {
 }
 
 function createConstructor(className) {
-    var constructor = function (portNumber, hostName) {
+    var constructor = function (portNumber, hostName, timeoutSeconds) {
         if (!(this instanceof constructor)) {
             throw new Error(className + ' is constructor.');
         }
 
         var port = portNumber || 9199,
             host = hostName || 'localhost',
-            client = rpc.createClient(port, host),
-            propertyName;
-        for (propertyName in this) {
-            /*jslint forin: true */
-            debug(propertyName);
-            client[propertyName] = this[propertyName];
-        }
-        return client;
-    };
-
-    constructor.prototype.get_client = function () {
+            timeoutMillis = (timeoutSeconds || 0) * 1000,
+            client = rpc.createClient(port, host, timeoutMillis);
+        this.get_client = function () {
+            return client;
+        };
         return this;
     };
 
@@ -41,17 +35,24 @@ function createConstructor(className) {
         var methodName = method.name || method,
             assertParams = !isProduct && method.args ? function (params) {
                 debug({ params: params, args: method.args });
-                var schema = { type: 'array', items: method.args, minItems: method.args.length, maxItems: method.args.length },
+                var schema = {
+                        type: 'array',
+                        items: method.args,
+                        minItems: method.args.length,
+                        maxItems: method.args.length
+                    },
                     result = validate(params, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             } : function () {};
         constructor.prototype[methodName] = function () {
-            var params = toArray(arguments),
+            var client = this.get_client(),
+                params = toArray(arguments),
                 hasCallback = (typeof params[params.length - 1] === 'function'),
-                callback = hasCallback ? params.pop() : undefined;
+                callback = hasCallback ? params.pop() : function () {};
             assertParams(params);
-            this.call(methodName, params, function (error, result, msgid) {
-                callback(error && new Error(result + ' (' + error + ')'), error ? null : result, msgid);
+            client.call(methodName, params, function (error, result, msgid) {
+                callback(error && new Error(util.format('%s %s', error, result || '')),
+                        error ? null : result, msgid);
             });
         };
     });
