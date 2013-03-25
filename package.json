@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "msgpack": "*",
+    "msgpack-js": "https://github.com/naokikimura/msgpack-js/tarball/spike",
     "json-schema": "*"
   },
   "readmeFilename": "README.md",

@@ -1,6 +1,7 @@
 /*jslint node: true, passfail: false */
 
 var jubatus = require('../index.js'),
+    msgpack = require('msgpack-js'),
     spawn = require('child_process').spawn,
     async = require('async');
 
@@ -83,7 +84,7 @@ module.exports = {
             },
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
-                    value = 1.2,
+                    value = new msgpack.type.Double(1),
                     data = [ [value, datum] ];
                 self.regression.train(self.name, data, callback);
             },
