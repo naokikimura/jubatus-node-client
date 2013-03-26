@@ -1,7 +1,7 @@
 /*jslint node: true, passfail: false */
 
 var jubatus = require('../index.js'),
-    msgpack = require('msgpack-js'),
+    msgpack = jubatus.msgpack,
     spawn = require('child_process').spawn,
     async = require('async');
 

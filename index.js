@@ -6,6 +6,8 @@ var assert = require('assert'),
     api = require('./api'),
     rpc = require('./lib/msgpack-rpc');
 
+exports.msgpack = rpc.msgpack;
+
 var isDebugEnabled = process.env.NODE_DEBUG && (/jubatus/).test(process.env.NODE_DEBUG),
     isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV),
     debug = isDebugEnabled ? function (x) { console.error('JUBATUS:', x); } : function () {};
