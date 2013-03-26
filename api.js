@@ -1,71 +1,112 @@
 var common = {
     methods: [
         {
-            "name": "save",
-            "return": { "type": "boolean" },
-            "args": [
-                { "name": "name", "type": "string"},
-                { "name": "id", "type": "string"}
-            ]
+            "id": "save",
+            "properties": {
+                "return": { "type": "boolean" },
+                "args": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": [
+                        { "id": "name", "type": "string"},
+                        { "id": "id", "type": "string"}
+                    ],
+                    "additionalItems": false
+                }
+            }
         },
         {
-            "name": "load",
-            "return": { "type": "boolean" },
-            "args": [
-                { "name": "name", "type": "string"},
-                { "name": "id", "type": "string"}
-            ]
+            "id": "load",
+            "properties": {
+                "return": { "type": "boolean" },
+                "args": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": [
+                        { "id": "name", "type": "string"},
+                        { "id": "id", "type": "string"}
+                    ],
+                    "additionalItems": false
+                }
+            }
         },
         {
-            "name": "get_config",
-            "return": { "type": "string" },
-            "args": [
-                { "name": "name", "type": "string"}
-            ]
+            "id": "get_config",
+            "properties": {
+                "return": { "type": "string" },
+                "args": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": [
+                        { "id": "name", "type": "string"}
+                    ],
+                    "additionalItems": false
+                }
+            }
         },
         {
-            "name": "get_status",
-            "return": { "type": "object" },
-            "args": [
-                { "name": "name", "type": "string"}
-            ]
+            "id": "get_status",
+            "properties": {
+                "return": { "type": "object" },
+                "args": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": [
+                        { "id": "name", "type": "string"}
+                    ],
+                    "additionalItems": false
+                }
+            }
         },
         {
-            "name": "clear",
-            "return": { "type": "boolean" },
-            "args": [
-                { "name": "name", "type": "string"}
-            ]
+            "id": "clear",
+            "properties": {
+                "return": { "type": "boolean" },
+                "args": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": [
+                        { "id": "name", "type": "string"}
+                    ],
+                    "additionalItems": false
+                }
+            }
         }
     ],
     types: [
         {
-            "name": "datum",
+            "id": "datum",
             "type": "array",
             "items": [
                 {
-                    "name": "string_values",
+                    "id": "string_values",
                     "type": "array",
                     "items": {
                         "type": "array",
-                        "items": [
-                            { "type": "string" },
-                            { "type": "string" }
-                        ]
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [ { "type": "string" }, { "type": "string" } ],
+                        "additionalItems": false
                     }
                 },
                 {
-                    "name": "num_values",
+                    "id": "num_values",
                     "type": "array",
                     "items": {
                         "type": "array",
-                        "items": [
-                            { "type": "string" },
-                            { "type": "number" }
-                        ]
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [ { "type": "string" }, { "type": "number" } ],
+                        "additionalItems": false
                     }
                 }
-            ]
+            ],
+            "additionalItems": false
         }
     ]
 };
@@ -74,56 +115,85 @@ module.exports = {
     Classifier: {
         methods: common.methods.concat([
             {
-                "name": "train",
-                "return": { "type": "array", "items": { "type": "number" } },
-                "args": [
-                    { "name": "name", "type": "string" },
-                    { "name": "data", "type": "array", "items": { "type": "object" } }
-                ]
+                "id": "train",
+                "properties": {
+                    "return": { "type": "array", "items": { "type": "integer" } },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                        ],
+                        "additionalItems": false
+                    }
+                }
             },
             {
-                "name": "classify",
-                "return": { "type": "array", "items": "object" },
-                "args": [
-                    { "name": "name", "type": "string" },
-                    { "name": "data", "type": "array", "items": { "type": "object" } }
-                ]
+                "id": "classify",
+                "properties": {
+                    "return": { "type": "array", "items": "object" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                        ],
+                        "additionalItems": false
+                    }
+                }
             }
         ]),
         types: common.types.concat([
             {
-                "name": "estimate_result",
+                "id": "estimate_result",
                 "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
                 "items": [
-                    {
-                        "name": "label",
-                        "type": "string"
-                    },
-                    {
-                        "name": "score",
-                        "type": "double"
-                    }
-                ]
+                    { "id": "label", "type": "string" },
+                    { "id": "score", "type": "number" }
+                ],
+                "additionalItems": false
             }
         ])
     },
     Regression: {
         methods: common.methods.concat([
             {
-                "name": "train",
-                "return": { "type": "array", "items": { "type": "number" } },
-                "args": [
-                    { "name": "name", "type": "string" },
-                    { "name": "data", "type": "array", "items": { "type": "object" } }
-                ]
+                "id": "train",
+                "properties": {
+                    "return": { "type": "array", "items": { "type": "number" } },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "id", "type": "string" },
+                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                        ],
+                        "additionalItems": false
+                    }
+                }
             },
             {
-                "name": "estimate",
-                "return": { "type": "array", "items": { "type": "number" } },
-                "args": [
-                    { "name": "name", "type": "string" },
-                    { "name": "data", "type": "array", "items": { "type": "object" } }
-                ]
+                "id": "estimate",
+                "properties": {
+                    "return": { "type": "array", "items": { "type": "number" } },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "id", "type": "string" },
+                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                        ],
+                        "additionalItems": false
+                    }
+                }
             }
         ]),
         types: common.types.concat([])
@@ -157,13 +227,121 @@ module.exports = {
     },
     Stat: {
         methods: common.methods.concat([
-            'push',
-            'sum',
-            'stddev',
-            'max',
-            'min',
-            'entropy',
-            'moment'
+            {
+                "id": "push",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" },
+                            { "id": "val", "type": [ "number", "object"] }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "sum",
+                "properties": {
+                    "return": { "type": "number" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "stddev",
+                "properties": {
+                    "return": { "type": "number" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "max",
+                "properties": {
+                    "return": { "type": "number" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "min",
+                "properties": {
+                    "return": { "type": "number" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "entropy",
+                "properties": {
+                    "return": { "type": "number" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "moment",
+                "properties": {
+                    "return": { "type": "number" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 4,
+                        "maxItems": 4,
+                        "items": [
+                            { "id": "name", "type": "string" },
+                            { "id": "key", "type": "string" },
+                            { "id": "degree", "type": "integer" },
+                            { "id": "center", "type": [ "number", "object" ] }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            }
         ]),
         types: common.types.concat([])
     },

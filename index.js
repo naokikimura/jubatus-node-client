@@ -34,15 +34,10 @@ function createConstructor(className) {
 
     api[className].methods.forEach(function (method) {
         debug(method);
-        var methodName = method.name || method,
+        var methodName = method.id || method,
             assertParams = !isProduct && method.args ? function (params) {
                 debug({ params: params, args: method.args });
-                var schema = {
-                        type: 'array',
-                        items: method.args,
-                        minItems: method.args.length,
-                        maxItems: method.args.length
-                    },
+                var schema = method.args,
                     result = validate(params, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             } : function () {};
