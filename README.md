@@ -13,18 +13,20 @@ See also <http://jubat.us/en/api.html>
     var jubatus = require("jubatus"),
         classifier = new jubatus.classifier.client.Classifier(9199, "localhost");
 
+    var Double = jubatus.msgpack.type.Double;
+
 #### Train
 
     var name = "sample",
         stringValues = [ ["foo", "bar"] ],
-        numValues = [],
+        numValues = [ ["quux", 0.1] ],
         datum = [stringValues, numValues],
         label = "baz",
         data = [ [label, datum] ];
 
     classifier.train(name, data, function (error, result) {
         if (error) {
-            throw new Error(error);
+            throw error;
         }
     });
 
@@ -32,13 +34,13 @@ See also <http://jubat.us/en/api.html>
 
     var name = "sample",
         stringValues = [ ["foo", "qux"] ],
-        numValues = [],
+        numValues = [ ["quux", new Double(1)] ],
         datum = [stringValues, numValues],
         data = [datum];
 
     classifier.classify(name, data, function (error, result) {
         if (error) {
-            throw new Error(error);
+            throw error;
         }
 
         result.forEach(function (estimateResults) {
