@@ -58,8 +58,8 @@ function createConstructor(className) {
                 params = toArray(arguments),
                 hasCallback = (typeof params[params.length - 1] === 'function'),
                 callback = hasCallback ? params.pop() : function () {};
-            params.unshift(self.getClusterName());
             assertParams(params);
+            params.unshift(self.getClusterName());
             client.call(rpcName, params, function call(error, result, msgid) {
                 callback.call(self, error && new Error(util.format('%s %s', error, result || '')),
                         error ? null : result, msgid);
