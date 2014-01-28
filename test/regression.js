@@ -13,13 +13,13 @@ module.exports = {
         var self = this,
             config = 'regression_config.json',
             port = process.env.npm_package_config_test_port || 9199,
-            host = 'localhost';
-        self.name = 'test';
+            host = 'localhost',
+            name = 'test';
         async.series([
             function (callback) {
                 /*jslint nomen: true */
                 var command = 'jubaregression',
-                    args = ['-p', port, '-n', self.name, '-f', config],
+                    args = ['-p', port, '-n', name, '-f', config],
                     options = { cwd: __dirname },
                     jubaregression = spawn(command, args, options);
                 jubaregression.on('exit', function (code, signal) {
@@ -43,7 +43,7 @@ module.exports = {
                 self.jubaregression = jubaregression;
             },
             function (callback) {
-                self.regression = new jubatus.regression.client.Regression(port, host);
+                self.regression = new jubatus.regression.client.Regression(port, host, name);
                 callback(null);
             }
         ], function (error) {
@@ -54,7 +54,7 @@ module.exports = {
         });
     },
     tearDown: function (callback) {
-        this.regression.get_client().close();
+        this.regression.getClient().close();
         this.jubaregression.kill();
         callback();
     },
@@ -62,7 +62,7 @@ module.exports = {
         var datum = [ [ ["foo", "bar"] ], [] ],
             value = 1.01,
             data = [ [value, datum] ];
-        this.regression.train(this.name, data, function (error, result) {
+        this.regression.train(data, function (error, result) {
             debug({ error: error, result: result });
             test.equal(error, null, error);
             test.equal(result, data.length);
@@ -75,7 +75,7 @@ module.exports = {
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
                     data = [ datum ];
-                self.regression.estimate(self.name, data, function (error, result) {
+                self.regression.estimate(data, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result.length, data.length);
@@ -86,12 +86,12 @@ module.exports = {
                 var datum = [ [ ["foo", "bar"] ], [] ],
                     value = new msgpack.type.Double(1),
                     data = [ [value, datum] ];
-                self.regression.train(self.name, data, callback);
+                self.regression.train(data, callback);
             },
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
                     data = [ datum ];
-                self.regression.estimate(self.name, data, function (error, result) {
+                self.regression.estimate(data, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result.length, data.length);
