@@ -13,13 +13,13 @@ module.exports = {
         var self = this,
             config = 'stat_config.json',
             port = process.env.npm_package_config_test_port || 9199,
-            host = 'localhost';
-        self.name = 'test';
+            host = 'localhost',
+            name = 'test';
         async.series([
             function (callback) {
                 /*jslint nomen: true */
                 var command = 'jubastat',
-                    args = ['-p', port, '-n', self.name, '-f', config],
+                    args = ['-p', port, '-n', name, '-f', config],
                     options = { cwd: __dirname },
                     jubastat = spawn(command, args, options);
                 jubastat.on('exit', function (code, signal) {
@@ -43,7 +43,7 @@ module.exports = {
                 self.jubastat = jubastat;
             },
             function (callback) {
-                self.stat = new jubatus.stat.client.Stat(port, host);
+                self.stat = new jubatus.stat.client.Stat(port, host, name);
                 callback(null);
             }
         ], function (error) {
@@ -54,14 +54,14 @@ module.exports = {
         });
     },
     tearDown: function (callback) {
-        this.stat.get_client().close();
+        this.stat.getClient().close();
         this.jubastat.kill();
         callback();
     },
     push: function (test) {
         var key = "foo",
             value = 1.01;
-        this.stat.push(this.name, key, value, function (error, result) {
+        this.stat.push(key, value, function (error, result) {
             debug({ error: error, result: result });
             test.equal(error, null, error);
             test.ok(result);
@@ -76,11 +76,11 @@ module.exports = {
         async.series([
             function (callback) {
                 async.each(values, function (value, callback) {
-                    self.stat.push(self.name, key, new msgpack.type.Double(value), callback);
+                    self.stat.push(key, new msgpack.type.Double(value), callback);
                 }, callback);
             },
             function (callback) {
-                self.stat.sum(self.name, key, function (error, result) {
+                self.stat.sum(key, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result, expected);
@@ -98,11 +98,11 @@ module.exports = {
         async.series([
             function (callback) {
                 async.each(values, function (value, callback) {
-                    self.stat.push(self.name, key, new msgpack.type.Double(value), callback);
+                    self.stat.push(key, new msgpack.type.Double(value), callback);
                 }, callback);
             },
             function (callback) {
-                self.stat.stddev(self.name, key, function (error, result) {
+                self.stat.stddev(key, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(typeof result, "number");
@@ -121,11 +121,11 @@ module.exports = {
         async.series([
             function (callback) {
                 async.each(values, function (value, callback) {
-                    self.stat.push(self.name, key, new msgpack.type.Double(value), callback);
+                    self.stat.push(key, new msgpack.type.Double(value), callback);
                 }, callback);
             },
             function (callback) {
-                self.stat.max(self.name, key, function (error, result) {
+                self.stat.max(key, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result, expected);
@@ -144,11 +144,11 @@ module.exports = {
         async.series([
             function (callback) {
                 async.each(values, function (value, callback) {
-                    self.stat.push(self.name, key, new msgpack.type.Double(value), callback);
+                    self.stat.push(key, new msgpack.type.Double(value), callback);
                 }, callback);
             },
             function (callback) {
-                self.stat.min(self.name, key, function (error, result) {
+                self.stat.min(key, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result, expected);
@@ -166,11 +166,11 @@ module.exports = {
         async.series([
             function (callback) {
                 async.each(values, function (value, callback) {
-                    self.stat.push(self.name, key, new msgpack.type.Double(value), callback);
+                    self.stat.push(key, new msgpack.type.Double(value), callback);
                 }, callback);
             },
             function (callback) {
-                self.stat.entropy(self.name, key, function (error, result) {
+                self.stat.entropy(key, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(typeof result, "number");
@@ -188,13 +188,13 @@ module.exports = {
         async.series([
             function (callback) {
                 async.each(values, function (value, callback) {
-                    self.stat.push(self.name, key, new msgpack.type.Double(value), callback);
+                    self.stat.push(key, new msgpack.type.Double(value), callback);
                 }, callback);
             },
             function (callback) {
                 var degree = 1,
                     center = 1.1;
-                self.stat.moment(self.name, key, degree, center, function (error, result) {
+                self.stat.moment(key, degree, center, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(typeof result, "number");

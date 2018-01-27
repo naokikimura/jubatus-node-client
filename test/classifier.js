@@ -13,13 +13,13 @@ module.exports = {
         var self = this,
             config = 'classifier_config.json',
             port = process.env.npm_package_config_test_port || 9199,
-            host = 'localhost';
-        self.name = 'test';
+            host = 'localhost',
+            name = 'test';
         async.series([
             function (callback) {
                 /*jslint nomen: true */
                 var command = 'jubaclassifier',
-                    args = ['-p', port, '-n', self.name, '-f', config],
+                    args = ['-p', port, '-n', name, '-f', config],
                     options = { cwd: __dirname },
                     jubaclassifier = spawn(command, args, options);
                 jubaclassifier.on('exit', function (code, signal) {
@@ -43,7 +43,7 @@ module.exports = {
                 self.jubaclassifier = jubaclassifier;
             },
             function (callback) {
-                self.classifier = new jubatus.classifier.client.Classifier(port, host);
+                self.classifier = new jubatus.classifier.client.Classifier(port, host, name);
                 callback(null);
             }
         ], function (error) {
@@ -54,7 +54,7 @@ module.exports = {
         });
     },
     tearDown: function (callback) {
-        this.classifier.get_client().close();
+        this.classifier.getClient().close();
         this.jubaclassifier.kill();
         callback();
     },
@@ -62,7 +62,7 @@ module.exports = {
         var datum = [ [ ["foo", "bar"] ], [ ["qux", 1.1] ] ],
             label = "baz",
             data = [ [label, datum] ];
-        this.classifier.train(this.name, data, function (error, result) {
+        this.classifier.train(data, function (error, result) {
             debug({ error: error, result: result });
             test.equal(error, null, error);
             test.equal(result, 1);
@@ -75,7 +75,7 @@ module.exports = {
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [ ["qux", new msgpack.type.Double(1)] ] ],
                     data = [ datum ];
-                self.classifier.classify(self.name, data, function (error, result) {
+                self.classifier.classify(data, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result.length, data.length);
@@ -86,12 +86,12 @@ module.exports = {
                 var datum = [ [ ["foo", "bar"] ], [ ["qux", new msgpack.type.Double(1)] ] ],
                     label = "baz",
                     data = [ [label, datum] ];
-                self.classifier.train(self.name, data, callback);
+                self.classifier.train(data, callback);
             },
             function (callback) {
                 var datum = [ [ ["foo", "bar"] ], [] ],
                     data = [ datum ];
-                self.classifier.classify(self.name, data, function (error, result) {
+                self.classifier.classify(data, function (error, result) {
                     debug({ error: error, result: result });
                     test.equal(error, null, error);
                     test.equal(result.length, data.length);
