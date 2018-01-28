@@ -15,14 +15,13 @@ See also <http://jubat.us/en/api/index.html>
 
 #### Train
 
-    var name = "sample",
-        stringValues = [ ["foo", "bar"] ],
+    var stringValues = [ ["foo", "bar"] ],
         numValues = [ ["quux", 0.1] ],
         datum = [stringValues, numValues],
         label = "baz",
         data = [ [label, datum] ];
 
-    classifier.train(name, data, function (error, result) {
+    classifier.train(data, function (error, result) {
         if (error) {
             throw error;
         }
@@ -30,13 +29,12 @@ See also <http://jubat.us/en/api/index.html>
 
 #### Classify
 
-    var name = "sample",
-        stringValues = [ ["foo", "qux"] ],
+    var stringValues = [ ["foo", "qux"] ],
         numValues = [ ["quux", 1] ],
         datum = [stringValues, numValues],
         data = [datum];
 
-    classifier.classify(name, data, function (error, result) {
+    classifier.classify(data, function (error, result) {
         if (error) {
             throw error;
         }
