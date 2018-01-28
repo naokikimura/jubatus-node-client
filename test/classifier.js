@@ -1,7 +1,6 @@
 /*jslint node: true, passfail: false */
 
 var jubatus = require('../index.js'),
-    msgpack = jubatus.msgpack,
     spawn = require('child_process').spawn,
     async = require('async');
 
@@ -73,7 +72,7 @@ module.exports = {
         var self = this;
         async.series([
             function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [ ["qux", new msgpack.type.Double(1)] ] ],
+                var datum = [ [ ["foo", "bar"] ], [ ["qux", 1] ] ],
                     data = [ datum ];
                 self.classifier.classify(data, function (error, result) {
                     debug({ error: error, result: result });
@@ -83,7 +82,7 @@ module.exports = {
                 });
             },
             function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [ ["qux", new msgpack.type.Double(1)] ] ],
+                var datum = [ [ ["foo", "bar"] ], [ ["qux", 1] ] ],
                     label = "baz",
                     data = [ [label, datum] ];
                 self.classifier.train(data, callback);

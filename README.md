@@ -13,8 +13,6 @@ See also <http://jubat.us/en/api.html>
     var jubatus = require("jubatus"),
         classifier = new jubatus.classifier.client.Classifier(9199, "localhost");
 
-    var Double = jubatus.msgpack.type.Double;
-
 #### Train
 
     var name = "sample",
@@ -34,7 +32,7 @@ See also <http://jubat.us/en/api.html>
 
     var name = "sample",
         stringValues = [ ["foo", "qux"] ],
-        numValues = [ ["quux", new Double(1)] ],
+        numValues = [ ["quux", 1] ],
         datum = [stringValues, numValues],
         data = [datum];
 
