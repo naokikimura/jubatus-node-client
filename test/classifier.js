@@ -70,38 +70,31 @@ module.exports = {
     },
     classify: function (test) {
         var self = this;
-        async.series([
-            function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [ ["qux", 1] ] ],
-                    data = [ datum ];
-                self.classifier.classify(data, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result.length, data.length);
-                    callback(error, result);
-                });
-            },
-            function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [ ["qux", 1] ] ],
-                    label = "baz",
-                    data = [ [label, datum] ];
-                self.classifier.train(data, callback);
-            },
-            function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [] ],
-                    data = [ datum ];
-                self.classifier.classify(data, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result.length, data.length);
-                    result.forEach(function (estimates) {
-                        test.equal("string", typeof estimates[0][0]);
-                        test.equal("number", typeof estimates[0][1]);
-                    });
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
+        var datum = [ [ ["foo", "bar"] ], [ ["qux", 1] ] ],
+            data = [ datum ];
+        self.classifier.classify(data).then(([ result ]) => {
+            debug({ result: result });
+            test.equal(result.length, 1);
+
+            let datum = [ [ ["foo", "bar"] ], [ ["qux", 1] ] ],
+                label = "baz",
+                data = [ [ label, datum ] ];
+            return self.classifier.train(data);
+        }).then(([ result ]) => {
+            let datum = [ [ ["foo", "bar"] ], [] ],
+                data = [ datum ];
+            return self.classifier.classify(data);
+        }).then(([ result ]) => {
+            debug({ result: result });
+            test.equal(result.length, 1);
+            result.forEach(estimates => {
+                test.equal("string", typeof estimates[0][0]);
+                test.equal("number", typeof estimates[0][1]);
+            });
+            test.done();
+        }).catch(error => {
+            debug({ error: error });
+            test.ok(false, error);
             test.done();
         });
     }

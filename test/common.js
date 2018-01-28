@@ -92,17 +92,23 @@ module.exports = {
         });
     },
     get_status: function (test) {
-        this.classifier.getStatus(function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
+        this.classifier.getStatus().then(([ result, msgid ]) => {
+            debug({ result: result, msgid: msgid });
             test.ok(result);
+            test.done();
+        }).catch(error => {
+            debug({ error: error });
+            test.ok(null, error);
             test.done();
         });
     },
     get_proxy_status: function (test) {
-        this.classifier.getProxyStatus(function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(result, null, result);
+        this.classifier.getProxyStatus().then(([ result, msgid ]) => {
+            debug({ result: result, msgid: msgid });
+            test.ok(null, result);
+            test.done();
+        }).catch(error => {
+            debug({ error: error });
             test.ok(error);
             test.done();
         });

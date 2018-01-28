@@ -42,31 +42,45 @@ function createConstructor(className) {
         return this;
     };
 
-    api[className].methods.forEach(function (method) {
+    return api[className].methods.map(method => {
         debug(method);
         var rpcName = method.id || method,
             methodName = camelCase(rpcName),
-            assertParams = !isProduct && method.args ? function (params) {
+            assertParams = !isProduct && method.args ? params => {
                 debug({ params: params, args: method.args });
                 var schema = method.args,
                     result = validate(params, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
-            } : function () {};
+            } : () => {};
+      return [ rpcName, methodName, assertParams ];
+    })
+    .reduce((constructor, [ rpcName, methodName, assertParams ]) => {
         constructor.prototype[methodName] = function () {
             var self = this,
                 client = self.getClient(),
                 params = toArray(arguments),
-                hasCallback = (typeof params[params.length - 1] === 'function'),
-                callback = hasCallback ? params.pop() : function () {};
+                hasCallback = (typeof params[params.length - 1] === 'function');
             assertParams(params);
             params.unshift(self.getClusterName());
-            client.call(rpcName, params, function call(error, result, msgid) {
-                callback.call(self, error && new Error(util.format('%s %s', error, result || '')),
-                        error ? null : result, msgid);
-            });
+            if (hasCallback) {
+                let callback = params.pop();
+                client.call(rpcName, params, (error, result, msgid) => {
+                    callback.call(self, error && new Error(`${ error } ${ result || '' }`),
+                            error ? null : result, msgid);
+                });
+            } else {
+                return new Promise((resolve, reject) => {
+                    client.call(rpcName, params, (error, result, msgid) => {
+                        if (error)
+                            reject(new Error(`${ error } ${ result || '' }`))
+                        else
+                            resolve([ result, msgid ]);
+                    });
+                });
+            }
         };
-    });
-    return constructor;
+        return constructor;
+    }, constructor);
 }
 
 Object.keys(api).forEach(function (className) {
