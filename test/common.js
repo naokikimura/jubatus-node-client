@@ -102,8 +102,8 @@ module.exports = {
     get_proxy_status: function (test) {
         this.classifier.getProxyStatus(function (error, result) {
             debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.ok(result);
+            test.equal(result, null, result);
+            test.ok(error);
             test.done();
         });
     }
