@@ -29,14 +29,14 @@ module.exports = {
                         callback = function () {};
                     }
                 });
-                jubaregression.stderr.on('data', function (data) {
+                jubaregression.stdout.on('data', function (data) {
                     if (/RPC server startup/.test(data.toString())) {
                         callback(null);
                         callback = function () {};
                     }
                 });
                 if (isDebugEnabled) {
-                    jubaregression.stderr.on('data', function (data) {
+                    jubaregression.stdout.on('data', function (data) {
                         process.stderr.write(data);
                     });
                 }

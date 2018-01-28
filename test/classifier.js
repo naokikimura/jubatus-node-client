@@ -29,14 +29,14 @@ module.exports = {
                         callback = function () {};
                     }
                 });
-                jubaclassifier.stderr.on('data', function (data) {
+                jubaclassifier.stdout.on('data', function (data) {
                     if (/RPC server startup/.test(data.toString())) {
                         callback(null);
                         callback = function () {};
                     }
                 });
                 if (isDebugEnabled) {
-                    jubaclassifier.stderr.on('data', function (data) {
+                    jubaclassifier.stdout.on('data', function (data) {
                         process.stderr.write(data);
                     });
                 }
