@@ -6,7 +6,7 @@ Jubatus client for Node.js (unofficial)
 Usage
 -----
 
-See also <http://jubat.us/en/api.html>
+See also <http://jubat.us/en/api/index.html>
 
 ### Classifier
 
