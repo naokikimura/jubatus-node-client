@@ -21,10 +21,10 @@ See also <http://jubat.us/en/api/index.html>
         label = "baz",
         data = [ [label, datum] ];
 
-    classifier.train(data, function (error, result) {
-        if (error) {
-            throw error;
-        }
+    classifier.train(data).then(([ result ] ) => {
+        console.error(result);
+    }).catch(error => {
+        console.error(error);
     });
 
 #### Classify
@@ -34,21 +34,17 @@ See also <http://jubat.us/en/api/index.html>
         datum = [stringValues, numValues],
         data = [datum];
 
-    classifier.classify(data, function (error, result) {
-        if (error) {
-            throw error;
-        }
-
-        result.forEach(function (estimateResults) {
+    classifier.classify(data).then(([ result ] ) => {
+        result.forEach(estimateResults => {
             var mostLikely = estimateResults
-                    .map(function (estimateResult) {
-                        return { label: estimateResult[0], score: estimateResult[1] };
-                    })
-                    .reduce(function (previous, current) {
+                    .map(([ label, score ]) =>({ label, score })
+                    .reduce((previous, current) => {
                         return previous.score > current.score ? previous : current;
                     }, { label: null, score: NaN });
             console.log("estimate = %j", mostLikely);
         });
+    }).catch(error => {
+        console.error(error);
     });
 
 Tutorial
