@@ -1,207 +1,159 @@
 /*jslint node: true, passfail: false */
 
-var jubatus = require('../index.js'),
-    spawn = require('child_process').spawn,
-    async = require('async');
+const expect = require('chai').expect;
+const spawn = require('child_process').spawn;
+const portfinder = require('portfinder');
+const debug = require('debug')('jubatus-node-client:test:stat');
+const jubatus = require('../index.js');
 
-var isDebugEnabled = process.env.NODE_DEBUG && (/test/).test(process.env.NODE_DEBUG),
-    debug = isDebugEnabled ? function (x) { console.error('TEST:', x); } : function () {};
+let server;
+let client;
 
-module.exports = {
-    setUp: function (callback) {
-        var self = this,
-            config = 'stat_config.json',
-            port = process.env.npm_package_config_test_port || 9199,
-            host = 'localhost',
-            name = 'test';
-        async.series([
-            function (callback) {
-                /*jslint nomen: true */
-                var command = 'jubastat',
-                    args = ['-p', port, '-n', name, '-f', config],
-                    options = { cwd: __dirname },
-                    jubastat = spawn(command, args, options);
-                jubastat.on('exit', function (code, signal) {
-                    debug({ code: code, signal: signal });
-                    if (code === null) {
-                        callback(new Error(signal));
-                        callback = function () {};
-                    }
-                });
-                jubastat.stdout.on('data', function (data) {
-                    if (/RPC server startup/.test(data.toString())) {
-                        callback(null);
-                        callback = function () {};
-                    }
-                });
-                if (isDebugEnabled) {
-                    jubastat.stdout.on('data', function (data) {
-                        process.stderr.write(data);
-                    });
+before(done => {
+    const option = { port: Number(process.env.npm_package_config_test_port || 9199) };
+    portfinder.getPortPromise(option).then(port => {
+        debug(`port: ${ port }`);
+        const executor = (resolve, reject) => {
+            /*jslint nomen: true */
+            const config = 'stat_config.json',
+                command = 'jubastat',
+                args = ['-p', port, '-f', config],
+                options = { cwd: __dirname };
+            server = spawn(command, args, options);
+            server.on('exit', (code, signal) => {
+                debug({ code: code, signal: signal });
+                if (code === null) {
+                    reject(new Error(signal));
                 }
-                self.jubastat = jubastat;
-            },
-            function (callback) {
-                self.stat = new jubatus.stat.client.Stat(port, host, name);
-                callback(null);
+            });
+            server.stdout.on('data', data => {
+                if (/RPC server startup/.test(data.toString())) {
+                    resolve(port);
+                }
+            });
+            if (debug.enabled) {
+                server.stdout.on('data', data => {
+                    process.stderr.write(data);
+                });
             }
-        ], function (error) {
-            if (error) {
-                throw error;
-            }
-            callback();
-        });
-    },
-    tearDown: function (callback) {
-        this.stat.getClient().close();
-        this.jubastat.kill();
-        callback();
-    },
-    push: function (test) {
-        var key = "foo",
+        };
+        return new Promise(executor);
+    }).then(port => {
+        client = new jubatus.stat.client.Stat(port, 'localhost');
+        done();
+    }).catch(done);
+});
+
+after(done => {
+    client.getClient().close();
+    server.kill();
+    done();
+});
+
+describe('stat#push', () => {
+    it('push', done => {
+        const key = "foo",
             value = 1.01;
-        this.stat.push(key, value, function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.ok(result);
-            test.done();
-        });
-    },
-    sum: function (test) {
-        var self = this,
-            key = "foo",
+        client.push(key, value).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            done();
+        }).catch(done);
+    });
+});
+
+describe('stat#sum', () => {
+    it('sum', done => {
+        const key = "foo",
             values = [1, 1.2, 0],
-            expected = values.reduce(function (previous, current) { return previous + current; }, 0);
-        async.series([
-            function (callback) {
-                async.each(values, function (value, callback) {
-                    self.stat.push(key, value, callback);
-                }, callback);
-            },
-            function (callback) {
-                self.stat.sum(key, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result, expected);
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    },
-    stddev: function (test) {
-        var self = this,
-            key = "foo",
+            expected = values.reduce((previous, current) => previous + current, 0);
+        client.clear()
+        .then(() => Promise.all(values.map(value => client.push(key, value))))
+        .then(() => client.sum(key))
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.equal(expected);
+            done();
+        }).catch(done);
+    });
+});
+
+describe('stat#stddev', () => {
+    it('stddev', done => {
+        const key = "foo",
             values = [1, 1.2, 0];
-        async.series([
-            function (callback) {
-                async.each(values, function (value, callback) {
-                    self.stat.push(key, value, callback);
-                }, callback);
-            },
-            function (callback) {
-                self.stat.stddev(key, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(typeof result, "number");
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    },
-    max: function (test) {
-        var self = this,
-            key = "foo",
+        client.clear()
+        .then(() => Promise.all(values.map(value => client.push(key, value))))
+        .then(() => client.stddev(key))
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a("number");
+            done();
+        }).catch(done);
+    });
+});
+
+describe('stat#max', () => {
+    it('max', done => {
+        const key = "foo",
             values = [1, 1.2, 0],
-            expected = values.reduce(function (previous, current) { return previous > current ? previous : current; }, 0);
-        async.series([
-            function (callback) {
-                async.each(values, function (value, callback) {
-                    self.stat.push(key, value, callback);
-                }, callback);
-            },
-            function (callback) {
-                self.stat.max(key, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result, expected);
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    },
-    min: function (test) {
-        var self = this,
-            key = "foo",
+            expected = values.reduce((previous, current) => Math.max(previous, current), Number.MIN_VALUE);
+        client.clear()
+        .then(() => Promise.all(values.map(value => client.push(key, value))))
+        .then(() => client.max(key))
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.equal(expected);
+            done();
+        }).catch(done);
+    });
+});
+
+describe('stat#min', () => {
+    it('min', done => {
+        const key = "foo",
+            values = [1, 1.2, 0, -1],
+            expected = values.reduce((previous, current) => Math.min(previous, current), Number.MAX_VALUE);
+        client.clear()
+        .then(() => Promise.all(values.map(value => client.push(key, value))))
+        .then(() => client.min(key))
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a("number");
+            expect(result).to.equal(expected);
+            done();
+        }).catch(done);
+    });
+});
+
+describe('stat#entropy', () => {
+    it('entropy', done => {
+        const key = "foo",
+            values = [1, 1.2, 10, 100];
+        client.clear()
+        .then(() => Promise.all(values.map(value => client.push(key, value))))
+        .then(() => client.entropy(key))
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a("number");
+            done();
+        }).catch(done);
+    });
+});
+
+describe('stat#moment', () => {
+    it('moment', done => {
+        const key = "foo",
             values = [1, 1.2, 0],
-            expected = values.reduce(function (previous, current) { return previous < current ? previous : current; }, 0);
-        async.series([
-            function (callback) {
-                async.each(values, function (value, callback) {
-                    self.stat.push(key, value, callback);
-                }, callback);
-            },
-            function (callback) {
-                self.stat.min(key, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result, expected);
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    },
-    entropy: function (test) {
-        var self = this,
-            key = "foo",
-            values = [1, 1.2, 0];
-        async.series([
-            function (callback) {
-                async.each(values, function (value, callback) {
-                    self.stat.push(key, value, callback);
-                }, callback);
-            },
-            function (callback) {
-                self.stat.entropy(key, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(typeof result, "number");
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    },
-    moment: function (test) {
-        var self = this,
-            key = "foo",
-            values = [1, 1.2, 0];
-        async.series([
-            function (callback) {
-                async.each(values, function (value, callback) {
-                    self.stat.push(key, value, callback);
-                }, callback);
-            },
-            function (callback) {
-                var degree = 1,
-                    center = 1.1;
-                self.stat.moment(key, degree, center, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(typeof result, "number");
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    }
-};
+            degree = 1,
+            center = 1.1;
+        client.clear()
+        .then(() => Promise.all(values.map(value => client.push(key, value))))
+        .then(() => client.moment(key, degree, center))
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a("number");
+            done();
+        }).catch(done);
+    });
+});

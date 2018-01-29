@@ -1,107 +1,92 @@
 /*jslint node: true, passfail: false */
 
-var jubatus = require('../index.js'),
-    spawn = require('child_process').spawn,
-    async = require('async');
+const expect = require('chai').expect;
+const spawn = require('child_process').spawn;
+const portfinder = require('portfinder');
+const debug = require('debug')('jubatus-node-client:test:regression');
+const jubatus = require('../index.js');
 
-var isDebugEnabled = process.env.NODE_DEBUG && (/test/).test(process.env.NODE_DEBUG),
-    debug = isDebugEnabled ? function (x) { console.error('TEST:', x); } : function () {};
+let server;
+let client;
 
-module.exports = {
-    setUp: function (callback) {
-        var self = this,
-            config = 'regression_config.json',
-            port = process.env.npm_package_config_test_port || 9199,
-            host = 'localhost',
-            name = 'test';
-        async.series([
-            function (callback) {
-                /*jslint nomen: true */
-                var command = 'jubaregression',
-                    args = ['-p', port, '-n', name, '-f', config],
-                    options = { cwd: __dirname },
-                    jubaregression = spawn(command, args, options);
-                jubaregression.on('exit', function (code, signal) {
-                    debug({ code: code, signal: signal });
-                    if (code === null) {
-                        callback(new Error(signal));
-                        callback = function () {};
-                    }
-                });
-                jubaregression.stdout.on('data', function (data) {
-                    if (/RPC server startup/.test(data.toString())) {
-                        callback(null);
-                        callback = function () {};
-                    }
-                });
-                if (isDebugEnabled) {
-                    jubaregression.stdout.on('data', function (data) {
-                        process.stderr.write(data);
-                    });
+before(done => {
+    const option = { port: Number(process.env.npm_package_config_test_port || 9199) };
+    portfinder.getPortPromise(option).then(port => {
+        debug(`port: ${ port }`);
+        const executor = (resolve, reject) => {
+            /*jslint nomen: true */
+            const config = 'regression_config.json',
+                command = 'jubaregression',
+                args = ['-p', port, '-f', config],
+                options = { cwd: __dirname };
+            server = spawn(command, args, options);
+            server.on('exit', (code, signal) => {
+                debug({ code: code, signal: signal });
+                if (code === null) {
+                    reject(new Error(signal));
                 }
-                self.jubaregression = jubaregression;
-            },
-            function (callback) {
-                self.regression = new jubatus.regression.client.Regression(port, host, name);
-                callback(null);
+            });
+            server.stdout.on('data', data => {
+                if (/RPC server startup/.test(data.toString())) {
+                    resolve(port);
+                }
+            });
+            if (debug.enabled) {
+                server.stdout.on('data', data => {
+                    process.stderr.write(data);
+                });
             }
-        ], function (error) {
-            if (error) {
-                throw error;
-            }
-            callback();
-        });
-    },
-    tearDown: function (callback) {
-        this.regression.getClient().close();
-        this.jubaregression.kill();
-        callback();
-    },
-    train: function (test) {
-        var datum = [ [ ["foo", "bar"] ], [] ],
+        };
+        return new Promise(executor);
+    }).then(port => {
+        client = new jubatus.regression.client.Regression(port, 'localhost');
+        done();
+    }).catch(done);
+});
+
+after(done => {
+    client.getClient().close();
+    server.kill();
+    done();
+});
+
+describe('regression#train', () => {
+    it('train', done => {
+        const datum = [ [ ["foo", "bar"] ], [] ],
             value = 1.01,
             data = [ [value, datum] ];
-        this.regression.train(data, function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.equal(result, data.length);
-            test.done();
-        });
-    },
-    estimate: function (test) {
-        var self = this;
-        async.series([
-            function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [] ],
-                    data = [ datum ];
-                self.regression.estimate(data, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result.length, data.length);
-                    callback(error, result);
-                });
-            },
-            function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [] ],
-                    value = 1,
-                    data = [ [value, datum] ];
-                self.regression.train(data, callback);
-            },
-            function (callback) {
-                var datum = [ [ ["foo", "bar"] ], [] ],
-                    data = [ datum ];
-                self.regression.estimate(data, function (error, result) {
-                    debug({ error: error, result: result });
-                    test.equal(error, null, error);
-                    test.equal(result.length, data.length);
-                    result.forEach(function (estimate) {
-                        test.equal("number", typeof estimate);
-                    });
-                    callback(error, result);
-                });
-            }
-        ], function (error) {
-            test.done();
-        });
-    }
-};
+        client.train(data).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            expect(result).to.equal(1);
+            done();
+        }).catch(done);
+    });
+});
+
+describe('regression#estimate', () => {
+    it('estimate', done => {
+        var datum = [ [ ["foo", "bar"] ], [] ],
+            data = [ datum ];
+        client.estimate(data).then(([ result ]) => {
+            debug(result);
+            expect(result.length).to.equal(1);
+
+            var datum = [ [ ["foo", "bar"] ], [] ],
+                value = 1,
+                data = [ [value, datum] ];
+            return client.train(data);
+        }).then(([ result ]) => {
+            let datum = [ [ ["foo", "bar"] ], [] ],
+                data = [ datum ];
+            return client.estimate(data);
+        }).then(([ result ]) => {
+            debug(result);
+            expect(result.length).to.equal(1);
+            result.forEach(estimate => {
+                expect(estimate).to.be.a("number");
+            });
+            done();
+        }).catch(done);
+    });
+});

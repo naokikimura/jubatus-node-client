@@ -1,116 +1,113 @@
 /*jslint node: true, passfail: false */
 
-var jubatus = require('../index.js'),
-    spawn = require('child_process').spawn,
-    async = require('async');
+const expect = require('chai').expect;
+const spawn = require('child_process').spawn;
+const portfinder = require('portfinder');
+const debug = require('debug')('jubatus-node-client:test:common');
+const jubatus = require('../index.js');
 
-var isDebugEnabled = process.env.NODE_DEBUG && (/test/).test(process.env.NODE_DEBUG),
-    debug = isDebugEnabled ? function (x) { console.error('TEST:', x); } : function () {};
+let server;
+let client;
 
-module.exports = {
-    setUp: function (callback) {
-        var self = this,
-            config = 'common_config.json',
-            port = process.env.npm_package_config_test_port || 9199,
-            host = 'localhost',
-            name = 'test';
-        async.series([
-            function (callback) {
-                /*jslint nomen: true */
-                var command = 'jubaclassifier',
-                    args = ['-p', port, '-n', name, '-f', config],
-                    options = { cwd: __dirname },
-                    jubaclassifier = spawn(command, args, options);
-                jubaclassifier.on('exit', function (code, signal) {
-                    debug({ code: code, signal: signal });
-                    if (code === null) {
-                        callback(new Error(signal));
-                        callback = function () {};
-                    }
-                });
-                jubaclassifier.stdout.on('data', function (data) {
-                    if (/RPC server startup/.test(data.toString())) {
-                        callback(null);
-                        callback = function () {};
-                    }
-                });
-                if (isDebugEnabled) {
-                    jubaclassifier.stdout.on('data', function (data) {
-                        process.stderr.write(data);
-                    });
+before(done => {
+    const option = { port: Number(process.env.npm_package_config_test_port || 9199) };
+    portfinder.getPortPromise(option).then(port => {
+        debug(`port: ${ port }`);
+        const executor = (resolve, reject) => {
+            /*jslint nomen: true */
+            const config = 'common_config.json',
+                command = 'jubaclassifier',
+                args = ['-p', port, '-f', config],
+                options = { cwd: __dirname };
+            server = spawn(command, args, options);
+            server.on('exit', (code, signal) => {
+                debug({ code: code, signal: signal });
+                if (code === null) {
+                    reject(new Error(signal));
                 }
-                self.jubaclassifier = jubaclassifier;
-            },
-            function (callback) {
-                self.classifier = new jubatus.classifier.client.Classifier(port, host, name);
-                callback(null);
+            });
+            server.stdout.on('data', data => {
+                if (/RPC server startup/.test(data.toString())) {
+                    resolve(port);
+                }
+            });
+            if (debug.enabled) {
+                server.stdout.on('data', data => {
+                    process.stderr.write(data);
+                });
             }
-        ], function (error) {
-            if (error) {
-                throw error;
-            }
-            callback();
-        });
-    },
-    tearDown: function (callback) {
-        this.classifier.getClient().close();
-        this.jubaclassifier.kill();
-        callback();
-    },
-    save: function (test) {
+        };
+        return new Promise(executor);
+    }).then(port => {
+        client = new jubatus.classifier.client.Classifier(port, 'localhost');
+        done();
+    }).catch(done);
+});
+
+after(done => {
+    client.getClient().close();
+    server.kill();
+    done();
+});
+
+describe('common#save', () => {
+    it('save', done => {
         var id = 'test';
-        this.classifier.save(id, function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.ok(result);
-            test.done();
-        });
-    },
-    load: function (test) {
+        client.save(id).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            done();
+        }).catch(done);
+    });
+});
+
+describe('common#load', () => {
+    it('load', done => {
         var id = 'test';
-        this.classifier.load(id, function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.ok(result);
-            test.done();
+        client.load(id).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            done();
+        }).catch(done);
+    });
+});
+
+describe('common#clear', () => {
+    it('clear', done => {
+        client.clear().then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            done();
+        }).catch(done);
+    });
+});
+
+describe('common#get_config', () => {
+    it('get_config', done => {
+        client.getConfig().then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            done();
+        }).catch(done);
+    });
+});
+
+describe('common#get_status', () => {
+    it('get_status', done => {
+        client.getStatus().then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.ok;
+            done();
+        }).catch(done);
+    });
+});
+
+describe('common#get_proxy_status', () => {
+    it('get_proxy_status', done => {
+        client.getProxyStatus().then(done).catch(error => {
+            debug(error);
+            expect(error).to.be.ok;
+            done();
         });
-    },
-    clear: function (test) {
-        this.classifier.clear(function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.ok(result);
-            test.done();
-        });
-    },
-    get_config: function (test) {
-        this.classifier.getConfig(function (error, result) {
-            debug({ error: error, result: result });
-            test.equal(error, null, error);
-            test.ok(result);
-            test.done();
-        });
-    },
-    get_status: function (test) {
-        this.classifier.getStatus().then(([ result, msgid ]) => {
-            debug({ result: result, msgid: msgid });
-            test.ok(result);
-            test.done();
-        }).catch(error => {
-            debug({ error: error });
-            test.ok(null, error);
-            test.done();
-        });
-    },
-    get_proxy_status: function (test) {
-        this.classifier.getProxyStatus().then(([ result, msgid ]) => {
-            debug({ result: result, msgid: msgid });
-            test.ok(null, result);
-            test.done();
-        }).catch(error => {
-            debug({ error: error });
-            test.ok(error);
-            test.done();
-        });
-    }
-};
+    });
+});

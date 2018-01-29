@@ -11,19 +11,21 @@
     "url": "https://github.com/naokikimura/jubatus-node-client.git"
   },
   "dependencies": {
+    "json-schema": "^0.2.3",
     "msgpack": "^1.0.2",
-    "msgpack-js": "^0.3.0",
-    "json-schema": "^0.2.3"
+    "msgpack-js": "^0.3.0"
   },
   "readmeFilename": "README.md",
   "gitHead": "22a1b0a18ef09251569dd77a4c65089a01d5e36f",
   "description": "Jubatus client for Node.js (unofficial)",
   "devDependencies": {
-    "nodeunit": "*",
-    "async": "*"
+    "chai": "^4.1.2",
+    "debug": "^3.1.0",
+    "mocha": "^5.0.0",
+    "portfinder": "^1.0.13"
   },
   "scripts": {
-    "test": "nodeunit test/"
+    "test": "mocha"
   },
   "config": {
     "test": {
