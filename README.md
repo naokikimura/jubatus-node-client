@@ -1,6 +1,8 @@
 jubatus-node-client
 ===================
 
+[![Build Status](https://secure.travis-ci.org/naokikimura/jubatus-tutorial-node.png?branch=master)](http://travis-ci.org/naokikimura/jubatus-tutorial-node)
+
 Jubatus client for Node.js (unofficial)
 
 Usage
