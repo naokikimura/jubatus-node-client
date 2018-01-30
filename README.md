@@ -1,7 +1,7 @@
 jubatus-node-client
 ===================
 
-[![Build Status](https://travis-ci.org/naokikimura/jubatus-node-client.svg?branch=master)](https://travis-ci.org/naokikimura/jubatus-node-client)
+[![Build Status](https://travis-ci.org/naokikimura/jubatus-node-client.svg?branch=master)](https://travis-ci.org/naokikimura/jubatus-node-client) [![npm version](https://badge.fury.io/js/jubatus.svg)](https://badge.fury.io/js/jubatus)
 
 Jubatus client for Node.js (unofficial)
 
