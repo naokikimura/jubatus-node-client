@@ -55,7 +55,7 @@ describe('common#save', () => {
         var id = 'test';
         client.save(id).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.ok;
+            expect(result).to.be.a('object');
             done();
         }).catch(done);
     });
@@ -66,7 +66,7 @@ describe('common#load', () => {
         var id = 'test';
         client.load(id).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.ok;
+            expect(result).to.be.a('boolean');
             done();
         }).catch(done);
     });
@@ -76,7 +76,7 @@ describe('common#clear', () => {
     it('clear', done => {
         client.clear().then(([ result ]) => {
             debug(result);
-            expect(result).to.be.ok;
+            expect(result).to.be.a('boolean');
             done();
         }).catch(done);
     });
@@ -86,7 +86,7 @@ describe('common#get_config', () => {
     it('get_config', done => {
         client.getConfig().then(([ result ]) => {
             debug(result);
-            expect(result).to.be.ok;
+            expect(result).to.be.a('string');
             done();
         }).catch(done);
     });
@@ -96,15 +96,37 @@ describe('common#get_status', () => {
     it('get_status', done => {
         client.getStatus().then(([ result ]) => {
             debug(result);
-            expect(result).to.be.ok;
+            expect(result).to.be.a('object');
             done();
         }).catch(done);
     });
 });
 
+describe('common#do_mix', () => {
+    it('do_mix', done => {
+        client.doMix()
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('boolean');
+            done();
+        })
+        .catch(error => {
+            debug(error);
+            expect(error).to.be.ok;
+            done();
+        });
+    });
+});
+
 describe('common#get_proxy_status', () => {
     it('get_proxy_status', done => {
-        client.getProxyStatus().then(done).catch(error => {
+        client.getProxyStatus()
+        .then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('object');
+            done();
+        })
+        .catch(error => {
             debug(error);
             expect(error).to.be.ok;
             done();

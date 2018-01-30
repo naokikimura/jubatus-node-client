@@ -23,45 +23,60 @@ function camelCase(input) {
 }
 
 function createConstructor(className) {
-    var constructor = function constructor(portNumber, hostName, clusterName, timeoutSeconds) {
+    var constructor = function constructor(port = 9199, host = 'localhost', name = 'cluster', timeoutSeconds = 0) {
         if (!(this instanceof constructor)) {
             throw new Error(className + ' is constructor.');
         }
 
-        var port = portNumber || 9199,
-            host = hostName || 'localhost',
-            cluster = clusterName || 'cluster',
-            timeoutMillis = (timeoutSeconds || 0) * 1000,
-            client = rpc.createClient(port, host, timeoutMillis);
-        this.getClient = function () {
-            return client;
-        };
-        this.getClusterName = function () {
-            return cluster;
-        }
+        const client = rpc.createClient(port, host, timeoutSeconds * 1000);
+
+        Object.defineProperty(this, 'client', {
+            get: function() { return client; }
+        });
+        Object.defineProperty(this, 'name', {
+            get: function() { return name; },
+            set: function(value) { name = value; }
+        });
         return this;
     };
+
+    // This is not an RPC method.
+    constructor.prototype.getClient = function () {
+        return this.client;
+    }
+
+    // This is not an RPC method.
+    constructor.prototype.getName = function () {
+        return this.name;
+    }
+
+    // This is not an RPC method.
+    constructor.prototype.setName = function (value) {
+        this.name = value;
+    }
 
     return api[className].methods.map(method => {
         debug(method);
         var rpcName = method.id || method,
             methodName = camelCase(rpcName),
-            assertParams = !isProduct && method.args ? params => {
-                debug({ params: params, args: method.args });
+            properties = method.properties || {},
+            assertParams = !isProduct && properties.args ? params => {
+                debug({ params: params, args: properties.args });
                 var schema = method.args,
                     result = validate(params, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             } : () => {};
-      return [ rpcName, methodName, assertParams ];
+      return [ rpcName, methodName, assertParams, properties.return ];
     })
-    .reduce((constructor, [ rpcName, methodName, assertParams ]) => {
+    .reduce((constructor, [ rpcName, methodName, assertParams, returnProperty ]) => {
         constructor.prototype[methodName] = function () {
+            debug(returnProperty);
             var self = this,
                 client = self.getClient(),
                 params = toArray(arguments),
                 hasCallback = (typeof params[params.length - 1] === 'function');
             assertParams(params);
-            params.unshift(self.getClusterName());
+            params.unshift(self.getName());
             if (hasCallback) {
                 let callback = params.pop();
                 client.call(rpcName, params, (error, result, msgid) => {
@@ -84,7 +99,5 @@ function createConstructor(className) {
 }
 
 Object.keys(api).forEach(function (className) {
-    var client = {};
-    client[className] = createConstructor(className);
-    module.exports[className.toLowerCase()] = { client: client };
+    module.exports[className.toLowerCase()] = { client: { [className]: createConstructor(className) } };
 });

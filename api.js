@@ -70,6 +70,19 @@ var common = {
             }
         },
         {
+            "id": "do_mix",
+            "properties": {
+                "return": { "type": "boolean" },
+                "args": {
+                    "type": "array",
+                    "minItems": 0,
+                    "maxItems": 0,
+                    "items": [ ],
+                    "additionalItems": false
+                }
+            }
+        },
+        {
             "id": "get_proxy_status",
             "properties": {
                 "return": { "type": "object" },
