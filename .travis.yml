@@ -1,3 +1,16 @@
+sudo: required
+
 language: node_js
+
 node_js:
   - 6.3.0
+
+addons:
+  apt:
+    sources:
+    - sourceline: 'deb http://download.jubat.us/apt/ubuntu/trusty binary/'
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y --allow-unauthenticated jubatus
+  - source /opt/jubatus/profile
