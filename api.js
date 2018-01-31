@@ -172,6 +172,49 @@ module.exports = {
                         "additionalItems": false
                     }
                 }
+            },
+            {
+                "id": "get_labels",
+                "properties": {
+                    "return": { "type": "object" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 0,
+                        "items": [],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "set_label",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { type: "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "delete_label",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { type: "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
             }
         ]),
         types: common.types.concat([

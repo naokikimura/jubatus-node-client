@@ -91,3 +91,59 @@ describe('classifier#classify', () => {
         }).catch(done);
     });
 });
+
+describe('classifier#get_labels', () => {
+    it('get_labels', done => {
+        client.getLabels().then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('object');
+            done();
+        }).catch(done);
+    });
+});
+
+describe('classifier#set_label', () => {
+    it('set_label', done => {
+        const label = 'foo';
+        client.clear().then(([ result ]) => {
+            expect(result).to.equal(true);
+            return client.setLabel(label);
+        }).then(([ result ]) => {
+            expect(result).to.be.a('boolean');
+            expect(result).to.equal(true);
+            return client.getLabels();
+        }).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('object');
+            expect(result).to.deep.equal({ [label]: 0 });
+            done();
+        }).catch(done);
+    });
+});
+
+describe('classifier#delete_label', () => {
+    it('delete_label', done => {
+        const label = 'foo';
+        client.clear().then(([ result ]) => {
+            expect(result).to.equal(true);
+            return client.setLabel(label);
+        }).then(([ result ]) => {
+            expect(result).to.be.a('boolean');
+            expect(result).to.equal(true);
+            return client.getLabels();
+        }).then(([ result ]) => {
+            expect(result).to.be.a('object');
+            expect(result).to.deep.equal({ [label]: 0 });
+            return client.deleteLabel(label);
+        }).then(([ result ]) => {
+            expect(result).to.be.a('boolean');
+            expect(result).to.equal(true);
+            return client.getLabels();
+        }).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('object');
+            expect(result).to.deep.equal({});
+            done();
+        }).catch(done);
+    });
+});
