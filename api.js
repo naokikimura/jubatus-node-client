@@ -641,8 +641,206 @@ module.exports = {
     },
     Burst: {
         methods: common.methods.concat([
-
-        ]),types: common.types.concat([
+            {
+                "id": "add_documents",
+                "properties": {
+                    "return": { "type": "integer" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "id": "document",
+                                        "type": "array",
+                                        "items": [
+                                            { "id": "pos", "type": "number" },
+                                            { "id": "text", "type": "string" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_result",
+                "properties": {
+                    "return": { "type": "array" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "keyword", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_result_at",
+                "properties": {
+                    "return": { "type": "array" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": [
+                            { "id": "keyword", "type": "string" },
+                            { "id": "pos", "type": "number" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_all_bursted_results",
+                "properties": {
+                    "return": { "type": "object" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 0,
+                        "items": [],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_all_bursted_results_at",
+                "properties": {
+                    "return": { "type": "object" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "pos", "type": "number" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_all_keywords",
+                "properties": {
+                    "return": { "type": "array" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 0,
+                        "items": [],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "add_keyword",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            {
+                                "id": "keyword_with_params",
+                                "type": "array",
+                                "items": [
+                                    { "id": "keyword", "type": "string" },
+                                    { "id": "scaling_param", "type": "number" },
+                                    { "id": "gamma", "type": "number" }
+                                ]
+                            }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "remove_keyword",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "keyword", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "remove_all_keywords",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 0,
+                        "items": [],
+                        "additionalItems": false
+                    }
+                }
+            }
+        ]),
+        types: common.types.concat([
+            {
+                "id": "keyword_with_params",
+                "type": "array",
+                "items": [
+                    { "id": "keyword", "type": "string" },
+                    { "id": "scaling_param", "type": "number" },
+                    { "id": "gamma", "type": "number" }
+                ]
+            },
+            {
+                "id": "batch",
+                "type": "array",
+                "items": [
+                    { "id": "all_data_count", "type": "integer" },
+                    { "id": "relevant_data_count", "type": "integer" },
+                    { "id": "burst_weight", "type": "number" }
+                ]
+            },
+            {
+                "id": "window",
+                "type": "array",
+                "items": [
+                    { "id": "start_pos", "type": "number" },
+                    {
+                        "id": "batches",
+                        "type": "array",
+                        "items": [
+                            {
+                                "id": "batch",
+                                "type": "array",
+                                "items": [
+                                    { "id": "all_data_count", "type": "integer" },
+                                    { "id": "relevant_data_count", "type": "integer" },
+                                    { "id": "burst_weight", "type": "number" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "document",
+                "type": "array",
+                "items": [
+                    { "id": "pos", "type": "number" },
+                    { "id": "text", "type": "string" }
+                ]
+            }
 
         ])
     },
