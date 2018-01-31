@@ -1089,5 +1089,51 @@ module.exports = {
                 "additionalItems": false
             }
         ])
+    },
+    Weight: {
+        methods: common.methods.concat([
+            {
+                "id": "update",
+                "properties": {
+                    "return": { "type": "array" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "type": "object" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "calc_weight",
+                "properties": {
+                    "return": { "type": "array" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "type": "object" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            }
+        ]),types: common.types.concat([
+            {
+                "id": "feature",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    { "id": "key", "type": "string" },
+                    { "id": "value", "type": "number" }
+                ],
+                "additionalItems": false
+            }
+        ])
     }
 };
