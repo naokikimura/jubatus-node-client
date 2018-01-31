@@ -3,13 +3,13 @@ var common = {
         {
             "id": "save",
             "properties": {
-                "return": { "type": "boolean" },
+                "return": { "type": "object" },
                 "args": {
                     "type": "array",
                     "minItems": 1,
                     "maxItems": 1,
                     "items": [
-                        { "id": "id", "type": "string"}
+                        { "id": "id", "type": "string" }
                     ],
                     "additionalItems": false
                 }
@@ -24,7 +24,7 @@ var common = {
                     "minItems": 1,
                     "maxItems": 1,
                     "items": [
-                        { "id": "id", "type": "string"}
+                        { "id": "id", "type": "string" }
                     ],
                     "additionalItems": false
                 }
@@ -146,7 +146,7 @@ module.exports = {
             {
                 "id": "train",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "integer" } },
+                    "return": { "type": "integer" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -161,7 +161,7 @@ module.exports = {
             {
                 "id": "classify",
                 "properties": {
-                    "return": { "type": "array", "items": "object" },
+                    "return": { "type": "array", "items": [ { "type": "array" } ] },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -236,7 +236,7 @@ module.exports = {
             {
                 "id": "train",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "number" } },
+                    "return": { "type": "integer" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -1207,7 +1207,17 @@ module.exports = {
             {
                 "id": "get_arm_info",
                 "properties": {
-                    "return": { "type": "object" },
+                    "return": {
+                        "properties": {
+                            "arm_id": { "type": "string" },
+                            "arm_info" : {
+                                "properties": {
+                                    "trial_count": "integer",
+                                    "weight": "number"
+                                }
+                            }
+                        }
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -1234,7 +1244,15 @@ module.exports = {
                     }
                 }
             }
-        ]),types: common.types.concat([
+        ]),
+        types: common.types.concat([
+            {
+                "id": "arm_info",
+                "properties": {
+                    "trial_count": "integer",
+                    "weight": "number"
+                }
+            }
         ])
     },
     Weight: {
@@ -1242,13 +1260,27 @@ module.exports = {
             {
                 "id": "update",
                 "properties": {
-                    "return": { "type": "array" },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "id": "feature",
+                                "type": "array",
+                                "minItems": 2,
+                                "maxItems": 2,
+                                "items": [
+                                    { "id": "key", "type": "string" },
+                                    { "id": "value", "type": "number" }
+                                ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "type": "object" }
+                            { "type": "array" }
                         ],
                         "additionalItems": false
                     }
@@ -1257,19 +1289,34 @@ module.exports = {
             {
                 "id": "calc_weight",
                 "properties": {
-                    "return": { "type": "array" },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "id": "feature",
+                                "type": "array",
+                                "minItems": 2,
+                                "maxItems": 2,
+                                "items": [
+                                    { "id": "key", "type": "string" },
+                                    { "id": "value", "type": "number" }
+                                ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "type": "object" }
+                            { "type": "array" }
                         ],
                         "additionalItems": false
                     }
                 }
             }
-        ]),types: common.types.concat([
+        ]),
+        types: common.types.concat([
             {
                 "id": "feature",
                 "type": "array",

@@ -61,14 +61,14 @@ function createConstructor(className) {
             methodName = camelCase(rpcName),
             properties = method.properties || {},
             assertParams = !isProduct && properties.args ? params => {
-                debug({ params: params, args: properties.args });
-                var schema = method.args,
+                debug({ params, args: properties.args });
+                var schema = properties.args,
                     result = validate(params, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             } : () => {},
             assertReturn = !isProduct && properties.return ? returnValue => {
                 debug({ result: returnValue, 'return': properties.return });
-                var schema = method.return,
+                var schema = properties.return,
                     result = validate(returnValue, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             } : () => {};
