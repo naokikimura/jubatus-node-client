@@ -639,6 +639,13 @@ module.exports = {
             }
         ])
     },
+    Burst: {
+        methods: common.methods.concat([
+
+        ]),types: common.types.concat([
+
+        ])
+    },
     Stat: {
         methods: common.methods.concat([
             {
@@ -1131,6 +1138,103 @@ module.exports = {
                 ],
                 "additionalItems": false
             }
+        ])
+    },
+    Bandit: {
+        methods: common.methods.concat([
+            {
+                "id": "register_arm",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "arm_id", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "delete_arm",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "arm_id", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "select_arm",
+                "properties": {
+                    "return": { "id": "arm_id", "type": "string" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "player_id", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "register_reward",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "items": [
+                            { "id": "player_id", "type": "string" },
+                            { "id": "arm_id", "type": "string" },
+                            { "id": "reward", "type": "number" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_arm_info",
+                "properties": {
+                    "return": { "type": "object" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "player_id", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "reset",
+                "properties": {
+                    "return": { "type": "boolean" },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "player_id", "type": "string" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            }
+        ]),types: common.types.concat([
         ])
     },
     Weight: {
