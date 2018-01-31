@@ -65,12 +65,17 @@ function createConstructor(className) {
                 var schema = method.args,
                     result = validate(params, schema);
                 assert.ok(result.valid, util.format('%j', result.errors));
+            } : () => {},
+            assertReturn = !isProduct && properties.return ? returnValue => {
+                debug({ result: returnValue, 'return': properties.return });
+                var schema = method.return,
+                    result = validate(returnValue, schema);
+                assert.ok(result.valid, util.format('%j', result.errors));
             } : () => {};
-      return [ rpcName, methodName, assertParams, properties.return ];
+      return [ rpcName, methodName, assertParams, assertReturn, properties ];
     })
-    .reduce((constructor, [ rpcName, methodName, assertParams, returnProperty ]) => {
+    .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn, properties ]) => {
         constructor.prototype[methodName] = function () {
-            debug(returnProperty);
             var self = this,
                 client = self.getClient(),
                 params = toArray(arguments),
@@ -80,16 +85,22 @@ function createConstructor(className) {
             if (hasCallback) {
                 let callback = params.pop();
                 client.call(rpcName, params, (error, result, msgid) => {
-                    callback.call(self, error && new Error(`${ error } ${ result || '' }`),
-                            error ? null : result, msgid);
+                    if (error)
+                        callback.call(self, new Error(`${ error } ${ result || '' }`), null, msgid);
+                    else {
+                        assertReturn(result);
+                        callback.call(self, null, result, msgid);
+                    }
                 });
             } else {
                 return new Promise((resolve, reject) => {
                     client.call(rpcName, params, (error, result, msgid) => {
                         if (error)
                             reject(new Error(`${ error } ${ result || '' }`))
-                        else
+                        else {
+                            assertReturn(result);
                             resolve([ result, msgid ]);
+                        }
                     });
                 });
             }
