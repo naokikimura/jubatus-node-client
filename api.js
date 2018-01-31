@@ -968,7 +968,21 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "points", "type": "array", "items": { "type": "object" } }
+                            {
+                                "id": "points",
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "type": "array",
+                                        "minItems": 2,
+                                        "maxItems": 2,
+                                        "items": [
+                                            { "id": "id", "type": "string" },
+                                            { "id": "point", "type": "object" }
+                                        ]
+                                    }
+                                ]
+                            }
                         ],
                         "additionalItems": false
                     }
@@ -990,12 +1004,41 @@ module.exports = {
             {
                 "id": "get_core_members",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "array", "items": { type: "object" } } },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [ { "type": "object" } ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 0,
                         "maxItems": 0,
-                        "items": [ ],
+                        "items": [],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_core_members_light",
+                "properties": {
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [ { "type": "object" } ]
+                            }
+                        ]
+                    },
+                    "args": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 0,
+                        "items": [],
                         "additionalItems": false
                     }
                 }
@@ -1003,12 +1046,15 @@ module.exports = {
             {
                 "id": "get_k_center",
                 "properties": {
-                    "return": { "type": "array", "items": { type: "object" } },
+                    "return": {
+                        "type": "array",
+                        "items": [ { "type": "object" } ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 0,
                         "maxItems": 0,
-                        "items": [ ],
+                        "items": [],
                         "additionalItems": false
                     }
                 }
@@ -1031,7 +1077,28 @@ module.exports = {
             {
                 "id": "get_nearest_members",
                 "properties": {
-                    "return": { "type": "arra", "items": { "type": "object" } },
+                    "return": {
+                        "type": "array",
+                        "items": [ { "type": "object" } ]
+                    },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            { "id": "point", "type": "object" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "get_nearest_members_light",
+                "properties": {
+                    "return": {
+                        "type": "array",
+                        "items": [ { "type": "object" } ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -1044,7 +1111,41 @@ module.exports = {
                 }
             }
         ]),
-        types: common.types.concat([])
+        types: common.types.concat([
+            {
+                "id": "weighted_datum",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    { "id": "weight", "type": "number" },
+                    { "id": "point", "type": "object" }
+                ],
+                "additionalItems": false
+            },
+            {
+                "id": "indexed_point",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    { "id": "id", "type": "string" },
+                    { "id": "point", "type": "object" }
+                ],
+                "additionalItems": false
+            },
+            {
+                "id": "weighted_index",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    { "id": "weight", "type": "number" },
+                    { "id": "id", "type": "string" }
+                ],
+                "additionalItems": false
+            }
+        ])
     },
     Graph: {
         methods: common.methods.concat([
