@@ -833,7 +833,7 @@ module.exports = {
                         "items": [],
                         "additionalItems": false
                     }
-            }
+                }
             }
         ]),
         types: common.types.concat([
@@ -1503,12 +1503,12 @@ module.exports = {
             {
                 "id": "create_node",
                 "properties": {
-                    "return": { "type": "boolean" },
+                    "return": { "type": "string" },
                     "args": {
                         "type": "array",
                         "minItems": 0,
                         "maxItems": 0,
-                        "items": [ ],
+                        "items": [],
                         "additionalItems": false
                     }
                 }
@@ -1547,14 +1547,24 @@ module.exports = {
             {
                 "id": "create_edge",
                 "properties": {
-                    "return": { "type": "long" },
+                    "return": { "type": "number" },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
                             { "id": "node_id", "type": "string" },
-                            { "id": "e", "type": "object" }
+                            {
+                                "id": "e",
+                                "type": "array",
+                                "minItems": 3,
+                                "maxItems": 3,
+                                "items": [
+                                    { "id": "property", "type": "object" },
+                                    { "id": "source", "type": "string" },
+                                    { "id": "target", "type": "string" },
+                                ]
+                            }
                         ],
                         "additionalItems": false
                     }
@@ -1570,8 +1580,18 @@ module.exports = {
                         "maxItems": 3,
                         "items": [
                             { "id": "node_id", "type": "string" },
-                            { "id": "edge_id", "type": "long" },
-                            { "id": "e", "type": "object" }
+                            { "id": "edge_id", "type": "number" },
+                            {
+                                "id": "e",
+                                "type": "array",
+                                "minItems": 3,
+                                "maxItems": 3,
+                                "items": [
+                                    { "id": "property", "type": "object" },
+                                    { "id": "source", "type": "string" },
+                                    { "id": "target", "type": "string" },
+                                ]
+                            }
                         ],
                         "additionalItems": false
                     }
@@ -1587,7 +1607,7 @@ module.exports = {
                         "maxItems": 2,
                         "items": [
                             { "id": "node_id", "type": "string" },
-                            { "id": "edge_id", "type": "long" }
+                            { "id": "edge_id", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1673,13 +1693,24 @@ module.exports = {
             {
                 "id": "get_shortest_path",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "string" } },
+                    "return": { "type": "array", "items": [ { "type": "string" } ] },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "query", "type": "object" }
+                            {
+                                "id": "query",
+                                "type": "array",
+                                "minItems": 4,
+                                "maxItems": 4,
+                                "items": [
+                                    { "id": "source", "type": "string" },
+                                    { "id": "target", "type": "string" },
+                                    { "id": "max_hop", "type": "integer" },
+                                    { "id": "preset_query", "type": "array" }
+                                ]
+                            }
                         ],
                         "additionalItems": false
                     }
@@ -1693,7 +1724,7 @@ module.exports = {
                         "type": "array",
                         "minItems": 0,
                         "maxItems": 0,
-                        "items": [ ],
+                        "items": [],
                         "additionalItems": false
                     }
                 }
@@ -1701,7 +1732,17 @@ module.exports = {
             {
                 "id": "get_node",
                 "properties": {
-                    "return": { "type": "object" },
+                    "return": {
+                        "id": "node",
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "items": [
+                            { "id": "property", "type": "object" },
+                            { "id": "in_edges", "type": "array" },
+                            { "id": "out_edges", "type": "array" }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -1716,14 +1757,24 @@ module.exports = {
             {
                 "id": "get_edge",
                 "properties": {
-                    "return": { "type": "object" },
+                    "return": {
+                        "id": "edge",
+                        "type": "array",
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "items": [
+                            { "id": "property", "type": "object" },
+                            { "id": "source", "type": "string" },
+                            { "id": "target", "type": "string" },
+                        ]
+                    },
                     "args": {
                         "type": "array",
-                        "minItems": 1,
-                        "maxItems": 1,
+                        "minItems": 2,
+                        "maxItems": 2,
                         "items": [
                             { "id": "node_id", "type": "string" },
-                            { "id": "edge_id", "type": "long" }
+                            { "id": "edge_id", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1759,17 +1810,18 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "edge_query", "type": "array", "items": { "type": "object" } },
-                    { "id": "node_query", "type": "array", "items": { "type": "object" } }
+                    { "id": "edge_query", "type": "array", "items": [ { "type": "object" } ] },
+                    { "id": "node_query", "type": "array", "items": [ { "type": "object" } ] }
                 ],
                 "additionalItems": false
             },
             {
                 "id": "edge",
                 "type": "array",
-                "minItems": 2,
-                "maxItems": 2,
+                "minItems": 3,
+                "maxItems": 3,
                 "items": [
+                    { "id": "property", "type": "object" },
                     { "id": "source", "type": "string" },
                     { "id": "target", "type": "string" }
                 ],
