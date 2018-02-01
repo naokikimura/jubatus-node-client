@@ -552,13 +552,46 @@ module.exports = {
             {
                 "id": "add",
                 "properties": {
-                    "return": { "type": "object" },
+                    "return": {
+                        "id": "id_with_score",
+                        "type": "array",
+                        "items": [
+                            { "id": "id", "type": "string" },
+                            { "id": "score", "type": "number" }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
                             { "id": "row", "type": "object" }
+                        ],
+                        "additionalItems": false
+                    }
+                }
+            },
+            {
+                "id": "add_bulk",
+                "properties": {
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            { "type": "string" }
+                        ]
+                    },
+                    "args": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 1,
+                        "items": [
+                            {
+                                "id": "data",
+                                "type": "array",
+                                "items": [
+                                    { "type": "object" }
+                                ]
+                            }
                         ],
                         "additionalItems": false
                     }
