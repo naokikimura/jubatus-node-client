@@ -456,7 +456,18 @@ module.exports = {
             {
                 "id": "neighbor_row_from_id",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "object" } },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [
+                                    { "id": "id", "type": "string" },
+                                    { "id": "score", "type": "number" }
+                                ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 2,
@@ -470,9 +481,20 @@ module.exports = {
                 }
             },
             {
-                "id": "neighbor_row_from_data",
+                "id": "neighbor_row_from_datum",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "object" } },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [
+                                    { "id": "id", "type": "string" },
+                                    { "id": "score", "type": "number" }
+                                ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 2,
@@ -488,34 +510,69 @@ module.exports = {
             {
                 "id": "similar_row_from_id",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "object" } },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [
+                                    { "id": "id", "type": "string" },
+                                    { "id": "score", "type": "number" }
+                                ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
                             { "id": "id", "type": "string" },
-                            { "id": "size", "type": "integer" }
+                            { "id": "ret_num", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
                 }
             },
             {
-                "id": "similar_row_from_data",
+                "id": "similar_row_from_datum",
                 "properties": {
-                    "return": { "type": "array", "items": { "type": "object" } },
+                    "return": {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [
+                                    { "id": "id", "type": "string" },
+                                    { "id": "score", "type": "number" }
+                                ]
+                            }
+                        ]
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
                             { "id": "query", "type": "object" },
-                            { "id": "size", "type": "integer" }
+                            { "id": "ret_num", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
                 }
+            },
+            {
+                "id": "get_all_rows",
+                "properties": {
+                    "return": { "type": "array", "items": [ { "type": "string" } ] },
+                    "args": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 0,
+                        "items": [],
+                        "additionalItems": false
+                    }
+            }
             }
         ]),
         types: common.types.concat([
