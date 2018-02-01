@@ -14,7 +14,7 @@ deploy:
   provider: npm
   email: n.kimura.cap@gmail.com
   api_key:
-    secure: FVTV+acbdO7F54KXjU2tm1FGdnR9IWXkEkMiBNi4a9PffrFKyK1aWss4LnEbT8HbrUCuLC1rqOzZtdqmQh2fSoV8Ggknd0xlb+8FDpxTXFqtV8OYryEjkPMgsVMw4nkx1Lfwxwv203/Z9PsusSxu6awaedEcmEBzy/JUftqXQ+U=
+    secure: eSAqH/wQpKpN3dTc6sHxtBrjEpX8T5EbbGjgamihLBKYKbz/v/8fUHskyJE0Ji63XRy0C4W5W/jfg7XSGDZPfxXsJrut5EtKnCPvkqTnYesAdmbE5oS1vu2w+hIEqMESG7PmnTmq+uNPmX2BgyuacY2VVQ20Azv3ORwZbmXGWFU=
   on:
     tags: true
     repo: naokikimura/jubatus-node-client
