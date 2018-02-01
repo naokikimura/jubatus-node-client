@@ -18,3 +18,6 @@ deploy:
   on:
     tags: true
     repo: naokikimura/jubatus-node-client
+notifications:
+  slack:
+    secure: IITJQkQ+Qm94EX37KaEEDUO14SQ1J9e16Y5qA25JZrNcF7LHeRHd2v6CQI4QVf94LJz9finZ7sLoFzgAJJnYwf0vy5/a7Cq3ZanSE8Krn1WPuj7nhTeRsMsh8cpicS1f0jxsSy5wJwmuDnYOEgQbIO2+pK8x/SP1Wdhz++Jhfgg=
