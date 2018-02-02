@@ -59,7 +59,7 @@ function createConstructor(className) {
                 const result = validate(params, args);
                 assert.ok(result.valid, util.format('%j', result.errors));
             },
-            assertReturn = !isProduct ? () => {} : returnValue => {
+            assertReturn = isProduct ? () => {} : returnValue => {
                 debug({ returnValue, returnType });
                 const result = validate(returnValue, returnType);
                 assert.ok(result.valid, util.format('%j', result.errors));
