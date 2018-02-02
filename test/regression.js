@@ -25,7 +25,7 @@ after(done => {
 
 describe('regression#train', () => {
     it('train', done => {
-        const datum = [ [ ["foo", "bar"] ], [] ],
+        const datum = [ [ ['foo', 'bar'] ], [] ],
             value = 1.01,
             data = [ [value, datum] ];
         client.train(data).then(([ result ]) => {
@@ -39,25 +39,25 @@ describe('regression#train', () => {
 
 describe('regression#estimate', () => {
     it('estimate', done => {
-        var datum = [ [ ["foo", "bar"] ], [] ],
+        var datum = [ [ ['foo', 'bar'] ], [] ],
             data = [ datum ];
         client.estimate(data).then(([ result ]) => {
             debug(result);
             expect(result.length).to.equal(1);
 
-            var datum = [ [ ["foo", "bar"] ], [] ],
+            var datum = [ [ ['foo', 'bar'] ], [] ],
                 value = 1,
                 data = [ [value, datum] ];
             return client.train(data);
         }).then(([ result ]) => {
-            let datum = [ [ ["foo", "bar"] ], [] ],
+            let datum = [ [ ['foo', 'bar'] ], [] ],
                 data = [ datum ];
             return client.estimate(data);
         }).then(([ result ]) => {
             debug(result);
             expect(result.length).to.equal(1);
             result.forEach(estimate => {
-                expect(estimate).to.be.a("number");
+                expect(estimate).to.be.a('number');
             });
             done();
         }).catch(done);
