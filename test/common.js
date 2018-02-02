@@ -12,7 +12,7 @@ before(done => {
     const command = 'jubaclassifier', config = 'classifier_config.json';
     testUtil.createServerProcess(command, config).then(([ port, serverProcess ]) => {
         server = serverProcess;
-        client = new jubatus.classifier.client.Classifier(port, 'localhost');
+        client = new jubatus.classifier.client.Classifier(port, 'localhost', '');
         done();
     }).catch(done);
 });
@@ -21,6 +21,15 @@ after(done => {
     client.getClient().close();
     server.kill();
     done();
+});
+
+describe('common#name', () => {
+    it('set_name', done => {
+        expect(client).to.has.property('name', '');
+        const name = 'test';
+        client.setName(name);
+        expect(client).to.has.property('name', name);
+    });
 });
 
 describe('common#save', () => {
@@ -97,16 +106,16 @@ describe('common#do_mix', () => {
 
 describe('common#get_proxy_status', () => {
     it('get_proxy_status', done => {
-        client.getProxyStatus()
-        .then(([ result ]) => {
-            debug(result);
-            expect(result).to.be.a('object');
-            done();
-        })
-        .catch(error => {
-            debug(error);
-            expect(error).to.be.ok;
-            done();
+        client.getProxyStatus((error, reslt) => {
+            if (error) {
+                debug(error);
+                expect(error).to.be.ok;
+                done();
+            } else {
+                debug(result);
+                expect(result).to.be.a('object');
+                done();
+            }
         });
     });
 });
