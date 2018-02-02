@@ -25,10 +25,11 @@ after(done => {
 
 describe('common#name', () => {
     it('set_name', done => {
-        expect(client).to.has.property('name', '');
+        expect(client.getName()).to.equal('');
         const name = 'test';
         client.setName(name);
         expect(client).to.has.property('name', name);
+        done();
     });
 });
 
