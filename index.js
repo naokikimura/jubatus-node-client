@@ -1,11 +1,11 @@
 /*jslint node: true */
 
-const assert = require('assert'),
-    util = require('util'),
-    validate = require('json-schema').validate,
-    debug = require('./lib/debug')('jubatus');
-    api = require('./api'),
-    rpc = require('./lib/msgpack-rpc');
+const assert = require('assert');
+const util = require('util');
+const validate = require('json-schema').validate;
+const debug = require('./lib/debug')('jubatus');
+const api = require('./api');
+const rpc = require('./lib/msgpack-rpc');
 
 const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 
