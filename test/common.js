@@ -47,11 +47,15 @@ describe('common#load', () => {
 
 describe('common#clear', () => {
     it('clear', done => {
-        client.clear().then(([ result ]) => {
-            debug(result);
-            expect(result).to.be.a('boolean');
-            done();
-        }).catch(done);
+        client.clear((error, result) => {
+            if (error) {
+                done(error);
+            } else {
+                debug(result);
+                expect(result).to.be.a('boolean');
+                done();
+            }
+        });
     });
 });
 
