@@ -3,7 +3,7 @@
 const assert = require('assert');
 const util = require('util');
 const validate = require('json-schema').validate;
-const debug = require('./lib/debug')('jubatus');
+const debug = require('./lib/debug')('jubatus-node-client');
 const api = require('./api');
 const rpc = require('./lib/msgpack-rpc');
 
