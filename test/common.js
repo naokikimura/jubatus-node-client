@@ -107,7 +107,7 @@ describe('common#do_mix', () => {
 
 describe('common#get_proxy_status', () => {
     it('get_proxy_status', done => {
-        client.getProxyStatus((error, reslt) => {
+        client.getProxyStatus((error, result) => {
             if (error) {
                 debug(error);
                 expect(error).to.be.ok;
