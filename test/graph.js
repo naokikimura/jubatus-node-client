@@ -1,44 +1,17 @@
 /*jslint node: true, passfail: false */
 
 const expect = require('chai').expect;
-const spawn = require('child_process').spawn;
-const portfinder = require('portfinder');
 const debug = require('debug')('jubatus-node-client:test:graph');
+const testUtil = require('./util');
 const jubatus = require('../index.js');
 
 let server;
 let client;
 
 before(done => {
-    const option = { port: Number(process.env.npm_package_config_test_port || 9199) };
-    portfinder.getPortPromise(option).then(port => {
-        debug(`port: ${ port }`);
-        const executor = (resolve, reject) => {
-            /*jslint nomen: true */
-            const config = 'graph_config.json',
-                command = 'jubagraph',
-                args = ['-p', port, '-f', config],
-                options = { cwd: __dirname };
-            server = spawn(command, args, options);
-            server.on('exit', (code, signal) => {
-                debug({ code: code, signal: signal });
-                if (code === null) {
-                    reject(new Error(signal));
-                }
-            });
-            server.stdout.on('data', data => {
-                if (/RPC server startup/.test(data.toString())) {
-                    resolve(port);
-                }
-            });
-            if (debug.enabled) {
-                server.stdout.on('data', data => {
-                    process.stderr.write(data);
-                });
-            }
-        };
-        return new Promise(executor);
-    }).then(port => {
+    const command = 'jubagraph', config = 'graph_config.json';
+    testUtil.createServerProcess(command, config).then(([ port, serverProcess ]) => {
+        server = serverProcess;
         client = new jubatus.graph.client.Graph(port, 'localhost');
         done();
     }).catch(done);
@@ -75,7 +48,7 @@ describe('graph#remove_node', () => {
 
 describe('graph#update_node', () => {
     it('update_node', done => {
-        const property = { "foo": "bar" };
+        const property = { 'foo': 'bar' };
         client.createNode().then(([ nodeId ]) => {
             expect(nodeId).to.be.a('string');
             return client.updateNode(nodeId, property);
@@ -89,7 +62,7 @@ describe('graph#update_node', () => {
 
 describe('graph#create_edge', () => {
     it('create_edge', done => {
-        const property = { "foo": "bar" };
+        const property = { 'foo': 'bar' };
         const edge = [ property , null, null ];
         client.createNode().then(([ source ]) => {
             expect(source).to.be.a('string');
@@ -109,7 +82,7 @@ describe('graph#create_edge', () => {
 
 describe('graph#update_edge', () => {
     it('update_edge', done => {
-        const property = { "foo": "bar" };
+        const property = { 'foo': 'bar' };
         const edge = [ property , null, null ];
         client.createNode().then(([ source ]) => {
             expect(source).to.be.a('string');
@@ -144,12 +117,12 @@ describe('graph#get_centrality', () => {
             debug(nodes);
             nodeIds = nodes.map(node => node[0]);
             return Promise.all([
-                client.createEdge(nodeIds[0], [ { "foobar": "foo" }, nodeIds[0], nodeIds[1] ]),
-                client.createEdge(nodeIds[1], [ { "foobar": "bar" }, nodeIds[1], nodeIds[2] ]),
-                client.createEdge(nodeIds[2], [ { "foobar": "baz" }, nodeIds[2], nodeIds[0] ]),
-                client.createEdge(nodeIds[3], [ { "foobar": "qux" }, nodeIds[0], nodeIds[3] ]),
-                client.createEdge(nodeIds[3], [ { "foobar": "quux" }, nodeIds[1], nodeIds[3] ]),
-                client.createEdge(nodeIds[3], [ { "foobar": "quuz" }, nodeIds[2], nodeIds[3] ])
+                client.createEdge(nodeIds[0], [ { 'foobar': 'foo' }, nodeIds[0], nodeIds[1] ]),
+                client.createEdge(nodeIds[1], [ { 'foobar': 'bar' }, nodeIds[1], nodeIds[2] ]),
+                client.createEdge(nodeIds[2], [ { 'foobar': 'baz' }, nodeIds[2], nodeIds[0] ]),
+                client.createEdge(nodeIds[3], [ { 'foobar': 'qux' }, nodeIds[0], nodeIds[3] ]),
+                client.createEdge(nodeIds[3], [ { 'foobar': 'quux' }, nodeIds[1], nodeIds[3] ]),
+                client.createEdge(nodeIds[3], [ { 'foobar': 'quuz' }, nodeIds[2], nodeIds[3] ])
             ]);
         }).then(edges => {
             debug(edges);
@@ -244,10 +217,10 @@ describe('graph#get_shortest_path', () => {
             debug(nodes);
             nodeIds = nodes.map(node => node[0]);
             return Promise.all([
-                client.createEdge(nodeIds[0], [ { "foobar": "foo" }, nodeIds[0], nodeIds[1] ]),
-                client.createEdge(nodeIds[1], [ { "foobar": "bar" }, nodeIds[1], nodeIds[2] ]),
-                client.createEdge(nodeIds[2], [ { "foobar": "baz" }, nodeIds[2], nodeIds[3] ]),
-                client.createEdge(nodeIds[3], [ { "foobar": "qux" }, nodeIds[3], nodeIds[0] ])
+                client.createEdge(nodeIds[0], [ { 'foobar': 'foo' }, nodeIds[0], nodeIds[1] ]),
+                client.createEdge(nodeIds[1], [ { 'foobar': 'bar' }, nodeIds[1], nodeIds[2] ]),
+                client.createEdge(nodeIds[2], [ { 'foobar': 'baz' }, nodeIds[2], nodeIds[3] ]),
+                client.createEdge(nodeIds[3], [ { 'foobar': 'qux' }, nodeIds[3], nodeIds[0] ])
             ]);
         }).then(edges => {
             debug(edges);
@@ -297,7 +270,7 @@ describe('graph#get_node', () => {
 
 describe('graph#get_edge', () => {
     it('get_edge', done => {
-        const property = { "foo": "bar" };
+        const property = { 'foo': 'bar' };
         const edge = [ property , null, null ];
         client.createNode().then(([ source ]) => {
             expect(source).to.be.a('string');
@@ -320,7 +293,7 @@ describe('graph#get_edge', () => {
 
 describe('graph#get_edge', () => {
     it('get_edge', done => {
-        const property = { "foo": "bar" };
+        const property = { 'foo': 'bar' };
         const edge = [ property , null, null ];
         client.createNode().then(([ source ]) => {
             expect(source).to.be.a('string');
