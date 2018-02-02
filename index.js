@@ -3,7 +3,7 @@
 const assert = require('assert'),
     util = require('util'),
     validate = require('json-schema').validate,
-    debug = require('./debug')('jubatus:lib:msgpack-rpc');
+    debug = require('./lib/debug')('jubatus');
     api = require('./api'),
     rpc = require('./lib/msgpack-rpc');
 
@@ -20,19 +20,17 @@ function camelCase(input) {
 }
 
 function createConstructor(className) {
-    var constructor = function constructor(port = 9199, host = 'localhost', name = 'cluster', timeoutSeconds = 0) {
-        if (!(this instanceof constructor)) {
-            throw new Error(className + ' is constructor.');
-        }
+    var constructor = function constructor(port = 9199, host = 'localhost', name = '', timeoutSeconds = 0) {
+        if (!(this instanceof constructor)) { throw new Error(`${className} is constructor.`); }
 
         const client = rpc.createClient(port, host, timeoutSeconds * 1000);
 
         Object.defineProperty(this, 'client', {
-            get: function() { return client; }
+            get() { return client; }
         });
         Object.defineProperty(this, 'name', {
-            get: function() { return name; },
-            set: function(value) { name = value; }
+            get() { return name; },
+            set(value) { name = value; }
         });
         return this;
     };
@@ -40,51 +38,48 @@ function createConstructor(className) {
     // This is not an RPC method.
     constructor.prototype.getClient = function () {
         return this.client;
-    }
+    };
 
     // This is not an RPC method.
     constructor.prototype.getName = function () {
         return this.name;
-    }
+    };
 
     // This is not an RPC method.
     constructor.prototype.setName = function (value) {
         this.name = value;
-    }
+    };
 
     return api[className].methods.map(method => {
         debug(method);
-        var rpcName = method.id || method,
+        const { id: rpcName, properties: { args, 'return': returnType } } = method,
             methodName = camelCase(rpcName),
-            properties = method.properties || {},
-            assertParams = !isProduct && properties.args ? params => {
-                debug({ params, args: properties.args });
-                var schema = properties.args,
-                    result = validate(params, schema);
+            assertParams = isProduct ? () => {} : params => {
+                debug({ params, args });
+                const result = validate(params, args);
                 assert.ok(result.valid, util.format('%j', result.errors));
-            } : () => {},
-            assertReturn = !isProduct && properties.return ? returnValue => {
-                debug({ result: returnValue, 'return': properties.return });
-                var schema = properties.return,
-                    result = validate(returnValue, schema);
+            },
+            assertReturn = !isProduct ? () => {} : returnValue => {
+                debug({ returnValue, returnType });
+                const result = validate(returnValue, returnType);
                 assert.ok(result.valid, util.format('%j', result.errors));
-            } : () => {};
-      return [ rpcName, methodName, assertParams, assertReturn, properties ];
+            };
+      return [ rpcName, methodName, assertParams, assertReturn ];
     })
-    .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn, properties ]) => {
+    .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn ]) => {
         constructor.prototype[methodName] = function () {
-            var self = this,
+            const self = this,
                 client = self.getClient(),
                 params = toArray(arguments),
                 hasCallback = (typeof params[params.length - 1] === 'function');
             assertParams(params);
             params.unshift(self.getName());
             if (hasCallback) {
-                let callback = params.pop();
+                const callback = params.pop();
                 client.call(rpcName, params, (error, result, msgid) => {
-                    if (error)
+                    if (error) {
                         callback.call(self, new Error(`${ error } ${ result || '' }`), null, msgid);
-                    else {
+                    } else {
                         assertReturn(result);
                         callback.call(self, null, result, msgid);
                     }
@@ -92,9 +87,9 @@ function createConstructor(className) {
             } else {
                 return new Promise((resolve, reject) => {
                     client.call(rpcName, params, (error, result, msgid) => {
-                        if (error)
-                            reject(new Error(`${ error } ${ result || '' }`))
-                        else {
+                        if (error) {
+                            reject(new Error(`${ error } ${ result || '' }`));
+                        } else {
                             assertReturn(result);
                             resolve([ result, msgid ]);
                         }
