@@ -1,16 +1,13 @@
 /*jslint node: true */
 
-var assert = require('assert'),
+const assert = require('assert'),
     util = require('util'),
     validate = require('json-schema').validate,
+    debug = require('./debug')('jubatus:lib:msgpack-rpc');
     api = require('./api'),
     rpc = require('./lib/msgpack-rpc');
 
-exports.msgpack = require('msgpack-js');
-
-var isDebugEnabled = process.env.NODE_DEBUG && (/jubatus/).test(process.env.NODE_DEBUG),
-    isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV),
-    debug = isDebugEnabled ? function (x) { console.error('JUBATUS:', x); } : function () {};
+const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 
 function toArray(args) {
     return Array.prototype.slice.call(args);
