@@ -25,7 +25,7 @@ after(done => {
 
 describe('stat#push', () => {
     it('push', done => {
-        const key = "foo",
+        const key = 'foo',
             value = 1.01;
         client.push(key, value).then(([ result ]) => {
             debug(result);
@@ -37,7 +37,7 @@ describe('stat#push', () => {
 
 describe('stat#sum', () => {
     it('sum', done => {
-        const key = "foo",
+        const key = 'foo',
             values = [1, 1.2, 0],
             expected = values.reduce((previous, current) => previous + current, 0);
         client.clear()
@@ -53,14 +53,14 @@ describe('stat#sum', () => {
 
 describe('stat#stddev', () => {
     it('stddev', done => {
-        const key = "foo",
+        const key = 'foo',
             values = [1, 1.2, 0];
         client.clear()
         .then(() => Promise.all(values.map(value => client.push(key, value))))
         .then(() => client.stddev(key))
         .then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a("number");
+            expect(result).to.be.a('number');
             done();
         }).catch(done);
     });
@@ -68,7 +68,7 @@ describe('stat#stddev', () => {
 
 describe('stat#max', () => {
     it('max', done => {
-        const key = "foo",
+        const key = 'foo',
             values = [1, 1.2, 0],
             expected = values.reduce((previous, current) => Math.max(previous, current), Number.MIN_VALUE);
         client.clear()
@@ -84,7 +84,7 @@ describe('stat#max', () => {
 
 describe('stat#min', () => {
     it('min', done => {
-        const key = "foo",
+        const key = 'foo',
             values = [1, 1.2, 0, -1],
             expected = values.reduce((previous, current) => Math.min(previous, current), Number.MAX_VALUE);
         client.clear()
@@ -92,7 +92,7 @@ describe('stat#min', () => {
         .then(() => client.min(key))
         .then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a("number");
+            expect(result).to.be.a('number');
             expect(result).to.equal(expected);
             done();
         }).catch(done);
@@ -101,14 +101,14 @@ describe('stat#min', () => {
 
 describe('stat#entropy', () => {
     it('entropy', done => {
-        const key = "foo",
+        const key = 'foo',
             values = [1, 1.2, 10, 100];
         client.clear()
         .then(() => Promise.all(values.map(value => client.push(key, value))))
         .then(() => client.entropy(key))
         .then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a("number");
+            expect(result).to.be.a('number');
             done();
         }).catch(done);
     });
@@ -116,7 +116,7 @@ describe('stat#entropy', () => {
 
 describe('stat#moment', () => {
     it('moment', done => {
-        const key = "foo",
+        const key = 'foo',
             values = [1, 1.2, 0],
             degree = 1,
             center = 1.1;
@@ -125,7 +125,7 @@ describe('stat#moment', () => {
         .then(() => client.moment(key, degree, center))
         .then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a("number");
+            expect(result).to.be.a('number');
             done();
         }).catch(done);
     });
