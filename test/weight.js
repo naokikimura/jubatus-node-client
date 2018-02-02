@@ -24,10 +24,10 @@ after(done => {
 
 describe('weight#update', () => {
     it('update', done => {
-        const string_values = [ [ 'foo', 'bar' ] ];
-        const num_values = [ [ 'qux', 1.1 ] ];
-        const binary_values = [];
-        const datum = [ string_values, num_values, binary_values ];
+        const stringValues = [ [ 'foo', 'bar' ] ];
+        const numValues = [ [ 'qux', 1.1 ] ];
+        const binaryValues = [];
+        const datum = [ stringValues, numValues, binaryValues ];
         client.update(datum).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('array');
@@ -38,10 +38,10 @@ describe('weight#update', () => {
 
 describe('weight#calc_weight', () => {
     it('calc_weight', done => {
-        const string_values = [ [ 'foo', 'bar' ] ];
-        const num_values = [ [ 'qux', 1.1 ] ];
-        const binary_values = [];
-        const datum = [ string_values, num_values, binary_values ];
+        const stringValues = [ [ 'foo', 'bar' ] ];
+        const numValues = [ [ 'qux', 1.1 ] ];
+        const binaryValues = [];
+        const datum = [ stringValues, numValues, binaryValues ];
         client.calcWeight(datum).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('array');
