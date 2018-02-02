@@ -25,13 +25,16 @@ after(done => {
 
 describe('clustering#push', () => {
     it('push', done => {
-        const variables = [ 'foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', 'garply', 'waldo', 'fred', 'plugh', 'xyzzy', 'thud' ];
-        const points = [];
-        for (let i = 0; i < 1000; i++) {
+        const variables = [
+            'foo', 'bar', 'baz', 'qux', 'quux', 'quuz',
+            'corge', 'grault', 'garply', 'waldo', 'fred',
+            'plugh', 'xyzzy', 'thud'
+        ];
+        const points = Array.apply(null, { length: 1000 }).map((v, i) => {
             const index = Math.floor(Math.random() * variables.length);
             const variable = variables[index];
-            points[i] = [ '' + i, [ [ [ 'foobar', variable ] ] ] ];
-        }
+            return [ '' + i, [ [ [ 'foobar', variable ] ] ] ];
+        });
         client.push(points).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('boolean');
