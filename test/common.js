@@ -3,7 +3,8 @@
 const expect = require('chai').expect;
 const debug = require('debug')('jubatus-node-client:test:common');
 const testUtil = require('./util');
-const jubatus = require('../index.js');
+const jubatus = require('../');
+const rpc = require('../lib/msgpack-rpc');
 
 let server;
 let client;
@@ -12,7 +13,7 @@ before(done => {
     const command = 'jubaclassifier', config = 'classifier_config.json';
     testUtil.createServerProcess(command, config).then(([ port, serverProcess ]) => {
         server = serverProcess;
-        client = new jubatus.classifier.client.Classifier(port, 'localhost', '');
+        client = new jubatus.classifier.client.Classifier(rpc.createClient(port));
         done();
     }).catch(done);
 });

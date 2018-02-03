@@ -20,10 +20,15 @@ function camelCase(input) {
 }
 
 function createConstructor(className) {
-    var constructor = function constructor(port = 9199, host = 'localhost', name = '', timeoutSeconds = 0) {
+    var constructor = function constructor(options = 9199, ...args) {
         if (!(this instanceof constructor)) { throw new Error(`${className} is constructor.`); }
 
-        const client = rpc.createClient(port, host, timeoutSeconds * 1000);
+        const rpcClient = options instanceof rpc.Client ? options : options.rpcClient;
+        const port = typeof options === 'number' ? options : (options.port || 9199);
+        const host = options.host || args[0] || 'localhost';
+        let name = options.name || args[1] || '';
+        const timeoutSeconds = options.timeoutSeconds || args[2] || 0;
+        const client = rpcClient || rpc.createClient(port, host, timeoutSeconds * 1000);
 
         Object.defineProperty(this, 'client', {
             get() { return client; }

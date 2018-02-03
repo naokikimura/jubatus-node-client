@@ -39,7 +39,7 @@ describe('msgpack-rpc', () => {
     portfinder.getPortPromise(option).then(port => {
       debug({ port });
 
-      server = rpc.createServer().on('qux', (params) => {
+      server = rpc.createServer().on('qux', params => {
         expect(params).to.have.ordered.members([ 1, 2, 3 ]);
         done();
       });
