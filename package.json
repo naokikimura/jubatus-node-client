@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "json-schema": "^0.2.3",
-    "msgpack": "^1.0.2",
-    "msgpack-js": "^0.3.0"
+    "msgpack-js": "^0.3.0",
+    "msgpack-lite": "^0.1.26"
   },
   "readme": "README.md",
   "description": "Jubatus client for Node.js (unofficial)",
