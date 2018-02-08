@@ -9,10 +9,6 @@ const rpc = require('./lib/msgpack-rpc');
 
 const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 
-function toArray(args) {
-    return Array.prototype.slice.call(args);
-}
-
 function camelCase(input) {
     return input.toLowerCase().replace(/_(.)/g, function(match, group1) {
         return group1.toUpperCase();
@@ -72,34 +68,19 @@ function createConstructor(className) {
       return [ rpcName, methodName, assertParams, assertReturn ];
     })
     .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn ]) => {
-        constructor.prototype[methodName] = function () {
+        constructor.prototype[methodName] = function (...params) {
             const self = this,
                 client = self.getClient(),
-                params = toArray(arguments),
-                hasCallback = (typeof params[params.length - 1] === 'function');
+                callback = (typeof params[params.length - 1] === 'function') && params.pop();
             assertParams(params);
             params.unshift(self.getName());
-            if (hasCallback) {
-                const callback = params.pop();
+            if (callback) {
                 client.call(rpcName, params, (error, result, msgid) => {
-                    if (error) {
-                        callback.call(self, new Error(`${ error } ${ result || '' }`), null, msgid);
-                    } else {
-                        assertReturn(result);
-                        callback.call(self, null, result, msgid);
-                    }
+                    if (!error) { assertReturn(result); }
+                    callback.call(self, error, result, msgid);
                 });
             } else {
-                return new Promise((resolve, reject) => {
-                    client.call(rpcName, params, (error, result, msgid) => {
-                        if (error) {
-                            reject(new Error(`${ error } ${ result || '' }`));
-                        } else {
-                            assertReturn(result);
-                            resolve([ result, msgid ]);
-                        }
-                    });
-                });
+                return client.call(rpcName, params);
             }
         };
         return constructor;
