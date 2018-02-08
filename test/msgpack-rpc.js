@@ -28,10 +28,10 @@ describe('msgpack-rpc', () => {
       server.listen(port);
 
       client = rpc.createClient(port);
-      client.call('foo', [ 1, 2, 3], (error, response) => {
+      return client.request('foo', [ 1, 2, 3]);
+    }).then(([ response ]) => {
         expect(response).to.have.ordered.members([ 'bar' ]);
         done();
-      });
     }).catch(done);
   });
 
