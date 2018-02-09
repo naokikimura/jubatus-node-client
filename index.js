@@ -65,9 +65,8 @@ function createConstructor(className) {
                 const result = validate(returnValue, returnType);
                 assert.ok(result.valid, util.format('%j', result.errors));
             };
-      return [ rpcName, methodName, assertParams, assertReturn ];
-    })
-    .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn ]) => {
+        return [ rpcName, methodName, assertParams, assertReturn ];
+    }).reduce((constructor, [ rpcName, methodName, assertParams, assertReturn ]) => {
         constructor.prototype[methodName] = function (...params) {
             const self = this,
                 client = self.getClient(),
