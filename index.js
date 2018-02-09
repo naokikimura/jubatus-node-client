@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const util = require('util');
-const validate = require('json-schema').validate;
+const jsonschema = require('jsonschema');
 const debug = require('./lib/debug')('jubatus-node-client');
 const api = require('./api');
 const rpc = require('./lib/msgpack-rpc');
@@ -57,12 +57,20 @@ function createConstructor(className) {
             methodName = camelCase(rpcName),
             assertParams = isProduct ? () => {} : params => {
                 debug({ params, args });
-                const result = validate(params, args);
+                const validator = api[className].types.reduce((accumulator, current) => {
+                    accumulator.addSchema(current, `/types/${ current.id }`);
+                    return accumulator;
+                }, new jsonschema.Validator());
+                const result = validator.validate(params, args);
                 assert.ok(result.valid, util.format('%j', result.errors));
             },
             assertReturn = isProduct ? () => {} : returnValue => {
                 debug({ returnValue, returnType });
-                const result = validate(returnValue, returnType);
+                const validator = api[className].types.reduce((accumulator, current) => {
+                    accumulator.addSchema(current, `/types/${ current.id }`);
+                    return accumulator;
+                }, new jsonschema.Validator());
+                const result = validator.validate(returnValue, returnType);
                 assert.ok(result.valid, util.format('%j', result.errors));
             };
         return [ rpcName, methodName, assertParams, assertReturn ];

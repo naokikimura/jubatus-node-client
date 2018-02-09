@@ -9,7 +9,7 @@ var common = {
                     "minItems": 1,
                     "maxItems": 1,
                     "items": [
-                        { "id": "id", "type": "string" }
+                        { "name": "id", "type": "string" }
                     ],
                     "additionalItems": false
                 }
@@ -24,7 +24,7 @@ var common = {
                     "minItems": 1,
                     "maxItems": 1,
                     "items": [
-                        { "id": "id", "type": "string" }
+                        { "name": "id", "type": "string" }
                     ],
                     "additionalItems": false
                 }
@@ -100,6 +100,8 @@ var common = {
         {
             "id": "datum",
             "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
             "items": [
                 {
                     "id": "string_values",
@@ -151,8 +153,8 @@ module.exports = {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
-                        "items": [
-                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                        "items": [ 
+                            { "name": "data", "type": "array", "items": { "$ref": "/types/labeled_datum" } }
                         ],
                         "additionalItems": false
                     }
@@ -161,13 +163,13 @@ module.exports = {
             {
                 "id": "classify",
                 "properties": {
-                    "return": { "type": "array", "items": [ { "type": "array" } ] },
+                    "return": { "type": "array", "items": [ { "$ref": "/types/estimate_result" } ] },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                            { "name": "data", "type": "array", "items": { "$ref": "/types/datum" } }
                         ],
                         "additionalItems": false
                     }
@@ -195,7 +197,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { type: "string" }
+                            { "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -210,7 +212,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { type: "string" }
+                            { "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -224,8 +226,19 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "label", "type": "string" },
-                    { "id": "score", "type": "number" }
+                    { "name": "label", "type": "string" },
+                    { "name": "score", "type": "number" }
+                ],
+                "additionalItems": false
+            },
+            {
+                "id": "labeled_datum",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    { "name": "label", "type": "string" },
+                    { "name": "data", "$ref": "datum" }
                 ],
                 "additionalItems": false
             }
@@ -242,7 +255,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                            { "id": "data", "type": "array", "items": { "$ref": "/types/scored_datum" } }
                         ],
                         "additionalItems": false
                     }
@@ -257,14 +270,26 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "data", "type": "array", "items": { "type": "object" } }
+                            { "name": "data", "type": "array", "items": { "$ref": "/types/datum" } }
                         ],
                         "additionalItems": false
                     }
                 }
             }
         ]),
-        types: common.types.concat([])
+        types: common.types.concat([
+            {
+                "id": "scored_datum",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                    { "name": "score", "type": "number" },
+                    { "name": "data", "$ref": "datum" }
+                ],
+                "additionalItems": false
+            }
+        ])
     },
     Recommender: {
         methods: common.methods.concat([
@@ -277,7 +302,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "id", "type": "string" }
+                            { "name": "id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -292,48 +317,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            {
-                                "id": "row",
-                                "type": "array",
-                                "minItems": 1,
-                                "maxItems": 3,
-                                "items": [
-                                    {
-                                        "id": "string_values",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "array",
-                                            "minItems": 2,
-                                            "maxItems": 2,
-                                            "items": [ { "type": "string" }, { "type": "string" } ],
-                                            "additionalItems": false
-                                        }
-                                    },
-                                    {
-                                        "id": "num_values",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "array",
-                                            "minItems": 2,
-                                            "maxItems": 2,
-                                            "items": [ { "type": "string" }, { "type": "number" } ],
-                                            "additionalItems": false
-                                        }
-                                    },
-                                    {
-                                        "id": "binary_values",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "array",
-                                            "minItems": 2,
-                                            "maxItems": 2,
-                                            "items": [ { "type": "string" }, { "type": "object" } ],
-                                            "additionalItems": false
-                                        }
-                                    }
-                                ]
-                            }
+                            { "id": "name", "type": "string" },
+                            { "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -342,54 +327,13 @@ module.exports = {
             {
                 "id": "complete_row_from_id",
                 "properties": {
-                    "return": {
-                        "id": "datum",
-                        "type": "array",
-                        "minItems": 1,
-                        "maxItems": 3,
-                        "items": [
-                            {
-                                "id": "string_values",
-                                "type": "array",
-                                "items": {
-                                    "type": "array",
-                                    "minItems": 2,
-                                    "maxItems": 2,
-                                    "items": [ { "type": "string" }, { "type": "string" } ],
-                                    "additionalItems": false
-                                }
-                            },
-                            {
-                                "id": "num_values",
-                                "type": "array",
-                                "items": {
-                                    "type": "array",
-                                    "minItems": 2,
-                                    "maxItems": 2,
-                                    "items": [ { "type": "string" }, { "type": "number" } ],
-                                    "additionalItems": false
-                                }
-                            },
-                            {
-                                "id": "binary_values",
-                                "type": "array",
-                                "items": {
-                                    "type": "array",
-                                    "minItems": 2,
-                                    "maxItems": 2,
-                                    "items": [ { "type": "string" }, { "type": "object" } ],
-                                    "additionalItems": false
-                                }
-                            }
-                        ],
-                        "additionalItems": false
-                    },
+                    "return": { "$ref": "/types/datum" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "id", "type": "string" }
+                            { "name": "id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -398,51 +342,13 @@ module.exports = {
             {
                 "id": "complete_row_from_datum",
                 "properties": {
-                    "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "id": "string_values",
-                                "type": "array",
-                                "items": {
-                                    "type": "array",
-                                    "minItems": 2,
-                                    "maxItems": 2,
-                                    "items": [ { "type": "string" }, { "type": "string" } ],
-                                    "additionalItems": false
-                                }
-                            },
-                            {
-                                "id": "num_values",
-                                "type": "array",
-                                "items": {
-                                    "type": "array",
-                                    "minItems": 2,
-                                    "maxItems": 2,
-                                    "items": [ { "type": "string" }, { "type": "number" } ],
-                                    "additionalItems": false
-                                }
-                            },
-                            {
-                                "id": "binary_values",
-                                "type": "array",
-                                "items": {
-                                    "type": "array",
-                                    "minItems": 2,
-                                    "maxItems": 2,
-                                    "items": [ { "type": "string" }, { "type": "object" } ],
-                                    "additionalItems": false
-                                }
-                            }
-                        ],
-                        "additionalItems": false
-                    },
+                    "return": { "$ref": "/types/datum" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "row", "type": "array" }
+                            { "name": "row", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -452,26 +358,15 @@ module.exports = {
                 "id": "similar_row_from_id",
                 "properties": {
                     "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "type": "array", "items": { "$ref": "id_with_score" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "size", "type": "integer" }
+                            { "name": "id", "type": "string" },
+                            { "name": "size", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
@@ -481,26 +376,15 @@ module.exports = {
                 "id": "similar_row_from_id_and_score",
                 "properties": {
                     "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "type": "array", "items": { "$ref": "id_with_score" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "score", "type": "number" }
+                            { "name": "id", "type": "string" },
+                            { "name": "score", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -510,26 +394,15 @@ module.exports = {
                 "id": "similar_row_from_id_and_rate",
                 "properties": {
                     "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "type": "array", "items": { "$ref": "id_with_score" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "rate", "type": "number" }
+                            { "name": "id", "type": "string" },
+                            { "name": "rate", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -539,26 +412,15 @@ module.exports = {
                 "id": "similar_row_from_datum",
                 "properties": {
                     "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "type": "array", "items": { "$ref": "id_with_score" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "row", "type": "array" },
-                            { "id": "size", "type": "integer" }
+                            { "name": "row", "$ref": "/types/datum" },
+                            { "name": "size", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
@@ -568,26 +430,15 @@ module.exports = {
                 "id": "similar_row_from_datum_and_score",
                 "properties": {
                     "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "type": "array", "items": { "$ref": "id_with_score" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "row", "type": "array" },
-                            { "id": "score", "type": "number" }
+                            { "name": "row", "$ref": "/types/datum" },
+                            { "name": "score", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -597,26 +448,15 @@ module.exports = {
                 "id": "similar_row_from_datum_and_rate",
                 "properties": {
                     "return": {
-                        "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "type": "array", "items": { "$ref": "id_with_score" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "row", "type": "array" },
-                            { "id": "rate", "type": "number" }
+                            { "name": "row", "$ref": "/types/datum" },
+                            { "name": "rate", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -625,13 +465,13 @@ module.exports = {
             {
                 "id": "decode_row",
                 "properties": {
-                    "return": { "id": "datum", "type": "array" },
+                    "return": { "$ref": "/types/datum" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "id", "type": "string" }
+                            { "name": "id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -659,8 +499,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "lhs", "type": "array" },
-                            { "id": "rhs", "type": "array" }
+                            { "name": "lhs", "$ref": "/types/datum" },
+                            { "name": "rhs", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -675,7 +515,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "row", "type": "array" }
+                            { "name": "row", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -689,8 +529,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "id", "type": "string" },
-                    { "id": "score", "type": "number" }
+                    { "name": "id", "type": "string" },
+                    { "name": "score", "type": "number" }
                 ],
                 "additionalItems": false
             }
@@ -707,8 +547,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "d", "type": "object" }
+                            { "name": "id", "type": "string" },
+                            { "name": "d", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -720,13 +560,7 @@ module.exports = {
                     "return": {
                         "type": "array",
                         "items": [
-                            {
-                                "type": "array",
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
+                            { "$ref": "/types/id_with_score" }
                         ]
                     },
                     "args": {
@@ -734,8 +568,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "size", "type": "integer" }
+                            { "name": "id", "type": "string" },
+                            { "name": "size", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
@@ -747,13 +581,7 @@ module.exports = {
                     "return": {
                         "type": "array",
                         "items": [
-                            {
-                                "type": "array",
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
+                            { "$ref": "/types/id_with_score" }
                         ]
                     },
                     "args": {
@@ -761,8 +589,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "query", "type": "object" },
-                            { "id": "size", "type": "integer" }
+                            { "name": "query", "$ref": "/types/datum" },
+                            { "name": "size", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
@@ -774,13 +602,7 @@ module.exports = {
                     "return": {
                         "type": "array",
                         "items": [
-                            {
-                                "type": "array",
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
+                            { "$ref": "/types/id_with_score" }
                         ]
                     },
                     "args": {
@@ -788,8 +610,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "ret_num", "type": "integer" }
+                            { "name": "id", "type": "string" },
+                            { "name": "ret_num", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
@@ -801,13 +623,7 @@ module.exports = {
                     "return": {
                         "type": "array",
                         "items": [
-                            {
-                                "type": "array",
-                                "items": [
-                                    { "id": "id", "type": "string" },
-                                    { "id": "score", "type": "number" }
-                                ]
-                            }
+                            { "$ref": "/types/id_with_score" }
                         ]
                     },
                     "args": {
@@ -815,8 +631,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "query", "type": "object" },
-                            { "id": "ret_num", "type": "integer" }
+                            { "name": "query", "$ref": "/types/datum" },
+                            { "name": "ret_num", "type": "integer" }
                         ],
                         "additionalItems": false
                     }
@@ -843,8 +659,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "id", "type": "string" },
-                    { "id": "score", "type": "number" }
+                    { "name": "id", "type": "string" },
+                    { "name": "score", "type": "number" }
                 ],
                 "additionalItems": false
             }
@@ -861,7 +677,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "id", "type": "string" }
+                            { "name": "id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -870,20 +686,13 @@ module.exports = {
             {
                 "id": "add",
                 "properties": {
-                    "return": {
-                        "id": "id_with_score",
-                        "type": "array",
-                        "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "score", "type": "number" }
-                        ]
-                    },
+                    "return": { "$ref": "/types/id_with_score" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "row", "type": "object" }
+                            { "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -892,11 +701,7 @@ module.exports = {
             {
                 "id": "add_bulk",
                 "properties": {
-                    "return": {
-                        "type": "array",
-                        "items": [
-                            { "type": "string" }
-                        ]
+                    "return": { "type": "array", "items": [ { "type": "string" } ]
                     },
                     "args": {
                         "type": "array",
@@ -904,10 +709,10 @@ module.exports = {
                         "maxItems": 1,
                         "items": [
                             {
-                                "id": "data",
+                                "name": "data",
                                 "type": "array",
                                 "items": [
-                                    { "type": "object" }
+                                    { "$ref": "/types/datum" }
                                 ]
                             }
                         ],
@@ -924,8 +729,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "row", "type": "object" }
+                            { "name": "id", "type": "string" },
+                            { "name": "row",  "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -940,8 +745,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "id", "type": "string" },
-                            { "id": "row", "type": "object" }
+                            { "name": "id", "type": "string" },
+                            { "name": "row",  "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -956,7 +761,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "row", "type": "object" }
+                            { "name": "row",  "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -983,8 +788,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "id", "type": "string" },
-                    { "id": "score", "type": "number" }
+                    { "name": "id", "type": "string" },
+                    { "name": "score", "type": "number" }
                 ],
                 "additionalItems": false
             }
@@ -1001,19 +806,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            {
-                                "type": "array",
-                                "items": [
-                                    {
-                                        "id": "document",
-                                        "type": "array",
-                                        "items": [
-                                            { "id": "pos", "type": "number" },
-                                            { "id": "text", "type": "string" }
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "name": "data", "type": "array", "items": { "$ref": "/types/document" } }
                         ],
                         "additionalItems": false
                     }
@@ -1022,13 +815,13 @@ module.exports = {
             {
                 "id": "get_result",
                 "properties": {
-                    "return": { "type": "array" },
+                    "return": { "$ref": "/types/window" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "keyword", "type": "string" }
+                            { "name": "keyword", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1037,14 +830,14 @@ module.exports = {
             {
                 "id": "get_result_at",
                 "properties": {
-                    "return": { "type": "array" },
+                    "return": { "$ref": "/types/window" },
                     "args": {
                         "type": "array",
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "keyword", "type": "string" },
-                            { "id": "pos", "type": "number" }
+                            { "name": "keyword", "type": "string" },
+                            { "name": "pos", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1053,7 +846,13 @@ module.exports = {
             {
                 "id": "get_all_bursted_results",
                 "properties": {
-                    "return": { "type": "object" },
+                    "return": {
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": { "$ref": "/types/window" }
+                          },
+                          "additionalProperties": false
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 0,
@@ -1066,13 +865,19 @@ module.exports = {
             {
                 "id": "get_all_bursted_results_at",
                 "properties": {
-                    "return": { "type": "object" },
+                    "return": {
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": { "$ref": "/types/window" }
+                          },
+                          "additionalProperties": false
+                    },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "pos", "type": "number" }
+                            { "name": "pos", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1081,7 +886,7 @@ module.exports = {
             {
                 "id": "get_all_keywords",
                 "properties": {
-                    "return": { "type": "array" },
+                    "return": { "type": "array", "items": { "$ref": "/types/keyword_with_params" } },
                     "args": {
                         "type": "array",
                         "minItems": 0,
@@ -1100,15 +905,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            {
-                                "id": "keyword_with_params",
-                                "type": "array",
-                                "items": [
-                                    { "id": "keyword", "type": "string" },
-                                    { "id": "scaling_param", "type": "number" },
-                                    { "id": "gamma", "type": "number" }
-                                ]
-                            }
+                            { "name": "keyword_with_params" , "$ref": "/types/keyword_with_params" }
                         ],
                         "additionalItems": false
                     }
@@ -1123,7 +920,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "keyword", "type": "string" }
+                            { "name": "keyword", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1147,50 +944,52 @@ module.exports = {
             {
                 "id": "keyword_with_params",
                 "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
                 "items": [
-                    { "id": "keyword", "type": "string" },
-                    { "id": "scaling_param", "type": "number" },
-                    { "id": "gamma", "type": "number" }
-                ]
+                    { "name": "keyword", "type": "string" },
+                    { "name": "scaling_param", "type": "number" },
+                    { "name": "gamma", "type": "number" }
+                ],
+                "additionalItems": false
             },
             {
                 "id": "batch",
                 "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
                 "items": [
-                    { "id": "all_data_count", "type": "integer" },
-                    { "id": "relevant_data_count", "type": "integer" },
-                    { "id": "burst_weight", "type": "number" }
-                ]
+                    { "name": "all_data_count", "type": "integer" },
+                    { "name": "relevant_data_count", "type": "integer" },
+                    { "name": "burst_weight", "type": "number" }
+                ],
+                "additionalItems": false
             },
             {
                 "id": "window",
                 "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
                 "items": [
-                    { "id": "start_pos", "type": "number" },
+                    { "name": "start_pos", "type": "number" },
                     {
-                        "id": "batches",
+                        "name": "batches",
                         "type": "array",
-                        "items": [
-                            {
-                                "id": "batch",
-                                "type": "array",
-                                "items": [
-                                    { "id": "all_data_count", "type": "integer" },
-                                    { "id": "relevant_data_count", "type": "integer" },
-                                    { "id": "burst_weight", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "items": { "$ref": "batch" }
                     }
-                ]
+                ],
+                "additionalItems": false
             },
             {
                 "id": "document",
                 "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
                 "items": [
-                    { "id": "pos", "type": "number" },
-                    { "id": "text", "type": "string" }
-                ]
+                    { "name": "pos", "type": "number" },
+                    { "name": "text", "type": "string" }
+                ],
+                "additionalItems": false
             }
 
         ])
@@ -1206,8 +1005,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "key", "type": "string" },
-                            { "id": "value", "type": "number" }
+                            { "name": "key", "type": "string" },
+                            { "name": "value", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1222,7 +1021,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "key", "type": "string" }
+                            { "name": "key", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1237,7 +1036,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "key", "type": "string" }
+                            { "name": "key", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1252,7 +1051,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "key", "type": "string" }
+                            { "name": "key", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1267,7 +1066,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "key", "type": "string" }
+                            { "name": "key", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1282,7 +1081,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "key", "type": "string" }
+                            { "name": "key", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1297,9 +1096,9 @@ module.exports = {
                         "minItems": 3,
                         "maxItems": 3,
                         "items": [
-                            { "id": "key", "type": "string" },
-                            { "id": "degree", "type": "integer" },
-                            { "id": "center", "type": "number" }
+                            { "name": "key", "type": "string" },
+                            { "name": "degree", "type": "integer" },
+                            { "name": "center", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1320,19 +1119,9 @@ module.exports = {
                         "maxItems": 1,
                         "items": [
                             {
-                                "id": "points",
+                                "name": "points",
                                 "type": "array",
-                                "items": [
-                                    {
-                                        "type": "array",
-                                        "minItems": 2,
-                                        "maxItems": 2,
-                                        "items": [
-                                            { "id": "id", "type": "string" },
-                                            { "id": "point", "type": "object" }
-                                        ]
-                                    }
-                                ]
+                                "items": { "$ref": "/types/indexed_point" }
                             }
                         ],
                         "additionalItems": false
@@ -1357,12 +1146,7 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "items": [ { "type": "object" } ]
-                            }
-                        ]
+                        "items": { "type": "array", "items": { "$ref": "/types/weighted_datum" } }
                     },
                     "args": {
                         "type": "array",
@@ -1378,12 +1162,7 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [
-                            {
-                                "type": "array",
-                                "items": [ { "type": "object" } ]
-                            }
-                        ]
+                        "items": { "type": "array", "items": { "$ref": "/types/weighted_index" } }
                     },
                     "args": {
                         "type": "array",
@@ -1399,7 +1178,7 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [ { "type": "object" } ]
+                        "items": [ { "$ref": "/types/datum" } ]
                     },
                     "args": {
                         "type": "array",
@@ -1419,7 +1198,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "point", "type": "object" }
+                            { "name": "point", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -1430,14 +1209,14 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [ { "type": "object" } ]
+                        "items": { "$ref": "/types/weighted_datum" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "point", "type": "object" }
+                            { "name": "point", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -1448,14 +1227,14 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [ { "type": "object" } ]
+                        "items": [ { "$ref": "/types/weighted_index" } ]
                     },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "point", "type": "object" }
+                            { "name": "point", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -1469,8 +1248,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "weight", "type": "number" },
-                    { "id": "point", "type": "object" }
+                    { "name": "weight", "type": "number" },
+                    { "name": "point", "$ref": "datum" }
                 ],
                 "additionalItems": false
             },
@@ -1480,8 +1259,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "id", "type": "string" },
-                    { "id": "point", "type": "object" }
+                    { "name": "id", "type": "string" },
+                    { "name": "point", "$ref": "datum" }
                 ],
                 "additionalItems": false
             },
@@ -1522,7 +1301,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "node_id", "type": "string" }
+                            { "name": "node_id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1537,8 +1316,15 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "node_id", "type": "string" },
-                            { "id": "property", "type": "object" }
+                            { "name": "node_id", "type": "string" },
+                            {
+                                "name": "property",
+                                "type": "object",
+                                "patternProperties": {
+                                    ".*": { "type": "string" }
+                                },
+                                "additionalProperties": false
+                            }
                         ],
                         "additionalItems": false
                     }
@@ -1553,18 +1339,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "node_id", "type": "string" },
-                            {
-                                "id": "e",
-                                "type": "array",
-                                "minItems": 3,
-                                "maxItems": 3,
-                                "items": [
-                                    { "id": "property", "type": "object" },
-                                    { "id": "source", "type": "string" },
-                                    { "id": "target", "type": "string" },
-                                ]
-                            }
+                            { "name": "node_id", "type": "string" },
+                            { "name": "e", "$ref": "/types/edge" }
                         ],
                         "additionalItems": false
                     }
@@ -1579,19 +1355,9 @@ module.exports = {
                         "minItems": 3,
                         "maxItems": 3,
                         "items": [
-                            { "id": "node_id", "type": "string" },
-                            { "id": "edge_id", "type": "number" },
-                            {
-                                "id": "e",
-                                "type": "array",
-                                "minItems": 3,
-                                "maxItems": 3,
-                                "items": [
-                                    { "id": "property", "type": "object" },
-                                    { "id": "source", "type": "string" },
-                                    { "id": "target", "type": "string" },
-                                ]
-                            }
+                            { "name": "node_id", "type": "string" },
+                            { "name": "edge_id", "type": "number" },
+                            { "name": "e", "$ref": "/types/edge" }
                         ],
                         "additionalItems": false
                     }
@@ -1606,8 +1372,8 @@ module.exports = {
                         "minItems": 2,
                         "maxItems": 2,
                         "items": [
-                            { "id": "node_id", "type": "string" },
-                            { "id": "edge_id", "type": "number" }
+                            { "name": "node_id", "type": "string" },
+                            { "name": "edge_id", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1622,9 +1388,9 @@ module.exports = {
                         "minItems": 3,
                         "maxItems": 3,
                         "items": [
-                            { "id": "node_id", "type": "string" },
-                            { "id": "centrality_type", "type": "integer" },
-                            { "id": "query", "type": "object" }
+                            { "name": "node_id", "type": "string" },
+                            { "name": "centrality_type", "type": "integer" },
+                            { "name": "query", "$ref": "/types/preset_query" }
                         ],
                         "additionalItems": false
                     }
@@ -1639,7 +1405,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "query", "type": "object" }
+                            { "name": "query", "$ref": "/types/preset_query" }
                         ],
                         "additionalItems": false
                     }
@@ -1654,7 +1420,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "query", "type": "object" }
+                            { "name": "query", "$ref": "/types/preset_query" }
                         ],
                         "additionalItems": false
                     }
@@ -1669,7 +1435,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "query", "type": "object" }
+                            { "name": "query", "$ref": "/types/preset_query" }
                         ],
                         "additionalItems": false
                     }
@@ -1684,7 +1450,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "query", "type": "object" }
+                            { "name": "query", "$ref": "/types/preset_query" }
                         ],
                         "additionalItems": false
                     }
@@ -1699,18 +1465,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            {
-                                "id": "query",
-                                "type": "array",
-                                "minItems": 4,
-                                "maxItems": 4,
-                                "items": [
-                                    { "id": "source", "type": "string" },
-                                    { "id": "target", "type": "string" },
-                                    { "id": "max_hop", "type": "integer" },
-                                    { "id": "preset_query", "type": "array" }
-                                ]
-                            }
+                            { "name": "query", "$ref": "/types/shortest_path_query" }
                         ],
                         "additionalItems": false
                     }
@@ -1732,17 +1487,7 @@ module.exports = {
             {
                 "id": "get_node",
                 "properties": {
-                    "return": {
-                        "id": "node",
-                        "type": "array",
-                        "minItems": 3,
-                        "maxItems": 3,
-                        "items": [
-                            { "id": "property", "type": "object" },
-                            { "id": "in_edges", "type": "array" },
-                            { "id": "out_edges", "type": "array" }
-                        ]
-                    },
+                    "return": { "$ref": "/types/node" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
@@ -1757,17 +1502,7 @@ module.exports = {
             {
                 "id": "get_edge",
                 "properties": {
-                    "return": {
-                        "id": "edge",
-                        "type": "array",
-                        "minItems": 3,
-                        "maxItems": 3,
-                        "items": [
-                            { "id": "property", "type": "object" },
-                            { "id": "source", "type": "string" },
-                            { "id": "target", "type": "string" },
-                        ]
-                    },
+                    "return": { "$ref": "/types/edge" },
                     "args": {
                         "type": "array",
                         "minItems": 2,
@@ -1788,8 +1523,15 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "property", "type": "object" },
-                    { "id": "score", "type": "number" }
+                    {
+                        "name": "property",
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": { "type": "string" }
+                        },
+                        "additionalProperties": false
+                    },
+                    { "name": "score", "type": "number" }
                 ],
                 "additionalItems": false
             },
@@ -1799,8 +1541,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "from_id", "type": "string" },
-                    { "id": "to_id", "type": "string" }
+                    { "name": "from_id", "type": "string" },
+                    { "name": "to_id", "type": "string" }
                 ],
                 "additionalItems": false
             },
@@ -1810,8 +1552,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "edge_query", "type": "array", "items": [ { "type": "object" } ] },
-                    { "id": "node_query", "type": "array", "items": [ { "type": "object" } ] }
+                    { "name": "edge_query", "type": "array", "items": { "$ref": "query" } },
+                    { "name": "node_query", "type": "array", "items": { "$ref": "query" } }
                 ],
                 "additionalItems": false
             },
@@ -1821,9 +1563,16 @@ module.exports = {
                 "minItems": 3,
                 "maxItems": 3,
                 "items": [
-                    { "id": "property", "type": "object" },
-                    { "id": "source", "type": "string" },
-                    { "id": "target", "type": "string" }
+                    {
+                        "name": "property",
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": { "type": "string" }
+                        },
+                        "additionalProperties": false
+                    },
+                    { "name": "source", "type": "string" },
+                    { "name": "target", "type": "string" }
                 ],
                 "additionalItems": false
             },
@@ -1833,10 +1582,10 @@ module.exports = {
                 "minItems": 4,
                 "maxItems": 4,
                 "items": [
-                    { "id": "source", "type": "string" },
-                    { "id": "target", "type": "string" },
-                    { "id": "max_hop", "type": "integer" },
-                    { "id": "query", "type": "object" }
+                    { "name": "source", "type": "string" },
+                    { "name": "target", "type": "string" },
+                    { "name": "max_hop", "type": "integer" },
+                    { "name": "query", "$ref": "preset_query" }
                 ],
                 "additionalItems": false
             }
@@ -1853,7 +1602,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "arm_id", "type": "string" }
+                            { "name": "arm_id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1868,7 +1617,7 @@ module.exports = {
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "arm_id", "type": "string" }
+                            { "name": "arm_id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1877,13 +1626,13 @@ module.exports = {
             {
                 "id": "select_arm",
                 "properties": {
-                    "return": { "id": "arm_id", "type": "string" },
+                    "return": { "type": "string" },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "id": "player_id", "type": "string" }
+                            { "name": "player_id", "type": "string" }
                         ],
                         "additionalItems": false
                     }
@@ -1898,9 +1647,9 @@ module.exports = {
                         "minItems": 3,
                         "maxItems": 3,
                         "items": [
-                            { "id": "player_id", "type": "string" },
-                            { "id": "arm_id", "type": "string" },
-                            { "id": "reward", "type": "number" }
+                            { "name": "player_id", "type": "string" },
+                            { "name": "arm_id", "type": "string" },
+                            { "name": "reward", "type": "number" }
                         ],
                         "additionalItems": false
                     }
@@ -1910,15 +1659,12 @@ module.exports = {
                 "id": "get_arm_info",
                 "properties": {
                     "return": {
-                        "properties": {
-                            "arm_id": { "type": "string" },
-                            "arm_info" : {
-                                "properties": {
-                                    "trial_count": "integer",
-                                    "weight": "number"
-                                }
-                            }
-                        }
+                        "name": "property",
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": { "$ref": "/types/arm_info" }
+                        },
+                        "additionalProperties": false
                     },
                     "args": {
                         "type": "array",
@@ -1964,25 +1710,14 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [
-                            {
-                                "id": "feature",
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "key", "type": "string" },
-                                    { "id": "value", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "items": { "$ref": "/types/feature" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "type": "array" }
+                            { "name":"d", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -1993,25 +1728,14 @@ module.exports = {
                 "properties": {
                     "return": {
                         "type": "array",
-                        "items": [
-                            {
-                                "id": "feature",
-                                "type": "array",
-                                "minItems": 2,
-                                "maxItems": 2,
-                                "items": [
-                                    { "id": "key", "type": "string" },
-                                    { "id": "value", "type": "number" }
-                                ]
-                            }
-                        ]
+                        "items": { "$ref": "/types/feature" }
                     },
                     "args": {
                         "type": "array",
                         "minItems": 1,
                         "maxItems": 1,
                         "items": [
-                            { "type": "array" }
+                            { "name":"d", "$ref": "/types/datum" }
                         ],
                         "additionalItems": false
                     }
@@ -2025,8 +1749,8 @@ module.exports = {
                 "minItems": 2,
                 "maxItems": 2,
                 "items": [
-                    { "id": "key", "type": "string" },
-                    { "id": "value", "type": "number" }
+                    { "name": "key", "type": "string" },
+                    { "name": "value", "type": "number" }
                 ],
                 "additionalItems": false
             }

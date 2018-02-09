@@ -18,7 +18,7 @@
     "jubatus": "~1.0.7"
   },
   "dependencies": {
-    "json-schema": "^0.2.3",
+    "jsonschema": "^1.2.2",
     "msgpack-lite": "^0.1.26"
   },
   "readme": "README.md",
