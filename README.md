@@ -30,7 +30,7 @@ var stringValues = [ ["foo", "bar"] ],
     label = "baz",
     data = [ [ label, datum ] ];
 
-classifier.train(data).then(([ result ] ) => {
+classifier.train(data).then(([ result ]) => {
     console.error(result);
 }).catch(error => {
     console.error(error);
@@ -45,7 +45,7 @@ var stringValues = [ [ "foo", "qux" ] ],
     datum = [ stringValues, numValues ],
     data = [ datum ];
 
-classifier.classify(data).then(([ result ] ) => {
+classifier.classify(data).then(([ result ]) => {
     result.forEach(estimateResults => {
         var mostLikely = estimateResults
                 .map(([ label, score ]) =>({ label, score })
