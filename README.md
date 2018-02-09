@@ -16,8 +16,9 @@ See also <http://jubat.us/en/api/index.html>
 ### Classifier
 
 ```js
-var jubatus = require("jubatus"),
-    classifier = new jubatus.classifier.client.Classifier(9199, "localhost");
+const jubatus = require("jubatus");
+
+const classifier = new jubatus.classifier.client.Classifier(9199, "localhost");
 ```
 
 #### Train
@@ -25,9 +26,9 @@ var jubatus = require("jubatus"),
 ```js
 var stringValues = [ ["foo", "bar"] ],
     numValues = [ ["quux", 0.1] ],
-    datum = [stringValues, numValues],
+    datum = [ stringValues, numValues ],
     label = "baz",
-    data = [ [label, datum] ];
+    data = [ [ label, datum ] ];
 
 classifier.train(data).then(([ result ] ) => {
     console.error(result);
@@ -39,18 +40,16 @@ classifier.train(data).then(([ result ] ) => {
 #### Classify
 
 ```js
-var stringValues = [ ["foo", "qux"] ],
-    numValues = [ ["quux", 1] ],
-    datum = [stringValues, numValues],
-    data = [datum];
+var stringValues = [ [ "foo", "qux" ] ],
+    numValues = [ [ "quux", 1 ] ],
+    datum = [ stringValues, numValues ],
+    data = [ datum ];
 
 classifier.classify(data).then(([ result ] ) => {
     result.forEach(estimateResults => {
         var mostLikely = estimateResults
                 .map(([ label, score ]) =>({ label, score })
-                .reduce((previous, current) => {
-                    return previous.score > current.score ? previous : current;
-                }, { label: null, score: NaN });
+                .reduce((previous, current) => previous.score > current.score ? previous : current);
         console.log("estimate = %j", mostLikely);
     });
 }).catch(error => {
