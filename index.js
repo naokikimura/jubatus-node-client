@@ -24,7 +24,8 @@ function createConstructor(className) {
         const host = options.host || args[0] || 'localhost';
         let name = options.name || args[1] || '';
         const timeoutSeconds = options.timeoutSeconds || args[2] || 0;
-        const client = rpcClient || rpc.createClient(port, host, timeoutSeconds * 1000);
+        const codecOptions = { encode: { useraw: true } };
+        const client = rpcClient || rpc.createClient(port, host, timeoutSeconds * 1000, codecOptions);
 
         Object.defineProperty(this, 'client', {
             get() { return client; }
