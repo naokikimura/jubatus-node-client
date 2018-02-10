@@ -1,0 +1,180 @@
+{
+  "definitions": {
+    "id_with_score": {
+      "id": "id_with_score",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "id",
+          "type": "string"
+        },
+        {
+          "title": "score",
+          "type": "number"
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "id": "anomaly",
+  "type": "array",
+  "items": [
+    {
+      "id": "clear_row",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "add",
+      "properties": {
+        "return": {
+          "$ref": "#/definitions/id_with_score"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "$ref": "#/definitions/datum"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "add_bulk",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "data",
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/datum"
+                }
+              ]
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "update",
+      "properties": {
+        "return": {
+          "type": "number"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "id",
+              "type": "string"
+            },
+            {
+              "title": "row",
+              "$ref": "#/definitions/datum"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "overwrite",
+      "properties": {
+        "return": {
+          "type": "number"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "id",
+              "type": "string"
+            },
+            {
+              "title": "row",
+              "$ref": "#/definitions/datum"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "calc_score",
+      "properties": {
+        "return": {
+          "type": "number"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "row",
+              "$ref": "#/definitions/datum"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "get_all_rows",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    }
+  ]
+}
