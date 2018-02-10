@@ -7,11 +7,11 @@
       "maxItems": 2,
       "items": [
         {
-          "name": "label",
+          "title": "label",
           "type": "string"
         },
         {
-          "name": "score",
+          "title": "score",
           "type": "number"
         }
       ],
@@ -24,12 +24,12 @@
       "maxItems": 2,
       "items": [
         {
-          "name": "label",
+          "title": "label",
           "type": "string"
         },
         {
-          "name": "data",
-          "$ref": "datum"
+          "title": "data",
+          "$ref": "#/definitions/datum"
         }
       ],
       "additionalItems": false
@@ -50,7 +50,7 @@
           "maxItems": 1,
           "items": [
             {
-              "name": "data",
+              "title": "data",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/labeled_datum"
@@ -78,7 +78,7 @@
           "maxItems": 1,
           "items": [
             {
-              "name": "data",
+              "title": "data",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/datum"
