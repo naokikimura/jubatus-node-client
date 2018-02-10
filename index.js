@@ -5,7 +5,7 @@ const util = require('util');
 const jsonschema = require('jsonschema');
 const debug = require('./lib/debug')('jubatus-node-client');
 const api = require('./api');
-const rpc = require('./lib/msgpack-rpc');
+const rpc = require('msgpack-rpc-lite');
 
 const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 

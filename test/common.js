@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 const debug = require('debug')('jubatus-node-client:test:common');
 const testUtil = require('./util');
 const jubatus = require('../');
-const rpc = require('../lib/msgpack-rpc');
+const rpc = require('msgpack-rpc-lite');
 
 let server;
 let client;
@@ -92,13 +92,11 @@ describe('common#get_status', () => {
 
 describe('common#do_mix', () => {
     it('do_mix', done => {
-        client.doMix()
-        .then(([ result ]) => {
+        client.doMix().then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('boolean');
             done();
-        })
-        .catch(error => {
+        }).catch(error => {
             debug(error);
             expect(error).to.be.ok;
             done();
