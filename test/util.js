@@ -7,12 +7,9 @@ exports.createServerProcess = function (command, config, timeoutSeconds = 10, re
     const option = { port: Number(process.env.npm_package_config_test_port || 9199) };
     return portfinder.getPortPromise(option).then(port => {
         debug(`port: ${ port }`);
-        return new Promise((resolve, reject) => {
-            /*jslint nomen: true */
-            const args = [ '-p', port, '-f', config ],
-                options = { cwd: __dirname };
-            resolve([port, spawn(command, args, options) ]);
-        });
+        const args = [ '-p', port, '-f', config ],
+            options = { cwd: __dirname };
+        return [ port, spawn(command, args, options) ];
     }).then(([ port, serverProcess ]) => {
         const executor = (resolve, reject) => {
             const timeout = timers.setTimeout(() => {
