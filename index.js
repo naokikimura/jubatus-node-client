@@ -1,21 +1,20 @@
 /*jslint node: true */
 
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const util = require('util');
 const jsonschema = require('jsonschema');
 const debug = require('./lib/debug')('jubatus-node-client');
-const api = require('./api');
 const rpc = require('msgpack-rpc-lite');
 
 const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 
-function camelCase(input) {
-    return input.toLowerCase().replace(/_(.)/g, function(match, group1) {
-        return group1.toUpperCase();
-    });
+function toCamelCase(value) {
+    return value.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
 }
 
-function createConstructor(className) {
+function createConstructor(className, schema) {
     var constructor = function constructor(options = 9199, ...args) {
         if (!(this instanceof constructor)) { throw new Error(`${className} is constructor.`); }
 
@@ -52,26 +51,16 @@ function createConstructor(className) {
         this.name = value;
     };
 
-    return api[className].methods.map(method => {
-        debug(method);
-        const { id: rpcName, properties: { args, 'return': returnType } } = method,
-            methodName = camelCase(rpcName),
+    return schema.items.map(({ id: rpcName, properties: { 'arguments': argumentsSchema, 'return': returnSchema } }) => {
+        argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
+        const validator = new jsonschema.Validator();
+        const methodName = toCamelCase(rpcName),
             assertParams = isProduct ? () => {} : params => {
-                debug({ params, args });
-                const validator = api[className].types.reduce((accumulator, current) => {
-                    accumulator.addSchema(current, `/types/${ current.id }`);
-                    return accumulator;
-                }, new jsonschema.Validator());
-                const result = validator.validate(params, args);
+                const result = validator.validate(params, argumentsSchema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             },
             assertReturn = isProduct ? () => {} : returnValue => {
-                debug({ returnValue, returnType });
-                const validator = api[className].types.reduce((accumulator, current) => {
-                    accumulator.addSchema(current, `/types/${ current.id }`);
-                    return accumulator;
-                }, new jsonschema.Validator());
-                const result = validator.validate(returnValue, returnType);
+                const result = validator.validate(returnValue, returnSchema);
                 assert.ok(result.valid, util.format('%j', result.errors));
             };
         return [ rpcName, methodName, assertParams, assertReturn ];
@@ -95,6 +84,30 @@ function createConstructor(className) {
     }, constructor);
 }
 
-Object.keys(api).forEach(function (className) {
-    module.exports[className.toLowerCase()] = { client: { [className]: createConstructor(className) } };
+const dirname = './api/';
+const services = fs.readdirSync(dirname)
+    .map(file => path.resolve(dirname, file))
+    .filter(file => path.extname(file) === '.json')
+    .filter(file => fs.statSync(file).isFile())
+    .map(file => {
+        const service = toCamelCase('_' + path.basename(file, '.json'));
+        const schema = JSON.parse(fs.readFileSync(file).toString());
+        return ({ [service]: schema });
+    })
+    .reduce((accumulator, current) => Object.assign(accumulator, current));
+const { Common: common } = services;
+const schemas = Object.keys(services)
+    .filter(serviceName => serviceName !== 'Common')
+    .map(serviceName =>{
+        const service = services[serviceName];
+        service.definitions = Object.assign(service.definitions, common.definitions);
+        service.items = service.items.concat(common.items);
+        return { [serviceName]: service };
+    })
+    .reduce((accumulator, current) => Object.assign(accumulator, current));
+Object.keys(schemas).forEach(function (className) {
+    const schema = schemas[className];
+    debug(className, schema);
+    const constructor = createConstructor(className, schema);
+    module.exports[className.toLowerCase()] = { client: { [className]: constructor } };
 });
