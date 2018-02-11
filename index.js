@@ -14,15 +14,23 @@ function toCamelCase(value) {
     return value.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
 }
 
+function toOptions(args) {
+    const options = args.length > 1 ? args.shift() : args;
+    const rpcClient = options instanceof rpc.Client ? options : options.rpcClient;
+    const port = typeof options === 'number' ? options : options.port;
+    const host = options.host || args[0];
+    const name = options.name || args[1];
+    const timeoutSeconds = options.timeoutSeconds || args[2];
+    return { rpcClient, port, host, name, timeoutSeconds };
+}
+
 function createConstructor(className, schema) {
-    var constructor = function constructor(options = 9199, ...args) {
+    var constructor = function constructor(...args) {
         if (!(this instanceof constructor)) { throw new Error(`${className} is constructor.`); }
 
-        const rpcClient = options instanceof rpc.Client ? options : options.rpcClient;
-        const port = typeof options === 'number' ? options : (options.port || 9199);
-        const host = options.host || args[0] || 'localhost';
-        let name = options.name || args[1] || '';
-        const timeoutSeconds = options.timeoutSeconds || args[2] || 0;
+        const options = toOptions(args);
+        const { port = 9199, host = 'localhost', timeoutSeconds = 0, rpcClient } = options;
+        let { name = '' } = options ;
         const codecOptions = { encode: { useraw: true } };
         const client = rpcClient || rpc.createClient(port, host, timeoutSeconds * 1000, codecOptions);
 
