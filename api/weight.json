@@ -1,0 +1,71 @@
+{
+  "definitions": {
+    "feature": {
+      "id": "feature",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "key",
+          "type": "string"
+        },
+        {
+          "title": "value",
+          "type": "number"
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "id": "weight",
+  "type": "array",
+  "items": [
+    {
+      "id": "update",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/feature"
+          }
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "d",
+              "$ref": "#/definitions/datum"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    {
+      "id": "calc_weight",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/feature"
+          }
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "d",
+              "$ref": "#/definitions/datum"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    }
+  ]
+}
