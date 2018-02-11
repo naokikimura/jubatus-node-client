@@ -92,7 +92,7 @@ function createConstructor(className, schema) {
     }, constructor);
 }
 
-const dirname = './api/';
+const dirname = path.resolve(__dirname, './api/');
 const services = fs.readdirSync(dirname)
     .map(file => path.resolve(dirname, file))
     .filter(file => path.extname(file) === '.json')
