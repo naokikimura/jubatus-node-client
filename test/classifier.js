@@ -50,6 +50,7 @@ describe('classifier#classify', () => {
                 data = [ [ label, datum ] ];
             return client.train(data);
         }).then(([ result ]) => {
+            expect(result).to.equal(1);
             let datum = [ [ [ 'foo', 'bar' ] ] ],
                 data = [ datum ];
             return client.classify(data);
