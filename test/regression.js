@@ -50,6 +50,7 @@ describe('regression#estimate', () => {
                 data = [ [value, datum] ];
             return client.train(data);
         }).then(([ result ]) => {
+            expect(result).to.equal(1);
             let datum = [ [ ['foo', 'bar'] ], [] ],
                 data = [ datum ];
             return client.estimate(data);
