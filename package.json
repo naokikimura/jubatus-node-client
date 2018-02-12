@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "jsonschema": "^1.2.2",
-    "msgpack-rpc-lite": "0.0.1"
+    "msgpack-rpc-lite": "~0.0.3"
   },
   "readme": "README.md",
   "description": "Jubatus client for Node.js (unofficial)",

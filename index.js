@@ -15,12 +15,12 @@ function toCamelCase(value) {
 }
 
 function toOptions(args) {
-    const options = args.length > 1 ? args.shift() : args;
-    const rpcClient = options instanceof rpc.Client ? options : options.rpcClient;
-    const port = typeof options === 'number' ? options : options.port;
-    const host = options.host || args[0];
-    const name = options.name || args[1];
-    const timeoutSeconds = options.timeoutSeconds || args[2];
+    const first = args.shift();
+    const rpcClient = first instanceof rpc.Client ? first : first.rpcClient;
+    const port = typeof first === 'number' ? first : first.port;
+    const host = first.host || args[0];
+    const name = first.name || args[1];
+    const timeoutSeconds = first.timeoutSeconds || args[2];
     return { rpcClient, port, host, name, timeoutSeconds };
 }
 
@@ -80,12 +80,12 @@ function createConstructor(className, schema) {
             assertParams(params);
             params.unshift(self.getName());
             if (callback) {
-                client.call(rpcName, params, (error, result, msgid) => {
+                client.request.apply(client, [ rpcName ].concat(params, (error, result, msgid) => {
                     if (!error) { assertReturn(result); }
                     callback.call(self, error, result, msgid);
-                });
+                }));
             } else {
-                return client.call(rpcName, params);
+                return client.request.apply(client, [ rpcName ].concat(params));
             }
         };
         return constructor;
