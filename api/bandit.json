@@ -1,1 +1,149 @@
-{"definitions":{"arm_info":{"id":"arm_info","properties":{"trial_count":"integer","weight":"number"}}},"id":"bandit","properties":{"register_arm":{"id":"register_arm","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"arm_id","type":"string"}],"additionalItems":false}}},"delete_arm":{"id":"delete_arm","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"arm_id","type":"string"}],"additionalItems":false}}},"select_arm":{"id":"select_arm","properties":{"return":{"type":"string"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"player_id","type":"string"}],"additionalItems":false}}},"register_reward":{"id":"register_reward","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":3,"maxItems":3,"items":[{"title":"player_id","type":"string"},{"title":"arm_id","type":"string"},{"title":"reward","type":"number"}],"additionalItems":false}}},"get_arm_info":{"id":"get_arm_info","properties":{"return":{"title":"property","type":"object","patternProperties":{".*":{"$ref":"#/definitions/arm_info"}},"additionalProperties":false},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"id":"player_id","type":"string"}],"additionalItems":false}}},"reset":{"id":"reset","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"id":"player_id","type":"string"}],"additionalItems":false}}}}}
+{
+  "definitions": {
+    "arm_info": {
+      "id": "arm_info",
+      "properties": {
+        "trial_count": "integer",
+        "weight": "number"
+      }
+    }
+  },
+  "id": "bandit",
+  "properties": {
+    "register_arm": {
+      "id": "register_arm",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "arm_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "delete_arm": {
+      "id": "delete_arm",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "arm_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "select_arm": {
+      "id": "select_arm",
+      "properties": {
+        "return": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "player_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "register_reward": {
+      "id": "register_reward",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": [
+            {
+              "title": "player_id",
+              "type": "string"
+            },
+            {
+              "title": "arm_id",
+              "type": "string"
+            },
+            {
+              "title": "reward",
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_arm_info": {
+      "id": "get_arm_info",
+      "properties": {
+        "return": {
+          "title": "property",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/arm_info"
+            }
+          },
+          "additionalProperties": false
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "id": "player_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "reset": {
+      "id": "reset",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "id": "player_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    }
+  }
+}

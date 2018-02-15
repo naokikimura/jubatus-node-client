@@ -1,1 +1,73 @@
-{"definitions":{"scored_datum":{"id":"scored_datum","type":"array","minItems":2,"maxItems":2,"items":[{"title":"score","type":"number"},{"title":"data","$ref":"#/definitions/datum"}],"additionalItems":false}},"id":"regression","properties":{"train":{"id":"train","properties":{"return":{"type":"integer"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"data","type":"array","items":{"$ref":"#/definitions/scored_datum"}}],"additionalItems":false}}},"estimate":{"id":"estimate","properties":{"return":{"type":"array","items":{"type":"number"}},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"data","type":"array","items":{"$ref":"#/definitions/datum"}}],"additionalItems":false}}}}}
+{
+  "definitions": {
+    "scored_datum": {
+      "id": "scored_datum",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "score",
+          "type": "number"
+        },
+        {
+          "title": "data",
+          "$ref": "#/definitions/datum"
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "id": "regression",
+  "properties": {
+    "train": {
+      "id": "train",
+      "properties": {
+        "return": {
+          "type": "integer"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "data",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/scored_datum"
+              }
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "estimate": {
+      "id": "estimate",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "data",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/datum"
+              }
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    }
+  }
+}

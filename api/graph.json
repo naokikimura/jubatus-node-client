@@ -1,1 +1,455 @@
-{"definitions":{"node":{"id":"node","type":"array","minItems":2,"maxItems":2,"items":[{"title":"property","type":"object","patternProperties":{".*":{"type":"string"}},"additionalProperties":false},{"title":"score","type":"number"}],"additionalItems":false},"query":{"id":"query","type":"array","minItems":2,"maxItems":2,"items":[{"title":"from_id","type":"string"},{"title":"to_id","type":"string"}],"additionalItems":false},"preset_query":{"id":"preset_query","type":"array","minItems":2,"maxItems":2,"items":[{"title":"edge_query","type":"array","items":{"$ref":"#/definitions/query"}},{"title":"node_query","type":"array","items":{"$ref":"#/definitions/query"}}],"additionalItems":false},"edge":{"id":"edge","type":"array","minItems":3,"maxItems":3,"items":[{"title":"property","type":"object","patternProperties":{".*":{"type":"string"}},"additionalProperties":false},{"title":"source","type":"string"},{"title":"target","type":"string"}],"additionalItems":false},"shortest_path_query":{"id":"shortest_path_query","type":"array","minItems":4,"maxItems":4,"items":[{"title":"source","type":"string"},{"title":"target","type":"string"},{"title":"max_hop","type":"integer"},{"title":"query","$ref":"#/definitions/preset_query"}],"additionalItems":false}},"id":"graph","properties":{"create_node":{"id":"create_node","properties":{"return":{"type":"string"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"remove_node":{"id":"remove_node","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"node_id","type":"string"}],"additionalItems":false}}},"update_node":{"id":"update_node","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":2,"maxItems":2,"items":[{"title":"node_id","type":"string"},{"title":"property","type":"object","patternProperties":{".*":{"type":"string"}},"additionalProperties":false}],"additionalItems":false}}},"create_edge":{"id":"create_edge","properties":{"return":{"type":"number"},"arguments":{"type":"array","minItems":2,"maxItems":2,"items":[{"title":"node_id","type":"string"},{"title":"e","$ref":"#/definitions/edge"}],"additionalItems":false}}},"update_edge":{"id":"update_edge","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":3,"maxItems":3,"items":[{"title":"node_id","type":"string"},{"title":"edge_id","type":"number"},{"title":"e","$ref":"#/definitions/edge"}],"additionalItems":false}}},"remove_edge":{"id":"remove_edge","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":2,"maxItems":2,"items":[{"title":"node_id","type":"string"},{"title":"edge_id","type":"number"}],"additionalItems":false}}},"get_centrality":{"id":"get_centrality","properties":{"return":{"type":"number"},"arguments":{"type":"array","minItems":3,"maxItems":3,"items":[{"title":"node_id","type":"string"},{"title":"centrality_type","type":"integer"},{"title":"query","$ref":"#/definitions/preset_query"}],"additionalItems":false}}},"add_centrality_query":{"id":"add_centrality_query","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"query","$ref":"#/definitions/preset_query"}],"additionalItems":false}}},"add_shortest_path_query":{"id":"add_shortest_path_query","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"query","$ref":"#/definitions/preset_query"}],"additionalItems":false}}},"remove_centrality_query":{"id":"remove_centrality_query","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"query","$ref":"#/definitions/preset_query"}],"additionalItems":false}}},"remove_shortest_path_query":{"id":"remove_shortest_path_query","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"query","$ref":"#/definitions/preset_query"}],"additionalItems":false}}},"get_shortest_path":{"id":"get_shortest_path","properties":{"return":{"type":"array","items":[{"type":"string"}]},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"query","$ref":"#/definitions/shortest_path_query"}],"additionalItems":false}}},"update_index":{"id":"update_index","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"get_node":{"id":"get_node","properties":{"return":{"$ref":"#/definitions/node"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"node_id","type":"string"}],"additionalItems":false}}},"get_edge":{"id":"get_edge","properties":{"return":{"$ref":"#/definitions/edge"},"arguments":{"type":"array","minItems":2,"maxItems":2,"items":[{"title":"node_id","type":"string"},{"title":"edge_id","type":"number"}],"additionalItems":false}}}}}
+{
+  "definitions": {
+    "node": {
+      "id": "node",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "property",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "title": "score",
+          "type": "number"
+        }
+      ],
+      "additionalItems": false
+    },
+    "query": {
+      "id": "query",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "from_id",
+          "type": "string"
+        },
+        {
+          "title": "to_id",
+          "type": "string"
+        }
+      ],
+      "additionalItems": false
+    },
+    "preset_query": {
+      "id": "preset_query",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "edge_query",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/query"
+          }
+        },
+        {
+          "title": "node_query",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/query"
+          }
+        }
+      ],
+      "additionalItems": false
+    },
+    "edge": {
+      "id": "edge",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [
+        {
+          "title": "property",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "title": "source",
+          "type": "string"
+        },
+        {
+          "title": "target",
+          "type": "string"
+        }
+      ],
+      "additionalItems": false
+    },
+    "shortest_path_query": {
+      "id": "shortest_path_query",
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": [
+        {
+          "title": "source",
+          "type": "string"
+        },
+        {
+          "title": "target",
+          "type": "string"
+        },
+        {
+          "title": "max_hop",
+          "type": "integer"
+        },
+        {
+          "title": "query",
+          "$ref": "#/definitions/preset_query"
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "id": "graph",
+  "properties": {
+    "create_node": {
+      "id": "create_node",
+      "properties": {
+        "return": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "remove_node": {
+      "id": "remove_node",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "update_node": {
+      "id": "update_node",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            },
+            {
+              "title": "property",
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "create_edge": {
+      "id": "create_edge",
+      "properties": {
+        "return": {
+          "type": "number"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            },
+            {
+              "title": "e",
+              "$ref": "#/definitions/edge"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "update_edge": {
+      "id": "update_edge",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            },
+            {
+              "title": "edge_id",
+              "type": "number"
+            },
+            {
+              "title": "e",
+              "$ref": "#/definitions/edge"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "remove_edge": {
+      "id": "remove_edge",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            },
+            {
+              "title": "edge_id",
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_centrality": {
+      "id": "get_centrality",
+      "properties": {
+        "return": {
+          "type": "number"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            },
+            {
+              "title": "centrality_type",
+              "type": "integer"
+            },
+            {
+              "title": "query",
+              "$ref": "#/definitions/preset_query"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "add_centrality_query": {
+      "id": "add_centrality_query",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "query",
+              "$ref": "#/definitions/preset_query"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "add_shortest_path_query": {
+      "id": "add_shortest_path_query",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "query",
+              "$ref": "#/definitions/preset_query"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "remove_centrality_query": {
+      "id": "remove_centrality_query",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "query",
+              "$ref": "#/definitions/preset_query"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "remove_shortest_path_query": {
+      "id": "remove_shortest_path_query",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "query",
+              "$ref": "#/definitions/preset_query"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_shortest_path": {
+      "id": "get_shortest_path",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "query",
+              "$ref": "#/definitions/shortest_path_query"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "update_index": {
+      "id": "update_index",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_node": {
+      "id": "get_node",
+      "properties": {
+        "return": {
+          "$ref": "#/definitions/node"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_edge": {
+      "id": "get_edge",
+      "properties": {
+        "return": {
+          "$ref": "#/definitions/edge"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "node_id",
+              "type": "string"
+            },
+            {
+              "title": "edge_id",
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    }
+  }
+}

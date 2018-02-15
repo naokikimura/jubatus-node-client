@@ -1,1 +1,184 @@
-{"definitions":{"datum":{"id":"datum","type":"array","minItems":1,"maxItems":3,"items":[{"id":"string_values","type":"array","items":{"type":"array","minItems":2,"maxItems":2,"items":[{"type":"string"},{"type":"string"}],"additionalItems":false}},{"id":"num_values","type":"array","items":{"type":"array","minItems":2,"maxItems":2,"items":[{"type":"string"},{"type":"number"}],"additionalItems":false}},{"id":"binary_values","type":"array","items":{"type":"array","minItems":2,"maxItems":2,"items":[{"type":"string"},{"type":"object"}],"additionalItems":false}}],"additionalItems":false}},"properties":{"save":{"id":"save","properties":{"return":{"type":"object"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"id","type":"string"}],"additionalItems":false}}},"load":{"id":"load","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"id","type":"string"}],"additionalItems":false}}},"clear":{"id":"clear","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"get_config":{"id":"get_config","properties":{"return":{"type":"string"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"get_status":{"id":"get_status","properties":{"return":{"type":"object"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"do_mix":{"id":"do_mix","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"get_proxy_status":{"id":"get_proxy_status","properties":{"return":{"type":"object"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}}}}
+{
+  "definitions": {
+    "datum": {
+      "id": "datum",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": [
+        {
+          "id": "string_values",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "additionalItems": false
+          }
+        },
+        {
+          "id": "num_values",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "additionalItems": false
+          }
+        },
+        {
+          "id": "binary_values",
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "additionalItems": false
+          }
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "properties": {
+    "save": {
+      "id": "save",
+      "properties": {
+        "return": {
+          "type": "object"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "load": {
+      "id": "load",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "id",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "clear": {
+      "id": "clear",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_config": {
+      "id": "get_config",
+      "properties": {
+        "return": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_status": {
+      "id": "get_status",
+      "properties": {
+        "return": {
+          "type": "object"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "do_mix": {
+      "id": "do_mix",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_proxy_status": {
+      "id": "get_proxy_status",
+      "properties": {
+        "return": {
+          "type": "object"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    }
+  }
+}

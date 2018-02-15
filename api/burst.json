@@ -1,1 +1,273 @@
-{"definitions":{"keyword_with_params":{"id":"keyword_with_params","type":"array","minItems":3,"maxItems":3,"items":[{"title":"keyword","type":"string"},{"title":"scaling_param","type":"number"},{"title":"gamma","type":"number"}],"additionalItems":false},"batch":{"id":"batch","type":"array","minItems":3,"maxItems":3,"items":[{"title":"all_data_count","type":"integer"},{"title":"relevant_data_count","type":"integer"},{"title":"burst_weight","type":"number"}],"additionalItems":false},"window":{"id":"window","type":"array","minItems":2,"maxItems":2,"items":[{"title":"start_pos","type":"number"},{"title":"batches","type":"array","items":{"$ref":"batch"}}],"additionalItems":false},"document":{"id":"document","type":"array","minItems":2,"maxItems":2,"items":[{"title":"pos","type":"number"},{"title":"text","type":"string"}],"additionalItems":false}},"id":"burst","properties":{"add_documents":{"id":"add_documents","properties":{"return":{"type":"integer"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"data","type":"array","items":{"$ref":"#/definitions/document"}}],"additionalItems":false}}},"get_result":{"id":"get_result","properties":{"return":{"$ref":"#/definitions/window"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"keyword","type":"string"}],"additionalItems":false}}},"get_result_at":{"id":"get_result_at","properties":{"return":{"$ref":"#/definitions/window"},"arguments":{"type":"array","minItems":2,"maxItems":2,"items":[{"title":"keyword","type":"string"},{"title":"pos","type":"number"}],"additionalItems":false}}},"get_all_bursted_results":{"id":"get_all_bursted_results","properties":{"return":{"type":"object","patternProperties":{".*":{"$ref":"#/definitions/window"}},"additionalProperties":false},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"get_all_bursted_results_at":{"id":"get_all_bursted_results_at","properties":{"return":{"type":"object","patternProperties":{".*":{"$ref":"#/definitions/window"}},"additionalProperties":false},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"pos","type":"number"}],"additionalItems":false}}},"get_all_keywords":{"id":"get_all_keywords","properties":{"return":{"type":"array","items":{"$ref":"#/definitions/keyword_with_params"}},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}},"add_keyword":{"id":"add_keyword","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"keyword_with_params","$ref":"#/definitions/keyword_with_params"}],"additionalItems":false}}},"remove_keyword":{"id":"remove_keyword","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":1,"maxItems":1,"items":[{"title":"keyword","type":"string"}],"additionalItems":false}}},"remove_all_keywords":{"id":"remove_all_keywords","properties":{"return":{"type":"boolean"},"arguments":{"type":"array","minItems":0,"maxItems":0,"items":[],"additionalItems":false}}}}}
+{
+  "definitions": {
+    "keyword_with_params": {
+      "id": "keyword_with_params",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [
+        {
+          "title": "keyword",
+          "type": "string"
+        },
+        {
+          "title": "scaling_param",
+          "type": "number"
+        },
+        {
+          "title": "gamma",
+          "type": "number"
+        }
+      ],
+      "additionalItems": false
+    },
+    "batch": {
+      "id": "batch",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [
+        {
+          "title": "all_data_count",
+          "type": "integer"
+        },
+        {
+          "title": "relevant_data_count",
+          "type": "integer"
+        },
+        {
+          "title": "burst_weight",
+          "type": "number"
+        }
+      ],
+      "additionalItems": false
+    },
+    "window": {
+      "id": "window",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "start_pos",
+          "type": "number"
+        },
+        {
+          "title": "batches",
+          "type": "array",
+          "items": {
+            "$ref": "batch"
+          }
+        }
+      ],
+      "additionalItems": false
+    },
+    "document": {
+      "id": "document",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "pos",
+          "type": "number"
+        },
+        {
+          "title": "text",
+          "type": "string"
+        }
+      ],
+      "additionalItems": false
+    }
+  },
+  "id": "burst",
+  "properties": {
+    "add_documents": {
+      "id": "add_documents",
+      "properties": {
+        "return": {
+          "type": "integer"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "data",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/document"
+              }
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_result": {
+      "id": "get_result",
+      "properties": {
+        "return": {
+          "$ref": "#/definitions/window"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "keyword",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_result_at": {
+      "id": "get_result_at",
+      "properties": {
+        "return": {
+          "$ref": "#/definitions/window"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "title": "keyword",
+              "type": "string"
+            },
+            {
+              "title": "pos",
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_all_bursted_results": {
+      "id": "get_all_bursted_results",
+      "properties": {
+        "return": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/window"
+            }
+          },
+          "additionalProperties": false
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_all_bursted_results_at": {
+      "id": "get_all_bursted_results_at",
+      "properties": {
+        "return": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/window"
+            }
+          },
+          "additionalProperties": false
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "pos",
+              "type": "number"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "get_all_keywords": {
+      "id": "get_all_keywords",
+      "properties": {
+        "return": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyword_with_params"
+          }
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    },
+    "add_keyword": {
+      "id": "add_keyword",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "keyword_with_params",
+              "$ref": "#/definitions/keyword_with_params"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "remove_keyword": {
+      "id": "remove_keyword",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": [
+            {
+              "title": "keyword",
+              "type": "string"
+            }
+          ],
+          "additionalItems": false
+        }
+      }
+    },
+    "remove_all_keywords": {
+      "id": "remove_all_keywords",
+      "properties": {
+        "return": {
+          "type": "boolean"
+        },
+        "arguments": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": [],
+          "additionalItems": false
+        }
+      }
+    }
+  }
+}
