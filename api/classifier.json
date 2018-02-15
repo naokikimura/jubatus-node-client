@@ -36,9 +36,8 @@
     }
   },
   "id": "classifier",
-  "type": "array",
-  "items": [
-    {
+  "properties": {
+    "train": {
       "id": "train",
       "properties": {
         "return": {
@@ -61,7 +60,7 @@
         }
       }
     },
-    {
+    "classify": {
       "id": "classify",
       "properties": {
         "return": {
@@ -89,7 +88,7 @@
         }
       }
     },
-    {
+    "get_labels": {
       "id": "get_labels",
       "properties": {
         "return": {
@@ -104,7 +103,7 @@
         }
       }
     },
-    {
+    "set_label": {
       "id": "set_label",
       "properties": {
         "return": {
@@ -123,7 +122,7 @@
         }
       }
     },
-    {
+    "delete_label": {
       "id": "delete_label",
       "properties": {
         "return": {
@@ -142,5 +141,5 @@
         }
       }
     }
-  ]
+  }
 }
