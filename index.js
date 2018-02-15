@@ -15,7 +15,7 @@ function toCamelCase(value) {
 }
 
 function toOptions(args) {
-    const first = args.shift();
+    const first = args.shift() || {};
     const rpcClient = first instanceof rpc.Client ? first : first.rpcClient;
     const port = typeof first === 'number' ? first : first.port;
     const host = first.host || args[0];
