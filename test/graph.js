@@ -103,6 +103,29 @@ describe('graph#update_edge', () => {
     });
 });
 
+describe('graph#remove_edge', () => {
+    it('remove_edge', done => {
+        const property = { 'foo': 'bar' };
+        const edge = [ property , null, null ];
+        client.createNode().then(([ source ]) => {
+            expect(source).to.be.a('string');
+            edge[1] = source;
+            return client.createNode();
+        }).then(([ target ]) => {
+            expect(target).to.be.a('string');
+            edge[2] = target;
+            return client.createEdge(edge[1], edge);
+        }).then(([ edgeId ]) => {
+            expect(edgeId).to.be.a('number');
+            return client.removeEdge(edge[1], edgeId);            
+        }).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('boolean').and.to.equal(true);
+            done();
+        }).catch(done);
+    });
+});
+
 describe('graph#get_centrality', () => {
     it('get_centrality', done => {
         let nodeIds = [];
@@ -125,8 +148,8 @@ describe('graph#get_centrality', () => {
                 client.createEdge(nodeIds[3], [ { 'foobar': 'quuz' }, nodeIds[2], nodeIds[3] ])
             ]);
         }).then(edges => {
-            debug(edges);
             edgeIds = edges.map(edge => edge[0]);
+            debug(edgeIds);
             const edgeQuery = [];
             const nodeQuery = [];
             query = [ edgeQuery, nodeQuery ];
@@ -213,18 +236,18 @@ describe('graph#get_shortest_path', () => {
             client.createNode(),
             client.createNode(),
             client.createNode()
-        ]).then(nodes => {
-            debug(nodes);
-            nodeIds = nodes.map(node => node[0]);
+        ]).then(results => {
+            nodeIds = results.map(([nodeId]) => nodeId);
+            debug(nodeIds);
             return Promise.all([
                 client.createEdge(nodeIds[0], [ { 'foobar': 'foo' }, nodeIds[0], nodeIds[1] ]),
                 client.createEdge(nodeIds[1], [ { 'foobar': 'bar' }, nodeIds[1], nodeIds[2] ]),
                 client.createEdge(nodeIds[2], [ { 'foobar': 'baz' }, nodeIds[2], nodeIds[3] ]),
                 client.createEdge(nodeIds[3], [ { 'foobar': 'qux' }, nodeIds[3], nodeIds[0] ])
             ]);
-        }).then(edges => {
-            debug(edges);
-            edgeIds = edges.map(edge => edge[0]);
+        }).then(results => {
+            edgeIds = results.map(([edgeId]) => edgeId);
+            debug(edgeIds);
             const edgeQuery = [];
             const nodeQuery = [];
             query = [ edgeQuery, nodeQuery ];
@@ -257,12 +280,20 @@ describe('graph#update_index', () => {
 
 describe('graph#get_node', () => {
     it('get_node', done => {
-        client.createNode().then(([ nodeId ]) => {
-            expect(nodeId).to.be.a('string');
-            return client.getNode(nodeId);
-        }).then(([ result ]) => {
-            debug(result);
-            expect(result).to.be.a('array').and.to.have.deep.members([ {}, [], []]);
+        client.createNode().then(([ source ]) => {
+            expect(source).to.be.a('string');
+            return client.createNode().then(([ target ]) => ([ source, target ]));
+        }).then(([ source, target ]) => {
+            expect(target).to.be.a('string');
+            const property = { 'foo': 'bar' };
+            const edge = [ property , source, target ];
+            return client.createEdge(source, edge).then(([ edgeId ]) => ({ edgeId, edge }));
+        }).then(({ edgeId, edge }) => {
+            expect(edgeId).to.be.a('number');
+            return client.getNode(edge[1]).then(([ node ]) => ({ node, edgeId }));
+        }).then(({ node, edgeId }) => {
+            debug(node);
+            expect(node).to.be.a('array').and.to.have.deep.members([ {}, [], [ edgeId ]]);
             done();
         }).catch(done);
     });
@@ -270,45 +301,20 @@ describe('graph#get_node', () => {
 
 describe('graph#get_edge', () => {
     it('get_edge', done => {
-        const property = { 'foo': 'bar' };
-        const edge = [ property , null, null ];
         client.createNode().then(([ source ]) => {
             expect(source).to.be.a('string');
-            edge[1] = source;
-            return client.createNode();
-        }).then(([ target ]) => {
+            return client.createNode().then(([ target ]) => ([ source, target ]));
+        }).then(([ source, target ]) => {
             expect(target).to.be.a('string');
-            edge[2] = target;
-            return client.createEdge(edge[1], edge);
-        }).then(([ edgeId ]) => {
+            const property = { 'foo': 'bar' };
+            const edge = [ property , source, target ];
+            return client.createEdge(source, edge).then(([ edgeId ]) => ({ edgeId, edge }));
+        }).then(({ edgeId, edge }) => {
             expect(edgeId).to.be.a('number');
-            return client.getEdge(edge[1], edgeId);            
-        }).then(([ result ]) => {
-            debug(result);
-            expect(result).to.be.a('array').and.to.have.deep.members(edge);
-            done();
-        }).catch(done);
-    });
-});
-
-describe('graph#get_edge', () => {
-    it('get_edge', done => {
-        const property = { 'foo': 'bar' };
-        const edge = [ property , null, null ];
-        client.createNode().then(([ source ]) => {
-            expect(source).to.be.a('string');
-            edge[1] = source;
-            return client.createNode();
-        }).then(([ target ]) => {
-            expect(target).to.be.a('string');
-            edge[2] = target;
-            return client.createEdge(edge[1], edge);
-        }).then(([ edgeId ]) => {
-            expect(edgeId).to.be.a('number');
-            return client.getEdge(edge[1], edgeId);            
-        }).then(([ result ]) => {
-            debug(result);
-            expect(result).to.be.a('array').and.to.have.deep.members(edge);
+            return client.getEdge(edge[1], edgeId).then(([ result ]) => ({ actual: result, expected: edge }));            
+        }).then(({ actual, expected }) => {
+            debug(actual);
+            expect(actual).to.be.a('array').and.to.have.deep.members(expected);
             done();
         }).catch(done);
     });
