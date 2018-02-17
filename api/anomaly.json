@@ -1,29 +1,35 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "id_with_score": {
-      "id": "id_with_score",
+      "title": "id_with_score",
+      "description": "Represents ID with its score.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
           "title": "id",
+          "description": "Data ID.",
           "type": "string"
         },
         {
           "title": "score",
+          "description": "Score for the data. Negative (normal) data are scored around 1.0. Higher score means higher abnormality.",
           "type": "number"
         }
       ],
       "additionalItems": false
     }
   },
-  "id": "anomaly",
+  "title": "anomaly",
   "properties": {
     "clear_row": {
-      "id": "clear_row",
+      "title": "clear_row",
+      "description": "Clears a point data with ID id.",
       "properties": {
         "return": {
+          "description": "True when the point was cleared successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -33,6 +39,7 @@
           "items": [
             {
               "title": "id",
+              "description": "point ID to be removed",
               "type": "string"
             }
           ],
@@ -41,9 +48,11 @@
       }
     },
     "add": {
-      "id": "add",
+      "title": "add",
+      "description": "Adds a point data row.",
       "properties": {
         "return": {
+          "description": "Tuple of the point ID and the anomaly measure value",
           "$ref": "#/definitions/id_with_score"
         },
         "arguments": {
@@ -52,6 +61,8 @@
           "maxItems": 1,
           "items": [
             {
+              "title": "row",
+              "description": "datum for the point",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -60,9 +71,11 @@
       }
     },
     "add_bulk": {
-      "id": "add_bulk",
+      "title": "add_bulk",
+      "description": "Adds a bulk of points. In contrast to add, this API doesn’t return anomaly measure values.",
       "properties": {
         "return": {
+          "description": "The list of successfully added IDs.",
           "type": "array",
           "items": [
             {
@@ -77,6 +90,7 @@
           "items": [
             {
               "title": "data",
+              "description": "List of datum for the points",
               "type": "array",
               "items": [
                 {
@@ -90,9 +104,11 @@
       }
     },
     "update": {
-      "id": "update",
+      "title": "update",
+      "description": "Updates the point id with the data row.",
       "properties": {
         "return": {
+          "description": "Anomaly measure value",
           "type": "number"
         },
         "arguments": {
@@ -102,10 +118,12 @@
           "items": [
             {
               "title": "id",
+              "description": "point ID to update",
               "type": "string"
             },
             {
               "title": "row",
+              "description": "new datum for the point",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -114,9 +132,11 @@
       }
     },
     "overwrite": {
-      "id": "overwrite",
+      "title": "overwrite",
+      "description": "Overwrites the point id with the data row.",
       "properties": {
         "return": {
+          "description": "Anomaly measure value",
           "type": "number"
         },
         "arguments": {
@@ -126,10 +146,12 @@
           "items": [
             {
               "title": "id",
+              "description": "point ID to overwrite",
               "type": "string"
             },
             {
               "title": "row",
+              "description": "new datum for the point",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -138,9 +160,11 @@
       }
     },
     "calc_score": {
-      "id": "calc_score",
+      "title": "calc_score",
+      "description": "Calculates an anomaly measure value for the point data row without adding a point. At this time, extremely large numbers can be returned. For the detail, please refer to FAQs:anomaly detection.",
       "properties": {
         "return": {
+          "description": "Anomaly measure value for given row",
           "type": "number"
         },
         "arguments": {
@@ -150,6 +174,7 @@
           "items": [
             {
               "title": "row",
+              "description": "datum",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -158,9 +183,11 @@
       }
     },
     "get_all_rows": {
-      "id": "get_all_rows",
+      "title": "get_all_rows",
+      "description": "Returns the list of all point IDs.",
       "properties": {
         "return": {
+          "description": "List of all point IDs",
           "type": "array",
           "items": {
             "type": "string"

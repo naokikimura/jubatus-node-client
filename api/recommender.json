@@ -1,29 +1,35 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "id_with_score": {
-      "id": "id_with_score",
+      "title": "id_with_score",
+      "description": "Represents ID with its score.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
           "title": "id",
+          "description": "Data ID.",
           "type": "string"
         },
         {
           "title": "score",
+          "description": "Score. Range of scores is 0 <= score <= 1 (less than or equal to -0 when using euclid_lsh).",
           "type": "number"
         }
       ],
       "additionalItems": false
     }
   },
-  "id": "recommender",
+  "title": "recommender",
   "properties": {
     "clear_row": {
-      "id": "clear_row",
+      "title": "clear_row",
+      "description": "Removes the given row id from the recommendation table.",
       "properties": {
         "return": {
+          "description": "True when the row was cleared successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -33,6 +39,7 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID to be removed",
               "type": "string"
             }
           ],
@@ -41,9 +48,11 @@
       }
     },
     "update_row": {
-      "id": "update_row",
+      "title": "update_row",
+      "description": "Updates the row whose id is id with given row. If the row with the same id already exists, the row is differential updated with row. Otherwise, new row entry will be created. If the server that manages the row and the server that received this RPC request are same, this operation is reflected instantly. If not, update operation is reflected after mix.",
       "properties": {
         "return": {
+          "description": "True if this function updates models successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -52,10 +61,13 @@
           "maxItems": 2,
           "items": [
             {
-              "id": "title",
+              "title": "id",
+              "description": "row ID",
               "type": "string"
             },
             {
+              "title": "row",
+              "description": "datum for the row",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -64,9 +76,11 @@
       }
     },
     "complete_row_from_id": {
-      "id": "complete_row_from_id",
+      "title": "complete_row_from_id",
+      "description": "Returns the datum for the row id, with missing value completed by predicted value.",
       "properties": {
         "return": {
+          "description": "datum stored in id row with missing value completed by predicted value",
           "$ref": "#/definitions/datum"
         },
         "arguments": {
@@ -76,6 +90,7 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID",
               "type": "string"
             }
           ],
@@ -84,9 +99,11 @@
       }
     },
     "complete_row_from_datum": {
-      "id": "complete_row_from_datum",
+      "title": "complete_row_from_datum",
+      "description": "Returns the datum constructed from row, with missing value completed by predicted value.",
       "properties": {
         "return": {
+          "description": "datum constructed from the given datum with missing value completed by predicted value",
           "$ref": "#/definitions/datum"
         },
         "arguments": {
@@ -96,6 +113,7 @@
           "items": [
             {
               "title": "row",
+              "description": "original datum to be completed (possibly some values are missing)",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -104,9 +122,11 @@
       }
     },
     "similar_row_from_id": {
-      "id": "similar_row_from_id",
+      "title": "similar_row_from_id",
+      "description": "Returns size rows (at maximum) which are most similar to the row id.",
       "properties": {
         "return": {
+          "description": "row IDs that are most similar to the row id",
           "type": "array",
           "items": {
             "$ref": "id_with_score"
@@ -119,10 +139,12 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID",
               "type": "string"
             },
             {
               "title": "size",
+              "description": "number of rows to be returned",
               "type": "integer"
             }
           ],
@@ -131,9 +153,11 @@
       }
     },
     "similar_row_from_id_and_score": {
-      "id": "similar_row_from_id_and_score",
+      "title": "similar_row_from_id_and_score",
+      "description": "Returns rows which are most similar to the row id and have a greater similarity score than score.",
       "properties": {
         "return": {
+          "description": "row IDs that are most similar to the row id",
           "type": "array",
           "items": {
             "$ref": "id_with_score"
@@ -146,10 +170,12 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID",
               "type": "string"
             },
             {
               "title": "score",
+              "description": "threshold of similarity score",
               "type": "number"
             }
           ],
@@ -158,9 +184,11 @@
       }
     },
     "similar_row_from_id_and_rate": {
-      "id": "similar_row_from_id_and_rate",
+      "title": "similar_row_from_id_and_rate",
+      "description": "Returns the top rate of all the rows which are most similar to the row id. For example, return the top 40% of all the rows when 0.4 is specified as rate.",
       "properties": {
         "return": {
+          "description": "row IDs that are most similar to the row id",
           "type": "array",
           "items": {
             "$ref": "id_with_score"
@@ -173,10 +201,12 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID",
               "type": "string"
             },
             {
               "title": "rate",
+              "description": "rate of all the rows to be returned (Range 0 < rate <= 1)",
               "type": "number"
             }
           ],
@@ -185,9 +215,11 @@
       }
     },
     "similar_row_from_datum": {
-      "id": "similar_row_from_datum",
+      "title": "similar_row_from_datum",
+      "description": "Returns size rows (at maximum) that most have similar datum to row.",
       "properties": {
         "return": {
+          "description": "rows that most have a similar datum to row",
           "type": "array",
           "items": {
             "$ref": "id_with_score"
@@ -200,10 +232,12 @@
           "items": [
             {
               "title": "row",
+              "description": "datum to find similar rows",
               "$ref": "#/definitions/datum"
             },
             {
               "title": "size",
+              "description": "number of rows to be returned",
               "type": "integer"
             }
           ],
@@ -212,9 +246,11 @@
       }
     },
     "similar_row_from_datum_and_score": {
-      "id": "similar_row_from_datum_and_score",
+      "title": "similar_row_from_datum_and_score",
+      "description": "Returns rows which are most similar to row and have a greater similarity score than score.",
       "properties": {
         "return": {
+          "description": "rows that most have a similar datum to row",
           "type": "array",
           "items": {
             "$ref": "id_with_score"
@@ -227,10 +263,12 @@
           "items": [
             {
               "title": "row",
+              "description": "datum to find similar rows",
               "$ref": "#/definitions/datum"
             },
             {
               "title": "score",
+              "description": "threshold of similarity score",
               "type": "number"
             }
           ],
@@ -239,9 +277,11 @@
       }
     },
     "similar_row_from_datum_and_rate": {
-      "id": "similar_row_from_datum_and_rate",
+      "title": "similar_row_from_datum_and_rate",
+      "description": "Returns the top rate of all the rows which are most similar to row. For example, return the top 40% of all the rows when 0.4 is specified as rate.",
       "properties": {
         "return": {
+          "description": "rows that most have a similar datum to row",
           "type": "array",
           "items": {
             "$ref": "id_with_score"
@@ -254,10 +294,12 @@
           "items": [
             {
               "title": "row",
+              "description": "datum to find similar rows",
               "$ref": "#/definitions/datum"
             },
             {
               "title": "rate",
+              "description": "rate of all the rows to be returned (Range 0 < rate <= 1)",
               "type": "number"
             }
           ],
@@ -266,9 +308,11 @@
       }
     },
     "decode_row": {
-      "id": "decode_row",
+      "title": "decode_row",
+      "description": "Returns the datum in the row id. Note that irreversibly converted datum (processed by fv_converter) will not be decoded.",
       "properties": {
         "return": {
+          "description": "datum for the given row id",
           "$ref": "#/definitions/datum"
         },
         "arguments": {
@@ -278,6 +322,7 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID",
               "type": "string"
             }
           ],
@@ -286,9 +331,11 @@
       }
     },
     "get_all_rows": {
-      "id": "get_all_rows",
+      "title": "get_all_rows",
+      "description": "Returns the list of all row IDs.",
       "properties": {
         "return": {
+          "description": "list of all row IDs",
           "type": "array",
           "items": [
             {
@@ -306,9 +353,11 @@
       }
     },
     "calc_similarity": {
-      "id": "calc_similarity",
+      "title": "calc_similarity",
+      "description": "Returns the similarity score (see score member of id_with_score) between two datum.",
       "properties": {
         "return": {
+          "description": "similarity between lhs and rhs",
           "type": "number"
         },
         "arguments": {
@@ -318,10 +367,12 @@
           "items": [
             {
               "title": "lhs",
+              "description": "datum",
               "$ref": "#/definitions/datum"
             },
             {
               "title": "rhs",
+              "description": "another datum",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -330,9 +381,11 @@
       }
     },
     "calc_l2norm": {
-      "id": "calc_l2norm",
+      "title": "calc_l2norm",
+      "description": "Returns the value of L2 norm for the row.",
       "properties": {
         "return": {
+          "description": "L2 norm for the given row",
           "type": "number"
         },
         "arguments": {
@@ -342,6 +395,7 @@
           "items": [
             {
               "title": "row",
+              "description": "datum",
               "$ref": "#/definitions/datum"
             }
           ],

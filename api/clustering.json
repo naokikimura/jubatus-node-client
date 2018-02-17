@@ -1,7 +1,8 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "weighted_datum": {
-      "id": "weighted_datum",
+      "title": "weighted_datum",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
@@ -18,7 +19,7 @@
       "additionalItems": false
     },
     "indexed_point": {
-      "id": "indexed_point",
+      "title": "indexed_point",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
@@ -35,29 +36,31 @@
       "additionalItems": false
     },
     "weighted_index": {
-      "id": "weighted_index",
+      "title": "weighted_index",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
-          "id": "weight",
+          "title": "weight",
           "type": "number"
         },
         {
-          "id": "id",
+          "title": "id",
           "type": "string"
         }
       ],
       "additionalItems": false
     }
   },
-  "id": "clustering",
+  "title": "clustering",
   "properties": {
     "push": {
-      "id": "push",
+      "title": "push",
+      "description": "Adds points.",
       "properties": {
         "return": {
+          "description": "True when the point was added successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -67,6 +70,7 @@
           "items": [
             {
               "title": "points",
+              "description": "list of indexed_point for the points. indexed_point is a tuple of string id and datum",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/indexed_point"
@@ -78,9 +82,11 @@
       }
     },
     "get_revision": {
-      "id": "get_revision",
+      "title": "get_revision",
+      "description": "Return revesion of cluster.",
       "properties": {
         "return": {
+          "description": "revision of cluster",
           "type": "integer"
         },
         "arguments": {
@@ -93,9 +99,11 @@
       }
     },
     "get_core_members": {
-      "id": "get_core_members",
+      "title": "get_core_members",
+      "description": "Returns coreset of cluster in datum. This method is not supported in dbscan.",
       "properties": {
         "return": {
+          "description": "coreset of cluster",
           "type": "array",
           "items": {
             "type": "array",
@@ -114,9 +122,11 @@
       }
     },
     "get_core_members_light": {
-      "id": "get_core_members_light",
+      "title": "get_core_members_light",
+      "description": "Returns coreset of cluster in index. This method is not supported in dbscan.",
       "properties": {
         "return": {
+          "description": "coreset of cluster",
           "type": "array",
           "items": {
             "type": "array",
@@ -135,9 +145,11 @@
       }
     },
     "get_k_center": {
-      "id": "get_k_center",
+      "title": "get_k_center",
+      "description": "Returns k cluster centers.",
       "properties": {
         "return": {
+          "description": "cluster centers",
           "type": "array",
           "items": [
             {
@@ -155,9 +167,11 @@
       }
     },
     "get_nearest_center": {
-      "id": "get_nearest_center",
+      "title": "get_nearest_center",
+      "description": "Returns nearest cluster center without adding point to cluster. This method is not supported in dbscan.",
       "properties": {
         "return": {
+          "description": "nearest cluster center",
           "type": "object"
         },
         "arguments": {
@@ -167,6 +181,7 @@
           "items": [
             {
               "title": "point",
+              "description": "datum",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -175,9 +190,11 @@
       }
     },
     "get_nearest_members": {
-      "id": "get_nearest_members",
+      "title": "get_nearest_members",
+      "description": "Returns nearest summary of cluster(coreset) from point. Its format is a list of tuples of weight and datum. This method is not supported in dbscan.",
       "properties": {
         "return": {
+          "description": "coreset",
           "type": "array",
           "items": {
             "$ref": "#/definitions/weighted_datum"
@@ -190,6 +207,7 @@
           "items": [
             {
               "title": "point",
+              "description": "datum",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -198,9 +216,11 @@
       }
     },
     "get_nearest_members_light": {
-      "id": "get_nearest_members_light",
+      "title": "get_nearest_members_light",
+      "description": "Returns nearest summary of cluster(coreset) from point. Its format is a list of tuples of weight and id. This method is not supported in dbscan.",
       "properties": {
         "return": {
+          "description": "coreset",
           "type": "array",
           "items": [
             {
@@ -215,6 +235,7 @@
           "items": [
             {
               "title": "point",
+              "description": "datum",
               "$ref": "#/definitions/datum"
             }
           ],

@@ -1,9 +1,11 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {},
-  "id": "stat",
+  "title": "stat",
   "properties": {
     "push": {
-      "id": "push",
+      "title": "push",
+      "description": "Adds value val to the attribute key.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -27,7 +29,8 @@
       }
     },
     "sum": {
-      "id": "sum",
+      "title": "sum",
+      "description": "Returns the sum of values in the attribute key.",
       "properties": {
         "return": {
           "type": "number"
@@ -47,7 +50,8 @@
       }
     },
     "stddev": {
-      "id": "stddev",
+      "title": "stddev",
+      "description": "Returns the standard deviation of values in the attribute key.",
       "properties": {
         "return": {
           "type": "number"
@@ -67,7 +71,8 @@
       }
     },
     "max": {
-      "id": "max",
+      "title": "max",
+      "description": "Returns the maximum value of values in the attribute key.",
       "properties": {
         "return": {
           "type": "number"
@@ -87,7 +92,8 @@
       }
     },
     "min": {
-      "id": "min",
+      "title": "min",
+      "description": "Returns the minimum value of values in the attribute key.",
       "properties": {
         "return": {
           "type": "number"
@@ -107,7 +113,8 @@
       }
     },
     "entropy": {
-      "id": "entropy",
+      "title": "entropy",
+      "description": "Returns the entropy of values in the attribute key.",
       "properties": {
         "return": {
           "type": "number"
@@ -127,7 +134,8 @@
       }
     },
     "moment": {
-      "id": "moment",
+      "title": "moment",
+      "description": "Returns the degree-th moment about center of values in the attribute key.",
       "properties": {
         "return": {
           "type": "number"

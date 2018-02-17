@@ -1,19 +1,34 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "arm_info": {
-      "id": "arm_info",
-      "properties": {
-        "trial_count": "integer",
-        "weight": "number"
-      }
+      "title": "arm_info",
+      "description": "The state of an arm.",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": [
+        {
+          "title": "trial_count",
+          "description": "Number of times of an arm being selected.",
+          "type": "integer"
+        },
+        {
+          "title": "weight",
+          "description": "The weight of an arm.",
+          "type": "number"
+        }
+      ]
     }
   },
-  "id": "bandit",
+  "title": "bandit",
   "properties": {
     "register_arm": {
-      "id": "register_arm",
+      "title": "register_arm",
+      "description": "Register a new arm with the name of arm_id.",
       "properties": {
         "return": {
+          "description": "True if succeeded in registering the arm. False if failed to register the arm.",
           "type": "boolean"
         },
         "arguments": {
@@ -23,6 +38,7 @@
           "items": [
             {
               "title": "arm_id",
+              "description": "ID of the new arm to be registered",
               "type": "string"
             }
           ],
@@ -31,9 +47,11 @@
       }
     },
     "delete_arm": {
-      "id": "delete_arm",
+      "title": "delete_arm",
+      "description": "Delete an arm with the name of arm_id.",
       "properties": {
         "return": {
+          "description": "True if succeeded in deleting the arm. False if failed to delete the arm.",
           "type": "boolean"
         },
         "arguments": {
@@ -43,6 +61,7 @@
           "items": [
             {
               "title": "arm_id",
+              "description": "ID of the arm to be deleted",
               "type": "string"
             }
           ],
@@ -51,9 +70,11 @@
       }
     },
     "select_arm": {
-      "id": "select_arm",
+      "title": "select_arm",
+      "description": "Select player’s arm according to current state.",
       "properties": {
         "return": {
+          "description": "arm_id selected by bandit algorithm.",
           "type": "string"
         },
         "arguments": {
@@ -63,6 +84,7 @@
           "items": [
             {
               "title": "player_id",
+              "description": "ID of the player whose arm is to be selected",
               "type": "string"
             }
           ],
@@ -71,9 +93,11 @@
       }
     },
     "register_reward": {
-      "id": "register_reward",
+      "title": "register_reward",
+      "description": "Register rewards with specified player’s specified arm.",
       "properties": {
         "return": {
+          "description": "True if succeeded in registering reward. False if failed to register rewards.",
           "type": "boolean"
         },
         "arguments": {
@@ -83,14 +107,17 @@
           "items": [
             {
               "title": "player_id",
+              "description": "ID of the player whose arm gets rewards",
               "type": "string"
             },
             {
               "title": "arm_id",
+              "description": "ID of the arm which rewards are registered with",
               "type": "string"
             },
             {
               "title": "reward",
+              "description": "amount of rewards",
               "type": "number"
             }
           ],
@@ -99,11 +126,13 @@
       }
     },
     "get_arm_info": {
-      "id": "get_arm_info",
+      "title": "get_arm_info",
+      "description": "Get all arms information of specified player.",
       "properties": {
         "return": {
           "title": "property",
           "type": "object",
+          "description": "arm information of specified player",
           "patternProperties": {
             ".*": {
               "$ref": "#/definitions/arm_info"
@@ -117,7 +146,8 @@
           "maxItems": 1,
           "items": [
             {
-              "id": "player_id",
+              "title": "player_id",
+              "description": "ID of the player",
               "type": "string"
             }
           ],
@@ -126,9 +156,11 @@
       }
     },
     "reset": {
-      "id": "reset",
+      "title": "reset",
+      "description": "Reset all arms information of specified player.",
       "properties": {
         "return": {
+          "description": "True if succeeded in resetting the arm. False if failed to reset.",
           "type": "boolean"
         },
         "arguments": {
@@ -137,7 +169,8 @@
           "maxItems": 1,
           "items": [
             {
-              "id": "player_id",
+              "title": "player_id",
+              "description": "ID of the user whose arms are to be reset.",
               "type": "string"
             }
           ],

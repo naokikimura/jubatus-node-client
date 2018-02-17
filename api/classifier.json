@@ -1,46 +1,55 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "estimate_result": {
-      "id": "estimate_result",
+      "title": "estimate_result",
+      "description": "Represents a result of classification.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
           "title": "label",
+          "description": "Represents an estimated label.",
           "type": "string"
         },
         {
           "title": "score",
+          "description": "Represents a probability value for the label. Higher score value means that the estimated label is more confident.",
           "type": "number"
         }
       ],
       "additionalItems": false
     },
     "labeled_datum": {
-      "id": "labeled_datum",
+      "title": "labeled_datum",
+      "description": "Represents a datum with its label.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
           "title": "label",
+          "description": "Represents a label of this datum.",
           "type": "string"
         },
         {
           "title": "data",
+          "description": "Represents a datum.",
           "$ref": "#/definitions/datum"
         }
       ],
       "additionalItems": false
     }
   },
-  "id": "classifier",
+  "title": "classifier",
   "properties": {
     "train": {
-      "id": "train",
+      "title": "train",
+      "description": "Trains and updates the model. labeled_datum is a tuple of datum and its label. This API is designed to accept bulk update with list of labeled_datum.",
       "properties": {
         "return": {
+          "description": "Number of trained datum (i.e., the length of the data)",
           "type": "integer"
         },
         "arguments": {
@@ -50,6 +59,7 @@
           "items": [
             {
               "title": "data",
+              "description": "list of tuple of label and datum",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/labeled_datum"
@@ -61,9 +71,11 @@
       }
     },
     "classify": {
-      "id": "classify",
+      "title": "classify",
+      "description": "Estimates labels from given data. This API is designed to accept bulk classification with list of datum.",
       "properties": {
         "return": {
+          "description": "List of list of estimate_result, in order of given datum",
           "type": "array",
           "items": [
             {
@@ -78,6 +90,7 @@
           "items": [
             {
               "title": "data",
+              "description": "list of datum to classify",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/datum"
@@ -89,10 +102,17 @@
       }
     },
     "get_labels": {
-      "id": "get_labels",
+      "title": "get_labels",
+      "description": "Returns the number of trained data for each label. If method is NN , the number of trained data that are deleted by unlearner is not include in this count.",
       "properties": {
         "return": {
-          "type": "object"
+          "description": "Pairs of label and the number of trained data",
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "number"
+            }
+          }
         },
         "arguments": {
           "type": "array",
@@ -104,9 +124,11 @@
       }
     },
     "set_label": {
-      "id": "set_label",
+      "title": "set_label",
+      "description": "Append new label. If the label is already exist, it fails. New label is add when label found in train method argument, too.",
       "properties": {
         "return": {
+          "description": "True if the new label was not exist. False if the label already exists.",
           "type": "boolean"
         },
         "arguments": {
@@ -115,6 +137,8 @@
           "maxItems": 1,
           "items": [
             {
+              "title": "new_label",
+              "description": "name of new label",
               "type": "string"
             }
           ],
@@ -123,9 +147,11 @@
       }
     },
     "delete_label": {
-      "id": "delete_label",
+      "title": "delete_label",
+      "description": "Deleting label. True if jubatus success to delete. False if the label is not exists.",
       "properties": {
         "return": {
+          "description": "True if jubatus success to delete label. False if the label is not exists.",
           "type": "boolean"
         },
         "arguments": {
@@ -134,6 +160,8 @@
           "maxItems": 1,
           "items": [
             {
+              "title": "target_label",
+              "description": "deleting label name",
               "type": "string"
             }
           ],

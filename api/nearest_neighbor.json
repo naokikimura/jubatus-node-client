@@ -1,29 +1,35 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "id_with_score": {
-      "id": "id_with_score",
+      "title": "id_with_score",
+      "description": "Represents ID with its score.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
           "title": "id",
+          "description": "Data ID.",
           "type": "string"
         },
         {
           "title": "score",
+          "description": "Score.",
           "type": "number"
         }
       ],
       "additionalItems": false
     }
   },
-  "id": "nearest_neighbor",
+  "title": "nearest_neighbor",
   "properties": {
     "set_row": {
-      "id": "set_row",
+      "title": "set_row",
+      "description": "Updates the row whose id is id with given row. If the row with the same id already exists, the row is overwritten with row (note that this behavior is different from that of recommender). Otherwise, new row entry will be created. If the server that manages the row and the server that received this RPC request are same, this operation is reflected instantly. If not, update operation is reflected after mix.",
       "properties": {
         "return": {
+          "description": "True if this function updates models successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -33,10 +39,12 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID",
               "type": "string"
             },
             {
               "title": "d",
+              "description": "datum for the row",
               "$ref": "#/definitions/datum"
             }
           ],
@@ -45,9 +53,11 @@
       }
     },
     "neighbor_row_from_id": {
-      "id": "neighbor_row_from_id",
+      "title": "neighbor_row_from_id",
+      "description": "Returns size rows (at maximum) that have most similar datum to id and their distance values.",
       "properties": {
         "return": {
+          "description": "row IDs that are the nearest to the row id and their distance values",
           "type": "array",
           "items": [
             {
@@ -62,10 +72,12 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID in the nearest neighbor search table",
               "type": "string"
             },
             {
               "title": "size",
+              "description": "number of rows to be returned",
               "type": "integer"
             }
           ],
@@ -74,9 +86,11 @@
       }
     },
     "neighbor_row_from_datum": {
-      "id": "neighbor_row_from_datum",
+      "title": "neighbor_row_from_datum",
+      "description": "Returns size rows (at maximum) of which datum are most similar to query and their distance values.",
       "properties": {
         "return": {
+          "description": "row IDs that are the nearest to query and their distance values",
           "type": "array",
           "items": [
             {
@@ -91,10 +105,12 @@
           "items": [
             {
               "title": "query",
+              "description": "datum for nearest neighbor search",
               "$ref": "#/definitions/datum"
             },
             {
               "title": "size",
+              "description": "number of rows to be returned",
               "type": "integer"
             }
           ],
@@ -103,9 +119,11 @@
       }
     },
     "similar_row_from_id": {
-      "id": "similar_row_from_id",
+      "title": "similar_row_from_id",
+      "description": "Returns ret_num rows (at maximum) that have most similar datum to id and their similarity values.",
       "properties": {
         "return": {
+          "description": "row IDs that are the nearest to the row id and their similarity values",
           "type": "array",
           "items": [
             {
@@ -120,10 +138,12 @@
           "items": [
             {
               "title": "id",
+              "description": "row ID in the nearest neighbor search table",
               "type": "string"
             },
             {
               "title": "ret_num",
+              "description": "number of rows to be returned",
               "type": "integer"
             }
           ],
@@ -132,9 +152,11 @@
       }
     },
     "similar_row_from_datum": {
-      "id": "similar_row_from_datum",
+      "title": "similar_row_from_datum",
+      "description": "Returns ret_num rows (at maximum) of which datum are most similar to query and their similarity values.",
       "properties": {
         "return": {
+          "description": "row IDs that are the nearest to query and their similarity values",
           "type": "array",
           "items": [
             {
@@ -149,10 +171,12 @@
           "items": [
             {
               "title": "query",
+              "description": "datum for nearest neighbor search",
               "$ref": "#/definitions/datum"
             },
             {
               "title": "ret_num",
+              "description": "number of rows to be returned",
               "type": "integer"
             }
           ],
@@ -161,9 +185,11 @@
       }
     },
     "get_all_rows": {
-      "id": "get_all_rows",
+      "title": "get_all_rows",
+      "description": "Returns the list of all row IDs.",
       "properties": {
         "return": {
+          "description": "list of all row IDs",
           "type": "array",
           "items": [
             {

@@ -1,29 +1,35 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "scored_datum": {
-      "id": "scored_datum",
+      "title": "scored_datum",
+      "description": "Represents a datum with its label.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
       "items": [
         {
           "title": "score",
+          "description": "Represents a label of this datum.",
           "type": "number"
         },
         {
           "title": "data",
+          "description": "Represents a datum.",
           "$ref": "#/definitions/datum"
         }
       ],
       "additionalItems": false
     }
   },
-  "id": "regression",
+  "title": "regression",
   "properties": {
     "train": {
-      "id": "train",
+      "title": "train",
+      "description": "Trains and updates the model. This function is designed to allow bulk update with list of scored_datum.",
       "properties": {
         "return": {
+          "description": "Number of trained datum (i.e., the length of the train_data)",
           "type": "integer"
         },
         "arguments": {
@@ -33,6 +39,7 @@
           "items": [
             {
               "title": "data",
+              "description": "list of tuple of label and datum",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/scored_datum"
@@ -44,9 +51,11 @@
       }
     },
     "estimate": {
-      "id": "estimate",
+      "title": "estimate",
+      "description": "Estimates the value from given estimate_data. This API is designed to allow bulk estimation with list of datum.",
       "properties": {
         "return": {
+          "description": "List of estimated values, in order of given datum",
           "type": "array",
           "items": {
             "type": "number"
@@ -59,6 +68,7 @@
           "items": [
             {
               "title": "data",
+              "description": "list of datum to estimate",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/datum"

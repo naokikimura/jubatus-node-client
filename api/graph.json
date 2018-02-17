@@ -1,30 +1,45 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "node": {
-      "id": "node",
+      "title": "node",
+      "description": "Represents the node information.",
       "type": "array",
-      "minItems": 2,
-      "maxItems": 2,
+      "minItems": 3,
+      "maxItems": 3,
       "items": [
         {
           "title": "property",
+          "description": "Property information for the node.",
           "type": "object",
           "patternProperties": {
             ".*": {
               "type": "string"
             }
-          },
-          "additionalProperties": false
+          }
         },
         {
-          "title": "score",
-          "type": "number"
+          "title": "in_edges",
+          "description": "List of ID of incoming edges.",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        {
+          "title": "out_edges",
+          "description": "List of ID of outgoing edges.",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
         }
       ],
       "additionalItems": false
     },
     "query": {
-      "id": "query",
+      "title": "query",
+      "description": "Represents a query.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
@@ -41,7 +56,8 @@
       "additionalItems": false
     },
     "preset_query": {
-      "id": "preset_query",
+      "title": "preset_query",
+      "description": "Represents a preset query. See the description below for details.",
       "type": "array",
       "minItems": 2,
       "maxItems": 2,
@@ -64,13 +80,15 @@
       "additionalItems": false
     },
     "edge": {
-      "id": "edge",
+      "title": "edge",
+      "description": "Represents the edge information.",
       "type": "array",
       "minItems": 3,
       "maxItems": 3,
       "items": [
         {
           "title": "property",
+          "description": "Property information for the edge.",
           "type": "object",
           "patternProperties": {
             ".*": {
@@ -81,17 +99,20 @@
         },
         {
           "title": "source",
+          "description": "ID of the source node that the edge connects.",
           "type": "string"
         },
         {
           "title": "target",
+          "description": "ID of the target node that the edge connects.",
           "type": "string"
         }
       ],
       "additionalItems": false
     },
     "shortest_path_query": {
-      "id": "shortest_path_query",
+      "title": "shortest_path_query",
+      "description": "Represents a shortest path query information. See the description of get_shortest_path method for details.",
       "type": "array",
       "minItems": 4,
       "maxItems": 4,
@@ -116,10 +137,11 @@
       "additionalItems": false
     }
   },
-  "id": "graph",
+  "title": "graph",
   "properties": {
     "create_node": {
-      "id": "create_node",
+      "title": "create_node",
+      "description": "Creates a node on the graph. Returns a node ID as string.",
       "properties": {
         "return": {
           "type": "string"
@@ -134,7 +156,8 @@
       }
     },
     "remove_node": {
-      "id": "remove_node",
+      "title": "remove_node",
+      "description": "Removes a node node_id from the graph.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -154,7 +177,8 @@
       }
     },
     "update_node": {
-      "id": "update_node",
+      "title": "update_node",
+      "description": "Updates the property of the node node_id to property.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -184,7 +208,8 @@
       }
     },
     "create_edge": {
-      "id": "create_edge",
+      "title": "create_edge",
+      "description": "Creates a link from e.source to e.target. Returns a edge ID as an unsigned long integer.",
       "properties": {
         "return": {
           "type": "number"
@@ -208,7 +233,8 @@
       }
     },
     "update_edge": {
-      "id": "update_edge",
+      "title": "update_edge",
+      "description": "Updates an existing edge edge_id with information e. Property will be replaced.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -236,7 +262,8 @@
       }
     },
     "remove_edge": {
-      "id": "remove_edge",
+      "title": "remove_edge",
+      "description": "Removes an edge edge_id. node_id must be an ID for the source node of the edge edge_id.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -260,7 +287,8 @@
       }
     },
     "get_centrality": {
-      "id": "get_centrality",
+      "title": "get_centrality",
+      "description": "Calculates (gets the computed value) the centrality over the edges that match the preset query query. The query must be registered beforehand by using add_centrality_query.",
       "properties": {
         "return": {
           "type": "number"
@@ -288,7 +316,8 @@
       }
     },
     "add_centrality_query": {
-      "id": "add_centrality_query",
+      "title": "add_centrality_query",
+      "description": "Adds a preset query query to the graph for centrality calculation.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -308,7 +337,8 @@
       }
     },
     "add_shortest_path_query": {
-      "id": "add_shortest_path_query",
+      "title": "add_shortest_path_query",
+      "description": "Adds a preset query query to the graph for shortest path calculation.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -328,7 +358,8 @@
       }
     },
     "remove_centrality_query": {
-      "id": "remove_centrality_query",
+      "title": "remove_centrality_query",
+      "description": "Removes a preset query query from the graph.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -348,7 +379,8 @@
       }
     },
     "remove_shortest_path_query": {
-      "id": "remove_shortest_path_query",
+      "title": "remove_shortest_path_query",
+      "description": "Removes a preset query query from the graph.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -368,7 +400,8 @@
       }
     },
     "get_shortest_path": {
-      "id": "get_shortest_path",
+      "title": "get_shortest_path",
+      "description": "Calculates (from the precomputed data) a shortest path from query.source to query.target that matches the preset query. The query must be registered beforehand by using add_shortest_path_query. Returns a list of node IDs that represents a path from query.source to query.target.",
       "properties": {
         "return": {
           "type": "array",
@@ -393,7 +426,8 @@
       }
     },
     "update_index": {
-      "id": "update_index",
+      "title": "update_index",
+      "description": "Runs mix locally. Do not use in distributed mode.",
       "properties": {
         "return": {
           "type": "boolean"
@@ -408,7 +442,8 @@
       }
     },
     "get_node": {
-      "id": "get_node",
+      "title": "get_node",
+      "description": "Gets the node for a node node_id.",
       "properties": {
         "return": {
           "$ref": "#/definitions/node"
@@ -428,7 +463,8 @@
       }
     },
     "get_edge": {
-      "id": "get_edge",
+      "title": "get_edge",
+      "description": "Gets the edge of an edge edge_id. node_id is an ID for the source node of the edge edge_id.",
       "properties": {
         "return": {
           "$ref": "#/definitions/edge"

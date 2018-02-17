@@ -64,8 +64,8 @@ function createSuperConstructor() {
 
 function buildMethods(schema, constructor) {
     return Object.keys(schema.properties)
-        .map(method => schema.properties[method])
-        .map(({ id: rpcName, properties: { 'arguments': argumentsSchema, 'return': returnSchema } }) => {
+        .map(method => ([ method, schema.properties[method] ]))
+        .map(([ rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
             const validator = new jsonschema.Validator();
             const methodName = toCamelCase(rpcName),

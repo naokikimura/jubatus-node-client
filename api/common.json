@@ -1,13 +1,16 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "definitions": {
     "datum": {
-      "id": "datum",
+      "title": "datum",
+      "description": "Represents a set of data used for machine learning in Jubatus.",
       "type": "array",
       "minItems": 1,
       "maxItems": 3,
       "items": [
         {
-          "id": "string_values",
+          "title": "string_values",
+          "description": "Input data represented in string. It is represented as key-value pairs of data. Name of keys cannot contain “$” sign.",
           "type": "array",
           "items": {
             "type": "array",
@@ -25,7 +28,8 @@
           }
         },
         {
-          "id": "num_values",
+          "title": "num_values",
+          "description": "Input data represented in numeric value. It is represented as key-value pairs of data.",
           "type": "array",
           "items": {
             "type": "array",
@@ -43,7 +47,8 @@
           }
         },
         {
-          "id": "binary_values",
+          "title": "binary_values",
+          "description": "Input data represented in binary value. It is represented as key-value pairs of data.",
           "type": "array",
           "items": {
             "type": "array",
@@ -66,9 +71,11 @@
   },
   "properties": {
     "save": {
-      "id": "save",
+      "title": "save",
+      "description": "Store the learing model to the local disk at ALL servers.",
       "properties": {
         "return": {
+          "description": "Path to the saved model for each server. The key of the map is in form of ipaddr_portnumber.",
           "type": "object"
         },
         "arguments": {
@@ -78,6 +85,7 @@
           "items": [
             {
               "title": "id",
+              "description": "file name to save",
               "type": "string"
             }
           ],
@@ -86,9 +94,11 @@
       }
     },
     "load": {
-      "id": "load",
+      "title": "load",
+      "description": "Restore the saved model from local disk at ALL servers.",
       "properties": {
         "return": {
+          "description": "True if this function loads files successfully at all servers",
           "type": "boolean"
         },
         "arguments": {
@@ -98,6 +108,7 @@
           "items": [
             {
               "title": "id",
+              "description": "file name to load",
               "type": "string"
             }
           ],
@@ -106,9 +117,11 @@
       }
     },
     "clear": {
-      "id": "clear",
+      "title": "clear",
+      "description": "Completely clears the model at ALL servers.",
       "properties": {
         "return": {
+          "description": "True when the model was cleared successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -121,9 +134,11 @@
       }
     },
     "get_config": {
-      "id": "get_config",
+      "title": "get_config",
+      "description": "Returns server configuration from a server. For format of configuration, see API reference of each services.",
       "properties": {
         "return": {
+          "description": "server configuration set on initialization",
           "type": "string"
         },
         "arguments": {
@@ -136,9 +151,11 @@
       }
     },
     "get_status": {
-      "id": "get_status",
+      "title": "get_status",
+      "description": "Returns server status from ALL servers. Each server is represented by a pair of IP address and port.",
       "properties": {
         "return": {
+          "description": "Internal state for each servers. The key of most outer map is in form of ipaddr_portnumber.",
           "type": "object"
         },
         "arguments": {
@@ -151,9 +168,11 @@
       }
     },
     "do_mix": {
-      "id": "do_mix",
+      "title": "do_mix",
+      "description": "Force cluster to fire mix. Call this RPC to Jubatus server directly. When you call this to proxy, RPC error will be raised.",
       "properties": {
         "return": {
+          "description": "True when model mixed successfully",
           "type": "boolean"
         },
         "arguments": {
@@ -166,9 +185,11 @@
       }
     },
     "get_proxy_status": {
-      "id": "get_proxy_status",
+      "title": "get_proxy_status",
+      "description": "Returns proxy status. This is an RPC method for proxy. When you use this for server, RPC error will be raised.",
       "properties": {
         "return": {
+          "description": "Internal state for proxy. The key of most outer map is in form of ipaddr_portnumber.",
           "type": "object"
         },
         "arguments": {
