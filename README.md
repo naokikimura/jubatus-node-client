@@ -26,9 +26,9 @@ const classifier = new jubatus.classifier.client.Classifier(9199, "localhost");
 ```js
 var stringValues = [ ["foo", "bar"] ],
     numValues = [ ["quux", 0.1] ],
-    datum = [ stringValues, numValues ],
+    datum = new jubatus.common.types.Datum(stringValues, numValues),
     label = "baz",
-    data = [ [ label, datum ] ];
+    data = [ new jubatus.classifier.types.LabeledDatum(label, datum) ];
 
 classifier.train(data).then(([ result ]) => {
     console.error(result);
@@ -42,13 +42,12 @@ classifier.train(data).then(([ result ]) => {
 ```js
 var stringValues = [ [ "foo", "qux" ] ],
     numValues = [ [ "quux", 1 ] ],
-    datum = [ stringValues, numValues ],
+    datum = new jubatus.common.types.Datum(stringValues, numValues),
     data = [ datum ];
 
 classifier.classify(data).then(([ result ]) => {
     result.forEach(estimateResults => {
         var mostLikely = estimateResults
-                .map(([ label, score ]) =>({ label, score })
                 .reduce((previous, current) => previous.score > current.score ? previous : current);
         console.log("estimate = %j", mostLikely);
     });
