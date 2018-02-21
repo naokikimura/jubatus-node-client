@@ -104,7 +104,7 @@ export namespace classifier {
        * @param {common.Datum[]} data list of datum to classify
        * @returns {Promise<[EstimateResult[], number]>} List of list of estimate_result, in order of given datum
        */
-      classify(data: common.types.Datum[]): Promise<[types.EstimateResult[], number]>;
+      classify(data: common.types.Datum[]): Promise<[[types.EstimateResult[]], number]>;
       getLabels(): Promise<[object, number]>;
       setLabel(label: string): Promise<[boolean, number]>;
       deleteLabel(label: string): Promise<[boolean, number]>;
