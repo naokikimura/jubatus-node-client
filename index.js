@@ -204,25 +204,25 @@ const services = fs.readdirSync(dirname)
         const schema = JSON.parse(fs.readFileSync(file));
         return ({ [service]: schema });
     })
-    .reduce((accumulator, current) => Object.assign(accumulator, current));
+    .reduce((accumulator, current) => Object.assign(accumulator, current), {});
 const { Common: common } = services;
 const schemas = Object.keys(services)
     .filter(serviceName => serviceName !== 'Common')
     .map(serviceName =>{
         const service = services[serviceName];
-        service.definitions = Object.assign(service.definitions, common.definitions);
+        Object.assign(service.definitions, common.definitions);
         return { [serviceName]: service };
     })
     .reduce((accumulator, current) => Object.assign(accumulator, current));
 const commonConstructor = createClientConstructor('Common', common, createSuperConstructor());
 const commonDefinitionKeys = Object.keys(common.definitions);
 const commonTypes = defineFromTupleFunction(createTypes(common.definitions, []), common.definitions, {});
-module.exports['common'] = { types: commonTypes };
+module.exports['common'] = { types: commonTypes, toTuple };
 Object.keys(schemas).forEach(function (className) {
     const schema = schemas[className];
     debug(className, schema);
     const definitions = schema.definitions;
     const types = defineFromTupleFunction(createTypes(definitions, commonDefinitionKeys), definitions, commonTypes);
-    const clientConstructor = createClientConstructor(className, schema, commonConstructor, Object.assign(types, commonTypes));
+    const clientConstructor = createClientConstructor(className, schema, commonConstructor, Object.assign(Object.assign({}, commonTypes), types));
     module.exports[className.toLowerCase()] = { client: { [className]: clientConstructor }, types };
 });
