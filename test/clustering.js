@@ -33,7 +33,8 @@ describe('clustering#push', () => {
         const points = Array.apply(null, { length: 1000 }).map((v, i) => {
             const index = Math.floor(Math.random() * variables.length);
             const variable = variables[index];
-            return [ '' + i, [ [ [ 'foobar', variable ] ] ] ];
+            const datum = new jubatus.common.types.Datum([ [ 'foobar', variable ] ]);
+            return new jubatus.clustering.types.IndexedPoint('' + i, datum);
         });
         client.push(points).then(([ result ]) => {
             debug(result);
@@ -59,7 +60,10 @@ describe('clustering#get_core_members', () => {
     it('get_core_members', done => {
         client.getCoreMembers().then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf.above(1)
+                .and.to.have.to.nested.property('[0][0]')
+                .and.to.be.a('WeightedDatum');
             done();
         }).catch(done);
     });
@@ -69,7 +73,10 @@ describe('clustering#get_core_members_light', () => {
     it('get_core_members_light', done => {
         client.getCoreMembersLight().then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf.above(1)
+                .and.to.have.to.nested.property('[0][0]')
+                .and.to.be.a('WeightedIndex');
             done();
         }).catch(done);
     });
@@ -79,7 +86,10 @@ describe('clustering#get_k_center', () => {
     it('get_k_center', done => {
         client.getKCenter().then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf.above(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('Datum');
             done();
         }).catch(done);
     });
@@ -90,7 +100,7 @@ describe('clustering#get_nearest_center', () => {
         const datum = [ [ [ 'foo', 'bar' ] ] ];
         client.getNearestCenter(datum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('Datum');
             done();
         }).catch(done);
     });
@@ -101,7 +111,10 @@ describe('clustering#get_nearest_members', () => {
         const datum = [ [ [ 'foo', 'bar' ] ] ];
         client.getNearestMembers(datum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf.above(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('WeightedDatum');
             done();
         }).catch(done);
     });
@@ -112,7 +125,10 @@ describe('clustering#get_nearest_members_light', () => {
         const datum = [ [ [ 'foo', 'bar' ] ] ];
         client.getNearestMembersLight(datum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf.above(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('WeightedIndex');
             done();
         }).catch(done);
     });

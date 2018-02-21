@@ -26,8 +26,8 @@ after(done => {
 describe('burst#add_documents', () => {
     it('add_documents', done => {
         const keyword = 'foo';
-        const keywordParams  = [ keyword, 1.2, 0.3 ];
-        const document = [ 1.2, 'foobar' ];
+        const keywordParams  = new jubatus.burst.types.KeywordWithParams(keyword, 1.2, 0.3);
+        const document = new jubatus.burst.types.Document(1.2, 'foobar');
         const documents = [ document ];
         client.clear().then(([ result ]) => {
             expect(result).to.equal(true);
@@ -65,8 +65,8 @@ describe('burst#get_result', () => {
             return client.getResult(keyword);
         }).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ -20, [ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 3, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ] ]);
+            expect(result).to.be.a('Window')
+                .and.to.deep.equal(jubatus.burst.types.Window.fromTuple([ -20, [ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 3, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ] ]));
             done();
         }).catch(done);
     });
@@ -116,7 +116,7 @@ describe('burst#get_all_bursted_results_at', () => {
 
 describe('burst#get_all_keywords', () => {
     it('get_all_keywords', done => {
-        const keyword = [ 'foo', 1.2, 0.3 ];
+        const keyword = jubatus.burst.types.KeywordWithParams.fromTuple([ 'foo', 1.2, 0.3 ]);
         client.clear().then(([ result ]) => {
             expect(result).to.equal(true);
 
@@ -158,7 +158,7 @@ describe('burst#add_keyword', () => {
 describe('burst#remove_keyword', () => {
     it('remove_keyword', done => {
         const keyword = 'foo';
-        const keywordParams  = [ keyword, 1.2, 0.3 ];
+        const keywordParams  = jubatus.burst.types.KeywordWithParams.fromTuple([ keyword, 1.2, 0.3 ]);
         client.clear().then(([ result ]) => {
             expect(result).to.equal(true);
 
@@ -184,7 +184,7 @@ describe('burst#remove_keyword', () => {
 describe('burst#remove_all_keywords', () => {
     it('remove_all_keywords', done => {
         const keyword = 'foo';
-        const keywordParams  = [ keyword, 1.2, 0.3 ];
+        const keywordParams  = jubatus.burst.types.KeywordWithParams.fromTuple([ keyword, 1.2, 0.3 ]);
         client.clear().then(([ result ]) => {
             expect(result).to.equal(true);
 

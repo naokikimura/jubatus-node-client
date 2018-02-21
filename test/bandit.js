@@ -91,7 +91,7 @@ describe('bandit#select_arm', () => {
         }).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('object');
-            expect(result).to.deep.equal({ [armId]: [ 1, reward ] }, 'get_arm_info');
+            expect(result).to.deep.equal({ [armId]: jubatus.bandit.types.ArmInfo.fromTuple([ 1, reward ]) }, 'get_arm_info');
             done();
         }).catch(done);
     });
@@ -144,7 +144,7 @@ describe('bandit#get_arm_info', () => {
         }).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('object');
-            expect(result).to.deep.equal({ [armId]: [ 1, reward ] });
+            expect(result).to.deep.equal({ [armId]: jubatus.bandit.types.ArmInfo.fromTuple([ 1, reward ]) });
             done();
         }).catch(done);
     });
@@ -179,7 +179,7 @@ describe('bandit#reset', () => {
         }).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('object');
-            expect(result).to.deep.equal({ [armId]: [ 0, 0 ] });
+            expect(result).to.deep.equal({ [armId]: jubatus.bandit.types.ArmInfo.fromTuple([ 0, 0 ]) });
             done();
         }).catch(done);
     });

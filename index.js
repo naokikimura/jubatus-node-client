@@ -14,6 +14,10 @@ function toCamelCase(value) {
     return value.replace(/_([a-z])/g, (match, group1) => group1.toUpperCase());
 }
 
+function toSnakeCase(value) {
+    return value.replace(/(^[A-Z])|([A-Z])/g, (match, g1, g2) => g1 ? g1.toLowerCase() : '_' + g2.toLowerCase());
+}
+
 function toOptions(args) {
     const first = args.shift() || {};
     const rpcClient = first instanceof rpc.Client ? first : first.rpcClient;
@@ -62,7 +66,7 @@ function createSuperConstructor() {
     return constructor;
 }
 
-function buildMethods(schema, constructor) {
+function buildMethods(schema, constructor, types) {
     return Object.keys(schema.properties)
         .map(method => ([ method, schema.properties[method] ]))
         .map(([ rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
@@ -77,29 +81,32 @@ function buildMethods(schema, constructor) {
                     const result = validator.validate(returnValue, returnSchema);
                     assert.ok(result.valid, util.format('%j', result.errors));
                 };
-            return [ rpcName, methodName, assertParams, assertReturn ];
+            const castTypeFunction = (value) => castType(value, returnSchema, types);
+            return [ rpcName, methodName, assertParams, assertReturn, castTypeFunction ];
         })
-        .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn ]) => {
-            constructor.prototype[methodName] = function (...params) {
+        .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn, castTypeFunction ]) => {
+            constructor.prototype[methodName] = function (...args) {
                 const self = this,
                     client = self.getClient(),
-                    callback = (typeof params[params.length - 1] === 'function') && params.pop();
+                    callback = (typeof args[args.length - 1] === 'function') && args.pop();
+                const params = toTuple(args);
                 assertParams(params);
                 params.unshift(self.getName());
                 if (callback) {
                     client.request.apply(client, [ rpcName ].concat(params, (error, result, msgid) => {
                         if (!error) { assertReturn(result); }
-                        callback.call(self, error, result, msgid);
+                        callback.call(self, error, error ? result : castTypeFunction(result), msgid);
                     }));
                 } else {
-                    return client.request.apply(client, [ rpcName ].concat(params));
+                    return client.request.apply(client, [ rpcName ].concat(params))
+                        .then(([result, msgid]) => ([castTypeFunction(result), msgid]));
                 }
             };
             return constructor;
         }, constructor);
 }
 
-function createConstructor(className, schema, superConstructor) {
+function createClientConstructor(className, schema, superConstructor, types) {
     const constructor = function constructor(...args) {
         assert(this instanceof constructor, `${className} is constructor.`);
 
@@ -107,7 +114,84 @@ function createConstructor(className, schema, superConstructor) {
         return this;
     };
     util.inherits(constructor, superConstructor);
-    return buildMethods(schema, constructor);
+    return buildMethods(schema, constructor, types);
+}
+
+function toTuple(value) {
+    return value && typeof value['toTuple'] === 'function' ? value.toTuple() : Array.isArray(value) ? value.map(toTuple) : value;
+}
+
+function castType(value, schema, types) {
+    const typeName = schema.type || 'object';
+    if ('$ref' in schema) {
+        return resolveType(schema['$ref'], types).fromTuple(value);
+    } else if (typeName === 'array') {
+        if (Array.isArray(schema.items)) {
+            return value.map((e, i) => castType(e, schema.items[i], types));
+        } else {
+            return value.map(e => castType(e, schema.items, types));
+        }
+    } else if (typeName === 'object' && ('properties' in schema || 'patternProperties' in schema)) {
+        const properties = Object.keys(schema.properties || {}).map(propertyName => ({propertyName, schema: schema.properties[propertyName]}));
+        const patternProperties = Object.keys(schema.patternProperties || {}).map(propertyName => ({propertyName, schema: schema.patternProperties[propertyName]}));
+        return Object.keys(value)
+            .map(key => ({ key, value: value[key] }))
+            .map(({ key, value }) => {
+                const schemas = []
+                    .concat(properties.filter(({ propertyName }) => propertyName === key))
+                    .concat(patternProperties.filter(({ pattern }) => (new RegExp(pattern).test(key))))
+                    .map(({ schema }) => schema);
+                const typedValue = schemas.reduce((value, schema) => castType(value, schema, types), value);
+                return { [key]: typedValue };
+            })
+            .reduce((accumulator, current) => Object.assign(accumulator, current), {});
+    } else {
+        return value;
+    }
+}
+
+function createTypes(definitions, ignoreKeys) {
+    return Object.keys(definitions)
+        .filter(key => !ignoreKeys.includes(key))
+        .map(key => definitions[key])
+        .map(definition => ([toCamelCase('_' + definition.title), definition.items]))
+        .map(([name, items]) => {
+            const keys = items.map(item => item.title).map(toCamelCase);
+            const properties = keys
+                .map(key => `${key}: { enumerable: true, value: ${key} }`)
+                .concat(`[Symbol.toStringTag]: { value: '${name}' }`).join(',');
+            const functionBody = `Object.defineProperties(this, {${properties}})`;
+            const constructor = new Function(keys, functionBody);
+            constructor.prototype.toTuple = function () {
+                const self = this;
+                return keys.map(key => self[key]).filter(value => value !== undefined).map(toTuple);
+            };
+            return ({ [name]: constructor });
+        })
+        .reduce((accumulator, current) => Object.assign(accumulator, current), {});
+}
+
+function resolveTypeName(pointer) {
+    const p = pointer || '';
+    return toCamelCase('_' + p.substring(p.lastIndexOf('/') + 1));
+}
+
+function resolveType(pointer, types) {
+    return (types || {})[resolveTypeName(pointer)] || { fromTuple: (value) => value };
+}
+
+function defineFromTupleFunction(types, definitions, commonTypes) {
+    return Object.keys(types).map(key => ([key, types[key]])).map(([typeName, constructor]) => {
+        const definitionKey = toSnakeCase(typeName);
+        const constractors = definitions[definitionKey].items.map(item => {
+            return '$ref' in item ? types[resolveTypeName(item['$ref'])] || commonTypes[resolveTypeName(item['$ref'])] : null;
+        });
+        constructor.fromTuple = function (tuple) {
+            const args = tuple.map((value, index) => constractors[index] ? constractors[index].fromTuple(value) : value);
+            return new (Function.prototype.bind.apply(constructor, [null].concat(args)));
+        };
+        return { [typeName]: constructor };
+    }).reduce((accumulator, current) => Object.assign(accumulator, current), {});
 }
 
 const dirname = path.resolve(__dirname, './api/');
@@ -127,14 +211,18 @@ const schemas = Object.keys(services)
     .map(serviceName =>{
         const service = services[serviceName];
         service.definitions = Object.assign(service.definitions, common.definitions);
-        service.properties = Object.assign(service.properties, common.properties);
         return { [serviceName]: service };
     })
     .reduce((accumulator, current) => Object.assign(accumulator, current));
-const superConstructor = createSuperConstructor();
+const commonConstructor = createClientConstructor('Common', common, createSuperConstructor());
+const commonDefinitionKeys = Object.keys(common.definitions);
+const commonTypes = defineFromTupleFunction(createTypes(common.definitions, []), common.definitions, {});
+module.exports['common'] = { types: commonTypes };
 Object.keys(schemas).forEach(function (className) {
     const schema = schemas[className];
     debug(className, schema);
-    const constructor = createConstructor(className, schema, superConstructor);
-    module.exports[className.toLowerCase()] = { client: { [className]: constructor } };
+    const definitions = schema.definitions;
+    const types = defineFromTupleFunction(createTypes(definitions, commonDefinitionKeys), definitions, commonTypes);
+    const clientConstructor = createClientConstructor(className, schema, commonConstructor, Object.assign(types, commonTypes));
+    module.exports[className.toLowerCase()] = { client: { [className]: clientConstructor }, types };
 });

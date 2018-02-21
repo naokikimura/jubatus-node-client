@@ -77,11 +77,12 @@
         "return": {
           "description": "List of list of estimate_result, in order of given datum",
           "type": "array",
-          "items": [
-            {
+          "items": {
+            "type": "array",
+            "items": {
               "$ref": "#/definitions/estimate_result"
             }
-          ]
+          }
         },
         "arguments": {
           "type": "array",

@@ -77,11 +77,9 @@
         "return": {
           "description": "The list of successfully added IDs.",
           "type": "array",
-          "items": [
-            {
-              "type": "string"
-            }
-          ]
+          "items": {
+            "type": "string"
+          }
         },
         "arguments": {
           "type": "array",
@@ -92,11 +90,9 @@
               "title": "data",
               "description": "List of datum for the points",
               "type": "array",
-              "items": [
-                {
-                  "$ref": "#/definitions/datum"
-                }
-              ]
+              "items": {
+                "$ref": "#/definitions/datum"
+              }
             }
           ],
           "additionalItems": false

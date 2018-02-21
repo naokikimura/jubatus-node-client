@@ -151,11 +151,9 @@
         "return": {
           "description": "cluster centers",
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/datum"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/datum"
+          }
         },
         "arguments": {
           "type": "array",
@@ -172,7 +170,7 @@
       "properties": {
         "return": {
           "description": "nearest cluster center",
-          "type": "object"
+          "$ref": "#/definitions/datum"
         },
         "arguments": {
           "type": "array",
@@ -222,11 +220,9 @@
         "return": {
           "description": "coreset",
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/weighted_index"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/weighted_index"
+          }
         },
         "arguments": {
           "type": "array",

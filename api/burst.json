@@ -68,7 +68,7 @@
           "description": "Batches that composes this window.",
           "type": "array",
           "items": {
-            "$ref": "batch"
+            "$ref": "#/definitions/batch"
           }
         }
       ],

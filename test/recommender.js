@@ -37,7 +37,7 @@ describe('recommender#clear_row', () => {
 describe('recommender#update_row', () => {
     it('update_row', done => {
         const id = 'foo';
-        const datum = [ [], [ [ 'bar', 1.2 ], [ 'baz', 3.4 ]  ], [] ];
+        const datum = new jubatus.common.types.Datum([], [['bar', 1], ['baz', 3]], []);
         client.updateRow(id, datum).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
@@ -49,10 +49,11 @@ describe('recommender#update_row', () => {
 describe('recommender#complete_row_from_id', () => {
     it('complete_row_from_id', done => {
         const id = 'foo';
+        const expected = new jubatus.common.types.Datum([], [['bar', 1], ['baz', 3]], []);
         client.completeRowFromId(id).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array')
-                .and.to.have.nested.property('[1][0][0]', 'bar');
+            expect(result).to.be.a('Datum')
+                .and.to.deep.equal(expected);
             done();
         }).catch(done);
     });
@@ -60,11 +61,12 @@ describe('recommender#complete_row_from_id', () => {
 
 describe('recommender#complete_row_from_datum', () => {
     it('complete_row_from_datum', done => {
-        const datum = [ [], [ [ 'bar', 1.2 ] ], [] ];
+        const datum = [ [], [ [ 'bar', 1 ] ], [] ];
+        const expected = new jubatus.common.types.Datum([], [['bar', 1], ['baz', 3]], []);
         client.completeRowFromDatum(datum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array')
-                .and.to.have.nested.property('[1][1][0]', 'baz');
+            expect(result).to.be.a('Datum')
+                .and.to.deep.equal(expected);
             done();
         }).catch(done);
     });
@@ -76,7 +78,9 @@ describe('recommender#similar_row_from_id', () => {
         client.similarRowFromId(id, size).then(([ result ]) => {
             debug(result);
             expect(result).to.be.an('array')
-                .and.to.have.deep.members([ [ 'foo', 1 ] ]);
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.recommender.types.IdWithScore.fromTuple([ id, 1 ]));
             done();
         }).catch(done);
     });
@@ -88,7 +92,9 @@ describe('recommender#similar_row_from_id_and_score', () => {
         client.similarRowFromIdAndScore(id, score).then(([ result ]) => {
             debug(result);
             expect(result).to.be.an('array')
-                .and.to.have.deep.members([ [ 'foo', 1 ] ]);
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.recommender.types.IdWithScore.fromTuple([ id, 1 ]));
             done();
         }).catch(done);
     });
@@ -100,7 +106,9 @@ describe('recommender#similar_row_from_id_and_rate', () => {
         client.similarRowFromIdAndRate(id, rate).then(([ result ]) => {
             debug(result);
             expect(result).to.be.an('array')
-                .and.to.have.deep.members([ [ 'foo', 1 ] ]);
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.recommender.types.IdWithScore.fromTuple([ id, 1 ]));
             done();
         }).catch(done);
     });
@@ -113,7 +121,10 @@ describe('recommender#similar_row_from_datum', () => {
         client.similarRowFromDatum(datum, size).then(([ result ]) => {
             debug(result);
             expect(result).to.be.an('array')
-                .and.to.have.nested.property('[0][0]', 'foo');
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('IdWithScore')
+                .and.to.have.to.nested.property('id', 'foo');
             done();
         }).catch(done);
     });
@@ -126,7 +137,10 @@ describe('recommender#similar_row_from_datum_and_score', () => {
         client.similarRowFromDatumAndScore(datum, score).then(([ result ]) => {
             debug(result);
             expect(result).to.be.an('array')
-                .and.to.have.nested.property('[0][0]', 'foo');
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('IdWithScore')
+                .and.to.have.to.nested.property('id', 'foo');
             done();
         }).catch(done);
     });
@@ -139,7 +153,10 @@ describe('recommender#similar_row_from_datum_and_rate', () => {
         client.similarRowFromDatumAndRate(datum, rate).then(([ result ]) => {
             debug(result);
             expect(result).to.be.an('array')
-                .and.to.have.nested.property('[0][0]', 'foo');
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('IdWithScore')
+                .and.to.have.to.nested.property('id', 'foo');
             done();
         }).catch(done);
     });
@@ -150,8 +167,8 @@ describe('recommender#decode_row', () => {
         const id = 'foo';
         client.decodeRow(id).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.an('array')
-                .and.to.have.nested.property('[1][0][0]', 'bar');
+            expect(result).to.be.an('Datum')
+                .and.to.have.nested.property('numValues[0][0]', 'bar');
             done();
         }).catch(done);
     });

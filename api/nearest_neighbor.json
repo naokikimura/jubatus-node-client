@@ -59,11 +59,9 @@
         "return": {
           "description": "row IDs that are the nearest to the row id and their distance values",
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/id_with_score"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/id_with_score"
+          }
         },
         "arguments": {
           "type": "array",
@@ -92,11 +90,9 @@
         "return": {
           "description": "row IDs that are the nearest to query and their distance values",
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/id_with_score"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/id_with_score"
+          }
         },
         "arguments": {
           "type": "array",
@@ -125,11 +121,9 @@
         "return": {
           "description": "row IDs that are the nearest to the row id and their similarity values",
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/id_with_score"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/id_with_score"
+          }
         },
         "arguments": {
           "type": "array",
@@ -158,11 +152,9 @@
         "return": {
           "description": "row IDs that are the nearest to query and their similarity values",
           "type": "array",
-          "items": [
-            {
-              "$ref": "#/definitions/id_with_score"
-            }
-          ]
+          "items": {
+            "$ref": "#/definitions/id_with_score"
+          }
         },
         "arguments": {
           "type": "array",
@@ -191,11 +183,9 @@
         "return": {
           "description": "list of all row IDs",
           "type": "array",
-          "items": [
-            {
-              "type": "string"
-            }
-          ]
+          "items": {
+            "type": "string"
+          }
         },
         "arguments": {
           "type": "array",

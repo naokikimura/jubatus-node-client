@@ -337,11 +337,9 @@
         "return": {
           "description": "list of all row IDs",
           "type": "array",
-          "items": [
-            {
-              "type": "string"
-            }
-          ]
+          "items": {
+            "type": "string"
+          }
         },
         "arguments": {
           "type": "array",

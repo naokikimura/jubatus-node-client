@@ -25,9 +25,9 @@ after(done => {
 
 describe('classifier#train', () => {
     it('train', done => {
-        const datum = [ [ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ] ],
-            label = 'baz',
-            data = [ [ label, datum ] ];
+        const datum = new jubatus.common.types.Datum([ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ]),
+            labeledDatum = new jubatus.classifier.types.LabeledDatum('baz', datum),
+            data = [ labeledDatum ];
         client.train(data).then(([ result ]) => {
             debug(result);
             expect(result).to.be.ok;
@@ -56,11 +56,11 @@ describe('classifier#classify', () => {
             return client.classify(data);
         }).then(([ result ]) => {
             debug(result);
-            expect(result.length).to.equal(1);
-            result.forEach(estimates => {
-                expect(estimates[0][0]).to.be.a('string');
-                expect(estimates[0][1]).to.be.a('number');
-            });
+            expect(result).to.be.an('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0][0]')
+                .and.to.be.a('EstimateResult')
+                .and.to.have.property('label', 'baz');
             done();
         }).catch(done);
     });

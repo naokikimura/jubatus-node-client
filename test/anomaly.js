@@ -37,11 +37,11 @@ describe('anomaly#clear_row', () => {
 
 describe('anomaly#add', () => {
     it('add', done => {
-        const datum = [ [ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ], [] ];
-        client.add(datum).then(([ result ]) => {
+        const datum = new jubatus.common.types.Datum([['foo', 'bar']], [['qux', 1.1]], []);
+        client.add(datum).then(([result]) => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ '0', Number.POSITIVE_INFINITY ]);
+            expect(result).to.be.a('IdWithScore')
+                .and.to.deep.equal(new jubatus.anomaly.types.IdWithScore('0', Number.POSITIVE_INFINITY));
             done();
         }).catch(done);
     });
@@ -61,9 +61,9 @@ describe('anomaly#add_bulk', () => {
 
 describe('anomaly#update', () => {
     it('update', done => {
-        const datum = [ [], [ [ 'quux', 1.1 ] ], [] ];
+        const datum = new jubatus.common.types.Datum([], [ [ 'quux', 1.1 ] ], []);
         client.add(datum).then(([ result ]) => {
-            expect(result, 'add').to.be.an('array').that.includes('4');
+            expect(result, 'add').to.be.an('IdWithScore').and.to.have.property('id', '4');
             return client.update('4', [ [], [ [ 'quux', Number.MIN_VALUE ] ], [] ]);
         }).then(([ result ]) => {
             debug(result);
@@ -77,7 +77,7 @@ describe('anomaly#overwrite', () => {
     it('overwrite', done => {
         const datum = [ [], [ [ 'quuz', 123 ] ], [] ];
         client.add(datum).then(([ result ]) => {
-            expect(result, 'add').to.be.an('array').that.includes('5');
+            expect(result, 'add').to.be.an('IdWithScore').and.to.have.property('id', '5');
             return client.overwrite('5', [ [], [ [ 'quuz', Number.MIN_SAFE_INTEGER ] ], [] ]);
         }).then(([ result ]) => {
             debug(result);

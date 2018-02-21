@@ -25,9 +25,10 @@ after(done => {
 
 describe('regression#train', () => {
     it('train', done => {
-        const datum = [ [ ['foo', 'bar'] ], [] ],
+        const datum = new jubatus.common.types.Datum([['foo', 'bar']], []),
             value = 1.01,
-            data = [ [value, datum] ];
+            scoredDatum = new jubatus.regression.types.ScoredDatum(value, datum),
+            data = [ scoredDatum ];
         client.train(data).then(([ result ]) => {
             debug(result);
             expect(result).to.be.ok;

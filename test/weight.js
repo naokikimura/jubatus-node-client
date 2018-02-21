@@ -27,10 +27,13 @@ describe('weight#update', () => {
         const stringValues = [ [ 'foo', 'bar' ] ];
         const numValues = [ [ 'qux', 1.1 ] ];
         const binaryValues = [];
-        const datum = [ stringValues, numValues, binaryValues ];
+        const datum = new jubatus.common.types.Datum(stringValues, numValues, binaryValues);
         client.update(datum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('Feature');
             done();
         }).catch(done);
     });
@@ -44,7 +47,10 @@ describe('weight#calc_weight', () => {
         const datum = [ stringValues, numValues, binaryValues ];
         client.calcWeight(datum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.be.a('Feature');
             done();
         }).catch(done);
     });

@@ -26,7 +26,7 @@ after(done => {
 describe('nearest_neighbor#set_row', () => {
     it('set_row', done => {
         const id = 'foobar';
-        const datum = [ [ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ], [] ];
+        const datum = new jubatus.common.types.Datum([['foo', 'bar']], [['qux', 1.1]], []);
         client.setRow(id, datum).then(([ result ]) => {
             debug(result);
             expect(result).to.be.a('boolean');
@@ -41,8 +41,10 @@ describe('nearest_neighbor#neighbor_row_from_id', () => {
         const id = 'foobar', size = 1;
         client.neighborRowFromId(id, size).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ [ id, 0 ] ]);
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.nearestneighbor.types.IdWithScore.fromTuple([ id, 0 ]));
             done();
         }).catch(done);
     });
@@ -54,8 +56,10 @@ describe('nearest_neighbor#neighbor_row_from_datum', () => {
         const size = 1;
         client.neighborRowFromDatum(datum, size).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ [ 'foobar', 0 ] ]);
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.nearestneighbor.types.IdWithScore.fromTuple([ 'foobar', 0 ]));
             done();
         }).catch(done);
     });
@@ -66,8 +70,10 @@ describe('nearest_neighbor#similar_row_from_id', () => {
         const id = 'foobar', retNum = 1;
         client.similarRowFromId(id, retNum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ [ id, 1 ] ]);
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.nearestneighbor.types.IdWithScore.fromTuple([ id, 1 ]));
             done();
         }).catch(done);
     });
@@ -79,8 +85,10 @@ describe('nearest_neighbor#similar_row_from_datum', () => {
         const retNum = 1;
         client.neighborRowFromDatum(datum, retNum).then(([ result ]) => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ [ 'foobar', 0 ] ]);
+            expect(result).to.be.a('array')
+                .and.to.have.lengthOf(1)
+                .and.to.have.to.nested.property('[0]')
+                .and.to.deep.equal(jubatus.nearestneighbor.types.IdWithScore.fromTuple([ 'foobar', 0 ]));
             done();
         }).catch(done);
     });
