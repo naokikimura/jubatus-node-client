@@ -32,17 +32,18 @@ function createSuperConstructor() {
     const constructor = function constructor(...args) {
         const options = toOptions(args);
         const { port = 9199, host = 'localhost', timeoutSeconds = 0, rpcClient } = options;
-        let { name = '' } = options ;
+        let { name = '' } = options;
         const codecOptions = { encode: { useraw: true } };
         const client = rpcClient || rpc.createClient(port, host, timeoutSeconds * 1000, codecOptions);
 
-        Object.defineProperty(this, 'client', {
-            get() { return client; }
-        });
-
-        Object.defineProperty(this, 'name', {
-            get() { return name; },
-            set(value) { name = value; }
+        Object.defineProperties(this, {
+            'client': {
+                get() { return client; }
+            },
+            'name': {
+                get() { return name; },
+                set(value) { name = value; }
+            }
         });
 
         return this;
@@ -68,23 +69,23 @@ function createSuperConstructor() {
 
 function buildMethods(schema, constructor, types) {
     return Object.keys(schema.properties)
-        .map(method => ([ method, schema.properties[method] ]))
-        .map(([ rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
+        .map(method => ([method, schema.properties[method]]))
+        .map(([rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
             const validator = new jsonschema.Validator();
             const methodName = toCamelCase(rpcName),
-                assertParams = isProduct ? () => {} : params => {
+                assertParams = isProduct ? () => { } : params => {
                     const result = validator.validate(params, argumentsSchema);
                     assert.ok(result.valid, util.format('%j', result.errors));
                 },
-                assertReturn = isProduct ? () => {} : returnValue => {
+                assertReturn = isProduct ? () => { } : returnValue => {
                     const result = validator.validate(returnValue, returnSchema);
                     assert.ok(result.valid, util.format('%j', result.errors));
                 };
             const castTypeFunction = (value) => castType(value, returnSchema, types);
-            return [ rpcName, methodName, assertParams, assertReturn, castTypeFunction ];
+            return [rpcName, methodName, assertParams, assertReturn, castTypeFunction];
         })
-        .reduce((constructor, [ rpcName, methodName, assertParams, assertReturn, castTypeFunction ]) => {
+        .reduce((constructor, [rpcName, methodName, assertParams, assertReturn, castTypeFunction]) => {
             constructor.prototype[methodName] = function (...args) {
                 const self = this,
                     client = self.getClient(),
@@ -93,12 +94,12 @@ function buildMethods(schema, constructor, types) {
                 assertParams(params);
                 params.unshift(self.getName());
                 if (callback) {
-                    client.request.apply(client, [ rpcName ].concat(params, (error, result, msgid) => {
+                    client.request.apply(client, [rpcName].concat(params, (error, result, msgid) => {
                         if (!error) { assertReturn(result); }
                         callback.call(self, error, error ? result : castTypeFunction(result), msgid);
                     }));
                 } else {
-                    return client.request.apply(client, [ rpcName ].concat(params))
+                    return client.request.apply(client, [rpcName].concat(params))
                         .then(([result, msgid]) => ([castTypeFunction(result), msgid]));
                 }
             };
@@ -132,8 +133,8 @@ function castType(value, schema, types) {
             return value.map(e => castType(e, schema.items, types));
         }
     } else if (typeName === 'object' && ('properties' in schema || 'patternProperties' in schema)) {
-        const properties = Object.keys(schema.properties || {}).map(propertyName => ({propertyName, schema: schema.properties[propertyName]}));
-        const patternProperties = Object.keys(schema.patternProperties || {}).map(propertyName => ({propertyName, schema: schema.patternProperties[propertyName]}));
+        const properties = Object.keys(schema.properties || {}).map(propertyName => ({ propertyName, schema: schema.properties[propertyName] }));
+        const patternProperties = Object.keys(schema.patternProperties || {}).map(propertyName => ({ propertyName, schema: schema.patternProperties[propertyName] }));
         return Object.keys(value)
             .map(key => ({ key, value: value[key] }))
             .map(({ key, value }) => {
@@ -161,7 +162,10 @@ function createTypes(definitions, ignoreKeys) {
                 .map(key => `${key}: { enumerable: true, value: ${key} }`)
                 .concat(`[Symbol.toStringTag]: { value: '${name}' }`).join(',');
             const functionBody = `Object.defineProperties(this, {${properties}})`;
-            const constructor = new Function(keys, functionBody);
+            const args = items.map(item => ({ 'default': item['default'], argument: toCamelCase(item.title) }))
+                .map(({ 'default': defaultValue, argument}) => defaultValue !== undefined ? `${argument}=${JSON.stringify(defaultValue)}` : argument)
+                .join(',');
+            const constructor = new Function(args, functionBody);
             constructor.prototype.toTuple = function () {
                 const self = this;
                 return keys.map(key => self[key]).filter(value => value !== undefined).map(toTuple);
@@ -208,7 +212,7 @@ const services = fs.readdirSync(dirname)
 const { Common: common } = services;
 const schemas = Object.keys(services)
     .filter(serviceName => serviceName !== 'Common')
-    .map(serviceName =>{
+    .map(serviceName => {
         const service = services[serviceName];
         Object.assign(service.definitions, common.definitions);
         return { [serviceName]: service };
@@ -217,6 +221,21 @@ const schemas = Object.keys(services)
 const commonConstructor = createClientConstructor('Common', common, createSuperConstructor());
 const commonDefinitionKeys = Object.keys(common.definitions);
 const commonTypes = defineFromTupleFunction(createTypes(common.definitions, []), common.definitions, {});
+if ('Datum' in commonTypes) {
+    const Datum = commonTypes.Datum;
+    Datum.prototype.addString = function (key, value) {
+        this.stringValues.push([key, value]);
+        return this;
+    };
+    Datum.prototype.addNumber = function (key, value) {
+        this.numValues.push([key, value]);
+        return this;
+    };
+    Datum.prototype.addBinary = function (key, value) {
+        this.binaryValues.push([key, value]);
+        return this;
+    };
+}
 module.exports['common'] = { types: commonTypes, toTuple };
 Object.keys(schemas).forEach(function (className) {
     const schema = schemas[className];

@@ -39,7 +39,7 @@ describe('classifier#train', () => {
 
 describe('classifier#classify', () => {
     it('classify', done => {
-        const datum = [ [ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ] ],
+        const datum = new jubatus.common.types.Datum().addString('foo', 'bar').addNumber('qux', 1.1),
             data = [ datum ];
         client.classify(data).then(([ result ]) => {
             debug(result);

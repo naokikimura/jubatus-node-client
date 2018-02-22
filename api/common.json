@@ -12,6 +12,7 @@
           "title": "string_values",
           "description": "Input data represented in string. It is represented as key-value pairs of data. Name of keys cannot contain “$” sign.",
           "type": "array",
+          "default": [],
           "items": {
             "type": "array",
             "minItems": 2,
@@ -31,6 +32,7 @@
           "title": "num_values",
           "description": "Input data represented in numeric value. It is represented as key-value pairs of data.",
           "type": "array",
+          "default": [],
           "items": {
             "type": "array",
             "minItems": 2,
@@ -50,6 +52,7 @@
           "title": "binary_values",
           "description": "Input data represented in binary value. It is represented as key-value pairs of data.",
           "type": "array",
+          "default": [],
           "items": {
             "type": "array",
             "minItems": 2,
