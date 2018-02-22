@@ -27,7 +27,7 @@ describe('nearest_neighbor#set_row', () => {
     it('set_row', done => {
         const id = 'foobar';
         const datum = new jubatus.common.types.Datum([['foo', 'bar']], [['qux', 1.1]], []);
-        client.setRow(id, datum).then(([ result ]) => {
+        client.setRow(id, datum).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
@@ -39,7 +39,7 @@ describe('nearest_neighbor#set_row', () => {
 describe('nearest_neighbor#neighbor_row_from_id', () => {
     it('neighbor_row_from_id', done => {
         const id = 'foobar', size = 1;
-        client.neighborRowFromId(id, size).then(([ result ]) => {
+        client.neighborRowFromId(id, size).then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf(1)
@@ -54,7 +54,7 @@ describe('nearest_neighbor#neighbor_row_from_datum', () => {
     it('neighbor_row_from_datum', done => {
         const datum = [ [ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ], [] ];
         const size = 1;
-        client.neighborRowFromDatum(datum, size).then(([ result ]) => {
+        client.neighborRowFromDatum(datum, size).then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf(1)
@@ -68,7 +68,7 @@ describe('nearest_neighbor#neighbor_row_from_datum', () => {
 describe('nearest_neighbor#similar_row_from_id', () => {
     it('similar_row_from_id', done => {
         const id = 'foobar', retNum = 1;
-        client.similarRowFromId(id, retNum).then(([ result ]) => {
+        client.similarRowFromId(id, retNum).then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf(1)
@@ -83,7 +83,7 @@ describe('nearest_neighbor#similar_row_from_datum', () => {
     it('similar_row_from_datum', done => {
         const datum = [ [ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ], [] ];
         const retNum = 1;
-        client.neighborRowFromDatum(datum, retNum).then(([ result ]) => {
+        client.neighborRowFromDatum(datum, retNum).then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf(1)
@@ -96,7 +96,7 @@ describe('nearest_neighbor#similar_row_from_datum', () => {
 
 describe('nearest_neighbor#get_all_rows', () => {
     it('get_all_rows', done => {
-        client.getAllRows().then(([ result ]) => {
+        client.getAllRows().then(result => {
             debug(result);
             expect(result).to.be.a('array');
             expect(result).to.deep.equal([ 'foobar' ]);

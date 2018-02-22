@@ -100,7 +100,7 @@ function buildMethods(schema, constructor, types) {
                     }));
                 } else {
                     return client.request.apply(client, [rpcName].concat(params))
-                        .then(([result, msgid]) => ([castTypeFunction(result), msgid]));
+                        .then(([result]) => castTypeFunction(result));
                 }
             };
             return constructor;
@@ -133,8 +133,10 @@ function castType(value, schema, types) {
             return value.map(e => castType(e, schema.items, types));
         }
     } else if (typeName === 'object' && ('properties' in schema || 'patternProperties' in schema)) {
-        const properties = Object.keys(schema.properties || {}).map(propertyName => ({ propertyName, schema: schema.properties[propertyName] }));
-        const patternProperties = Object.keys(schema.patternProperties || {}).map(propertyName => ({ propertyName, schema: schema.patternProperties[propertyName] }));
+        const properties = Object.keys(schema.properties || {})
+            .map(propertyName => ({ propertyName, schema: schema.properties[propertyName] }));
+        const patternProperties = Object.keys(schema.patternProperties || {})
+            .map(propertyName => ({ propertyName, schema: schema.patternProperties[propertyName] }));
         return Object.keys(value)
             .map(key => ({ key, value: value[key] }))
             .map(({ key, value }) => {

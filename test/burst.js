@@ -29,15 +29,15 @@ describe('burst#add_documents', () => {
         const keywordParams  = new jubatus.burst.types.KeywordWithParams(keyword, 1.2, 0.3);
         const document = new jubatus.burst.types.Document(1.2, 'foobar');
         const documents = [ document ];
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
             
             return client.addKeyword(keywordParams);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.addDocuments(documents);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('number');
             expect(result).to.equal(1);
@@ -51,19 +51,19 @@ describe('burst#get_result', () => {
         const keyword = 'foo';
         const keywordParams  = [ keyword, 1.001, 0.001 ];
         const documents = [ [ 0, 'foo' ], [ 0, 'bar' ], [ 0, 'baz' ] ];
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.addKeyword(keywordParams);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.addDocuments(documents);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(3);
 
             return client.getResult(keyword);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('Window')
                 .and.to.deep.equal(jubatus.burst.types.Window.fromTuple([ -20, [ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 3, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ] ]));
@@ -81,19 +81,19 @@ describe('burst#get_result_at', () => {
             new jubatus.burst.types.Document(3, 'bar'),
             new jubatus.burst.types.Document(6, 'baz')
         ];
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.addKeyword(keywordParams);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.addDocuments(documents);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(3);
 
             return client.getResultAt(keyword, 0);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('Window')
                 .and.to.deep.equal(jubatus.burst.types.Window.fromTuple([ -20, [ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 3, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ] ]));
@@ -107,19 +107,19 @@ describe('burst#get_all_bursted_results', () => {
         const keyword = 'foo';
         const keywordParams  = [ keyword, 1.001, 0.001 ];
         const documents = [ [ 0, 'foo' ], [ 1, 'bar' ], [ 2, 'baz' ] ];
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.addKeyword(keywordParams);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.addDocuments(documents);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(3);
 
             return client.getAllBurstedResults();
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({});
@@ -131,11 +131,11 @@ describe('burst#get_all_bursted_results', () => {
 describe('burst#get_all_bursted_results_at', () => {
     it('get_all_bursted_results_at', done => {
         const pos = 0;
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.getAllBurstedResultsAt(pos);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({});
@@ -147,20 +147,20 @@ describe('burst#get_all_bursted_results_at', () => {
 describe('burst#get_all_keywords', () => {
     it('get_all_keywords', done => {
         const keyword = jubatus.burst.types.KeywordWithParams.fromTuple([ 'foo', 1.2, 0.3 ]);
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.getAllKeywords();
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('array');
             expect(result).to.deep.equal([]);
 
             return client.addKeyword(keyword);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.getAllKeywords();
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('array');
             expect(result).to.deep.equal([ keyword ]);
@@ -172,11 +172,11 @@ describe('burst#get_all_keywords', () => {
 describe('burst#add_keyword', () => {
     it('add_keyword', done => {
         const keyword = [ 'foo', 1.2, 0.3 ];
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.addKeyword(keyword);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
@@ -189,20 +189,20 @@ describe('burst#remove_keyword', () => {
     it('remove_keyword', done => {
         const keyword = 'foo';
         const keywordParams  = jubatus.burst.types.KeywordWithParams.fromTuple([ keyword, 1.2, 0.3 ]);
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.addKeyword(keywordParams);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.getAllKeywords();
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('array');
             expect(result).to.deep.equal([ keywordParams ]);
 
             return client.removeKeyword(keyword);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
@@ -215,20 +215,20 @@ describe('burst#remove_all_keywords', () => {
     it('remove_all_keywords', done => {
         const keyword = 'foo';
         const keywordParams  = jubatus.burst.types.KeywordWithParams.fromTuple([ keyword, 1.2, 0.3 ]);
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
 
             return client.addKeyword(keywordParams);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
 
             return client.getAllKeywords();
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('array');
             expect(result).to.deep.equal([ keywordParams ]);
 
             return client.removeAllKeywords();
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);

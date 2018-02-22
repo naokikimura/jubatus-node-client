@@ -26,7 +26,7 @@ after(done => {
 describe('bandit#register_arm', () => {
     it('register_arm', done => {
         const armId = 'foo';
-        client.registerArm(armId).then(([ result ]) => {
+        client.registerArm(armId).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
@@ -38,22 +38,22 @@ describe('bandit#register_arm', () => {
 describe('bandit#delete_arm', () => {
     it('delete_arm', done => {
         const armId = 'foo';
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
 
             return client.deleteArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(false);
 
             return client.registerArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
 
             return client.deleteArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
@@ -67,28 +67,28 @@ describe('bandit#select_arm', () => {
         const armId = 'foo';
         const playerId = 'bar';
         const reward = 1.08;
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'clear');
 
             return client.registerArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_arm');
 
             return client.registerReward(playerId, armId, reward);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_reward');
 
             return client.selectArm(playerId);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('string');
             expect(result).to.equal(armId, 'select_arm');
 
             return client.getArmInfo(playerId);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({ [armId]: jubatus.bandit.types.ArmInfo.fromTuple([ 1, reward ]) }, 'get_arm_info');
@@ -102,17 +102,17 @@ describe('bandit#register_reward', () => {
         const armId = 'foo';
         const playerId = 'bar';
         const reward = 1.08;
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'clear');
 
             return client.registerArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_arm');
 
             return client.registerReward(playerId, armId, reward);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_reward');
@@ -126,22 +126,22 @@ describe('bandit#get_arm_info', () => {
         const armId = 'foo';
         const playerId = 'bar';
         const reward = 1.08;
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'clear');
 
             return client.registerArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_arm');
 
             return client.registerReward(playerId, armId, reward);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_reward');
 
             return client.getArmInfo(playerId);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({ [armId]: jubatus.bandit.types.ArmInfo.fromTuple([ 1, reward ]) });
@@ -155,28 +155,28 @@ describe('bandit#reset', () => {
         const armId = 'foo';
         const playerId = 'bar';
         const reward = 1.08;
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'clear');
 
             return client.registerArm(armId);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_arm');
 
             return client.registerReward(playerId, armId, reward);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'register_reward');
 
             return client.reset(playerId);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true, 'reset');
 
             return client.getArmInfo(playerId);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({ [armId]: jubatus.bandit.types.ArmInfo.fromTuple([ 0, 0 ]) });

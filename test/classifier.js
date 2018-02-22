@@ -28,7 +28,7 @@ describe('classifier#train', () => {
         const datum = new jubatus.common.types.Datum([ [ 'foo', 'bar' ] ], [ [ 'qux', 1.1 ] ]),
             labeledDatum = new jubatus.classifier.types.LabeledDatum('baz', datum),
             data = [ labeledDatum ];
-        client.train(data).then(([ result ]) => {
+        client.train(data).then(result => {
             debug(result);
             expect(result).to.be.ok;
             expect(result).to.equal(1);
@@ -41,7 +41,7 @@ describe('classifier#classify', () => {
     it('classify', done => {
         const datum = new jubatus.common.types.Datum().addString('foo', 'bar').addNumber('qux', 1.1),
             data = [ datum ];
-        client.classify(data).then(([ result ]) => {
+        client.classify(data).then(result => {
             debug(result);
             expect(result.length).to.equal(1);
 
@@ -49,12 +49,12 @@ describe('classifier#classify', () => {
                 label = 'baz',
                 data = [ [ label, datum ] ];
             return client.train(data);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(1);
             let datum = [ [ [ 'foo', 'bar' ] ] ],
                 data = [ datum ];
             return client.classify(data);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.an('array')
                 .and.to.have.lengthOf(1)
@@ -68,7 +68,7 @@ describe('classifier#classify', () => {
 
 describe('classifier#get_labels', () => {
     it('get_labels', done => {
-        client.getLabels().then(([ result ]) => {
+        client.getLabels().then(result => {
             debug(result);
             expect(result).to.be.a('object');
             done();
@@ -79,13 +79,13 @@ describe('classifier#get_labels', () => {
 describe('classifier#set_label', () => {
     it('set_label', done => {
         const label = 'foo';
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
             return client.setLabel(label);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
             return client.getLabels();
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({ [label]: 0 });
@@ -97,19 +97,19 @@ describe('classifier#set_label', () => {
 describe('classifier#delete_label', () => {
     it('delete_label', done => {
         const label = 'foo';
-        client.clear().then(([ result ]) => {
+        client.clear().then(result => {
             expect(result).to.equal(true);
             return client.setLabel(label);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
             return client.getLabels();
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.deep.equal({ [label]: 0 });
             return client.deleteLabel(label);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(true);
             return client.getLabels();
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             expect(result).to.deep.equal({});

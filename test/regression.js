@@ -29,7 +29,7 @@ describe('regression#train', () => {
             value = 1.01,
             scoredDatum = new jubatus.regression.types.ScoredDatum(value, datum),
             data = [ scoredDatum ];
-        client.train(data).then(([ result ]) => {
+        client.train(data).then(result => {
             debug(result);
             expect(result).to.be.ok;
             expect(result).to.equal(1);
@@ -42,7 +42,7 @@ describe('regression#estimate', () => {
     it('estimate', done => {
         var datum = [ [ ['foo', 'bar'] ], [] ],
             data = [ datum ];
-        client.estimate(data).then(([ result ]) => {
+        client.estimate(data).then(result => {
             debug(result);
             expect(result.length).to.equal(1);
 
@@ -50,12 +50,12 @@ describe('regression#estimate', () => {
                 value = 1,
                 data = [ [value, datum] ];
             return client.train(data);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.equal(1);
             let datum = [ [ ['foo', 'bar'] ], [] ],
                 data = [ datum ];
             return client.estimate(data);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result.length).to.equal(1);
             result.forEach(estimate => {

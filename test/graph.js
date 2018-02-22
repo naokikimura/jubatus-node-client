@@ -25,7 +25,7 @@ after(done => {
 
 describe('graph#create_node', () => {
     it('create_node', done => {
-        client.createNode().then(([ result ]) => {
+        client.createNode().then(result => {
             debug(result);
             expect(result).to.be.a('string');
             done();
@@ -35,10 +35,10 @@ describe('graph#create_node', () => {
 
 describe('graph#remove_node', () => {
     it('remove_node', done => {
-        client.createNode().then(([ result ]) => {
+        client.createNode().then(result => {
             expect(result).to.be.a('string');
             return client.removeNode(result);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -49,10 +49,10 @@ describe('graph#remove_node', () => {
 describe('graph#update_node', () => {
     it('update_node', done => {
         const property = { 'foo': 'bar' };
-        client.createNode().then(([ nodeId ]) => {
+        client.createNode().then(nodeId => {
             expect(nodeId).to.be.a('string');
             return client.updateNode(nodeId, property);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -63,14 +63,14 @@ describe('graph#update_node', () => {
 describe('graph#create_edge', () => {
     it('create_edge', done => {
         const property = { 'foo': 'bar' };
-        client.createNode().then(([ source ]) => {
+        client.createNode().then(source => {
             expect(source).to.be.a('string');
-            return client.createNode().then(([ target ]) => ([source, target]));
+            return client.createNode().then(target => ([source, target]));
         }).then(([source, target]) => {
             expect(target).to.be.a('string');
             const edge = new jubatus.graph.types.Edge(property, source, target);
             return client.createEdge(edge.source, edge);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('number');
             done();
@@ -80,18 +80,18 @@ describe('graph#create_edge', () => {
 
 describe('graph#update_edge', () => {
     it('update_edge', done => {
-        client.createNode().then(([ source ]) => {
+        client.createNode().then(source => {
             expect(source).to.be.a('string');
-            return client.createNode().then(([ target ]) => ([source, target]));
+            return client.createNode().then(target => ([source, target]));
         }).then(([source, target]) => {
             expect(target).to.be.a('string');
             const property = { 'foo': 'bar' };
             const edge = new jubatus.graph.types.Edge(property, source, target);
-            return client.createEdge(edge.source, edge).then(([ edgeId ]) => ([edgeId, edge]));
+            return client.createEdge(edge.source, edge).then(edgeId => ([edgeId, edge]));
         }).then(([ edgeId, edge ]) => {
             expect(edgeId).to.be.a('number');
             return client.updateEdge(edge.source, edgeId, edge);            
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -101,20 +101,18 @@ describe('graph#update_edge', () => {
 
 describe('graph#remove_edge', () => {
     it('remove_edge', done => {
-        const property = { 'foo': 'bar' };
-        const edge = [ property , null, null ];
-        client.createNode().then(([ source ]) => {
+        client.createNode().then(source => {
             expect(source).to.be.a('string');
-            edge[1] = source;
-            return client.createNode();
-        }).then(([ target ]) => {
+            return client.createNode().then(target => ([source, target]));
+        }).then(([source, target]) => {
             expect(target).to.be.a('string');
-            edge[2] = target;
-            return client.createEdge(edge[1], edge);
-        }).then(([ edgeId ]) => {
+            const property = { 'foo': 'bar' };
+            const edge = new jubatus.graph.types.Edge(property , source, target);
+            return client.createEdge(edge.source, edge).then(edgeId => ([edgeId, edge]));
+        }).then(([edgeId, edge]) => {
             expect(edgeId).to.be.a('number');
-            return client.removeEdge(edge[1], edgeId);            
-        }).then(([ result ]) => {
+            return client.removeEdge(edge.source, edgeId);            
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -134,7 +132,7 @@ describe('graph#get_centrality', () => {
             client.createNode()
         ]).then(nodes => {
             debug(nodes);
-            nodeIds = nodes.map(node => node[0]);
+            nodeIds = nodes;
             return Promise.all([
                 client.createEdge(nodeIds[0], [ { 'foobar': 'foo' }, nodeIds[0], nodeIds[1] ]),
                 client.createEdge(nodeIds[1], [ { 'foobar': 'bar' }, nodeIds[1], nodeIds[2] ]),
@@ -144,17 +142,17 @@ describe('graph#get_centrality', () => {
                 client.createEdge(nodeIds[3], [ { 'foobar': 'quuz' }, nodeIds[2], nodeIds[3] ])
             ]);
         }).then(results => {
-            edgeIds = results.map(([result]) => result ? result.toString() : result);
+            edgeIds = results.map(result => result ? result.toString() : result);
             debug(edgeIds);
             presetQuery = new jubatus.graph.types.PresetQuery([], []);
             return client.addCentralityQuery(presetQuery);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean').and.to.equal(true);
             return client.updateIndex();
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean').and.to.equal(true);
             return client.getCentrality(nodeIds[3], 0, presetQuery);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('number').and.to.equal(1);
             done();
@@ -167,7 +165,7 @@ describe('graph#add_centrality_query', () => {
         const edgeQuery = [ [ '', '' ] ];
         const nodeQuery = [ [ '', '' ] ];
         const query = [ edgeQuery, nodeQuery ];
-        client.addCentralityQuery(query).then(([ result ]) => {
+        client.addCentralityQuery(query).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -180,7 +178,7 @@ describe('graph#add_shortest_path_query', () => {
         const edgeQuery = [ [ '', '' ] ];
         const nodeQuery = [ [ '', '' ] ];
         const query = [ edgeQuery, nodeQuery ];
-        client.addShortestPathQuery(query).then(([ result ]) => {
+        client.addShortestPathQuery(query).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -193,10 +191,10 @@ describe('graph#remove_centrality_query', () => {
         const edgeQuery = [ [ '', '' ] ];
         const nodeQuery = [ [ '', '' ] ];
         const query = [ edgeQuery, nodeQuery ];
-        client.addCentralityQuery(query).then(([ result ]) => {
+        client.addCentralityQuery(query).then(result => {
             expect(result).to.be.a('boolean').and.to.equal(true);
             return client.removeCentralityQuery(query);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -209,10 +207,10 @@ describe('graph#remove_shortest_path_query', () => {
         const edgeQuery = [ [ '', '' ] ];
         const nodeQuery = [ [ '', '' ] ];
         const query = [ edgeQuery, nodeQuery ];
-        client.addShortestPathQuery(query).then(([ result ]) => {
+        client.addShortestPathQuery(query).then(result => {
             expect(result).to.be.a('boolean').and.to.equal(true);
             return client.removeShortestPathQuery(query);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -233,7 +231,7 @@ describe('graph#get_shortest_path', () => {
             client.createNode(),
             client.createNode()
         ]).then(results => {
-            nodeIds = results.map(([nodeId]) => nodeId);
+            nodeIds = results;
             debug(nodeIds);
             return Promise.all([
                 client.createEdge(nodeIds[0], [ { 'foobar': 'foo' }, nodeIds[0], nodeIds[1] ]),
@@ -242,18 +240,18 @@ describe('graph#get_shortest_path', () => {
                 client.createEdge(nodeIds[3], [ { 'foobar': 'qux' }, nodeIds[3], nodeIds[0] ])
             ]);
         }).then(results => {
-            edgeIds = results.map(([edgeId]) => edgeId);
+            edgeIds = results.map(edgeId => edgeId);
             debug(edgeIds);
             return client.addShortestPathQuery(presetQuery);
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean').and.to.equal(true);
             return client.updateIndex();
-        }).then(([ result ]) => {
+        }).then(result => {
             expect(result).to.be.a('boolean').and.to.equal(true);
             const shortestPathQuery = new jubatus.graph.types.ShortestPathQuery(nodeIds[0], nodeIds[3], 4, presetQuery);
             debug(shortestPathQuery);
             return client.getShortestPath(shortestPathQuery);
-        }).then(([ result ]) => {
+        }).then(result => {
             debug(result);
             expect(result).to.be.a('array');
             done();
@@ -263,7 +261,7 @@ describe('graph#get_shortest_path', () => {
 
 describe('graph#update_index', () => {
     it('update_index', done => {
-        client.updateIndex().then(([ result ]) => {
+        client.updateIndex().then(result => {
             debug(result);
             expect(result).to.be.a('boolean').and.to.equal(true);
             done();
@@ -274,22 +272,22 @@ describe('graph#update_index', () => {
 describe('graph#get_node', () => {
     it('get_node', done => {
         const nodeProperty = { 'qux': 'quux', 'foo': 'bar' };
-        client.createNode().then(([ source ]) => {
+        client.createNode().then(source => {
             expect(source).to.be.a('string');
-            return client.updateNode(source, nodeProperty).then(([ successful ]) => {
+            return client.updateNode(source, nodeProperty).then(successful => {
                 expect(successful).to.be.a('boolean').and.to.equal(true);
-                return [source];
+                return source;
             });
-        }).then(([ source ]) => {
-            return client.createNode().then(([ target ]) => ([ source, target ]));
+        }).then(source => {
+            return client.createNode().then(target => ([ source, target ]));
         }).then(([ source, target ]) => {
             expect(target).to.be.a('string');
             const property = { 'foo': 'bar' };
             const edge = jubatus.graph.types.Edge.fromTuple([ property, source, target ]);
-            return client.createEdge(source, edge).then(([ edgeId ]) => ({ edgeId, edge }));
+            return client.createEdge(source, edge).then(edgeId => ({ edgeId, edge }));
         }).then(({ edgeId, edge }) => {
             expect(edgeId).to.be.a('number').and.to.equal(32);
-            return client.getNode(edge.source).then(([ node ]) => ({ node, edgeId }));
+            return client.getNode(edge.source).then(node => ({ node, edgeId }));
         }).then(({ node, edgeId }) => {
             debug(node);
             expect(node).to.be.a('Node')
@@ -301,17 +299,17 @@ describe('graph#get_node', () => {
 
 describe('graph#get_edge', () => {
     it('get_edge', done => {
-        client.createNode().then(([ source ]) => {
+        client.createNode().then(source => {
             expect(source).to.be.a('string');
-            return client.createNode().then(([ target ]) => ([ source, target ]));
+            return client.createNode().then(target => ([ source, target ]));
         }).then(([ source, target ]) => {
             expect(target).to.be.a('string');
             const property = { 'foo': 'bar' };
             const edge = new jubatus.graph.types.Edge(property, source, target);
-            return client.createEdge(source, edge).then(([ edgeId ]) => ({ edgeId, edge }));
+            return client.createEdge(source, edge).then(edgeId => ({ edgeId, edge }));
         }).then(({ edgeId, edge }) => {
             expect(edgeId).to.be.a('number');
-            return client.getEdge(edge.source, edgeId).then(([ result ]) => ({ actual: result, expected: edge }));            
+            return client.getEdge(edge.source, edgeId).then(result => ({ actual: result, expected: edge }));            
         }).then(({ actual, expected }) => {
             debug(actual);
             expect(actual).to.be.a('Edge').and.to.deep.equal(expected);

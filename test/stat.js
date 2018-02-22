@@ -27,7 +27,7 @@ describe('stat#push', () => {
     it('push', done => {
         const key = 'foo',
             value = 1.01;
-        client.push(key, value).then(([ result ]) => {
+        client.push(key, value).then(result => {
             debug(result);
             expect(result).to.be.ok;
             done();
@@ -43,7 +43,7 @@ describe('stat#sum', () => {
         client.clear()
             .then(() => Promise.all(values.map(value => client.push(key, value))))
             .then(() => client.sum(key))
-            .then(([ result ]) => {
+            .then(result => {
                 debug(result);
                 expect(result).to.equal(expected);
                 done();
@@ -58,7 +58,7 @@ describe('stat#stddev', () => {
         client.clear()
             .then(() => Promise.all(values.map(value => client.push(key, value))))
             .then(() => client.stddev(key))
-            .then(([ result ]) => {
+            .then(result => {
                 debug(result);
                 expect(result).to.be.a('number');
                 done();
@@ -74,7 +74,7 @@ describe('stat#max', () => {
         client.clear()
             .then(() => Promise.all(values.map(value => client.push(key, value))))
             .then(() => client.max(key))
-            .then(([ result ]) => {
+            .then(result => {
                 debug(result);
                 expect(result).to.equal(expected);
                 done();
@@ -90,7 +90,7 @@ describe('stat#min', () => {
         client.clear()
             .then(() => Promise.all(values.map(value => client.push(key, value))))
             .then(() => client.min(key))
-            .then(([ result ]) => {
+            .then(result => {
                 debug(result);
                 expect(result).to.be.a('number');
                 expect(result).to.equal(expected);
@@ -106,7 +106,7 @@ describe('stat#entropy', () => {
         client.clear()
             .then(() => Promise.all(values.map(value => client.push(key, value))))
             .then(() => client.entropy(key))
-            .then(([ result ]) => {
+            .then(result => {
                 debug(result);
                 expect(result).to.be.a('number');
                 done();
@@ -123,7 +123,7 @@ describe('stat#moment', () => {
         client.clear()
             .then(() => Promise.all(values.map(value => client.push(key, value))))
             .then(() => client.moment(key, degree, center))
-            .then(([ result ]) => {
+            .then(result => {
                 debug(result);
                 expect(result).to.be.a('number');
                 done();

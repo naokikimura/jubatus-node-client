@@ -37,7 +37,7 @@ describe('common#name', () => {
 describe('common#save', () => {
     it('save', done => {
         const id = 'test';
-        client.save(id).then(([ result ]) => {
+        client.save(id).then(result => {
             debug(result);
             expect(result).to.be.a('object');
             done();
@@ -48,7 +48,7 @@ describe('common#save', () => {
 describe('common#load', () => {
     it('load', done => {
         const id = 'test';
-        client.load(id).then(([ result ]) => {
+        client.load(id).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             done();
@@ -72,7 +72,7 @@ describe('common#clear', () => {
 
 describe('common#get_config', () => {
     it('get_config', done => {
-        client.getConfig().then(([ result ]) => {
+        client.getConfig().then(result => {
             debug(result);
             expect(result).to.be.a('string');
             done();
@@ -82,7 +82,7 @@ describe('common#get_config', () => {
 
 describe('common#get_status', () => {
     it('get_status', done => {
-        client.getStatus().then(([ result ]) => {
+        client.getStatus().then(result => {
             debug(result);
             expect(result).to.be.a('object');
             done();
@@ -92,7 +92,7 @@ describe('common#get_status', () => {
 
 describe('common#do_mix', () => {
     it('do_mix', done => {
-        client.doMix().then(([ result ]) => {
+        client.doMix().then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             done();

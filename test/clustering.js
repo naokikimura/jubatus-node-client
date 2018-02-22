@@ -36,7 +36,7 @@ describe('clustering#push', () => {
             const datum = new jubatus.common.types.Datum([ [ 'foobar', variable ] ]);
             return new jubatus.clustering.types.IndexedPoint('' + i, datum);
         });
-        client.push(points).then(([ result ]) => {
+        client.push(points).then(result => {
             debug(result);
             expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
@@ -47,7 +47,7 @@ describe('clustering#push', () => {
 
 describe('clustering#get_revision', () => {
     it('get_revision', done => {
-        client.getRevision().then(([ result ]) => {
+        client.getRevision().then(result => {
             debug(result);
             expect(result).to.be.a('number');
             expect(result).to.equal(1);
@@ -58,7 +58,7 @@ describe('clustering#get_revision', () => {
 
 describe('clustering#get_core_members', () => {
     it('get_core_members', done => {
-        client.getCoreMembers().then(([ result ]) => {
+        client.getCoreMembers().then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf.above(1)
@@ -71,7 +71,7 @@ describe('clustering#get_core_members', () => {
 
 describe('clustering#get_core_members_light', () => {
     it('get_core_members_light', done => {
-        client.getCoreMembersLight().then(([ result ]) => {
+        client.getCoreMembersLight().then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf.above(1)
@@ -84,7 +84,7 @@ describe('clustering#get_core_members_light', () => {
 
 describe('clustering#get_k_center', () => {
     it('get_k_center', done => {
-        client.getKCenter().then(([ result ]) => {
+        client.getKCenter().then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf.above(1)
@@ -98,7 +98,7 @@ describe('clustering#get_k_center', () => {
 describe('clustering#get_nearest_center', () => {
     it('get_nearest_center', done => {
         const datum = [ [ [ 'foo', 'bar' ] ] ];
-        client.getNearestCenter(datum).then(([ result ]) => {
+        client.getNearestCenter(datum).then(result => {
             debug(result);
             expect(result).to.be.a('Datum');
             done();
@@ -109,7 +109,7 @@ describe('clustering#get_nearest_center', () => {
 describe('clustering#get_nearest_members', () => {
     it('get_nearest_members', done => {
         const datum = [ [ [ 'foo', 'bar' ] ] ];
-        client.getNearestMembers(datum).then(([ result ]) => {
+        client.getNearestMembers(datum).then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf.above(1)
@@ -123,7 +123,7 @@ describe('clustering#get_nearest_members', () => {
 describe('clustering#get_nearest_members_light', () => {
     it('get_nearest_members_light', done => {
         const datum = [ [ [ 'foo', 'bar' ] ] ];
-        client.getNearestMembersLight(datum).then(([ result ]) => {
+        client.getNearestMembersLight(datum).then(result => {
             debug(result);
             expect(result).to.be.a('array')
                 .and.to.have.lengthOf.above(1)
