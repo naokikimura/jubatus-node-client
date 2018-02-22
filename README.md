@@ -24,11 +24,9 @@ const classifier = new jubatus.classifier.client.Classifier(9199, "localhost");
 #### Train
 
 ```js
-var stringValues = [ ["foo", "bar"] ],
-    numValues = [ ["quux", 0.1] ],
-    datum = new jubatus.common.types.Datum(stringValues, numValues),
-    label = "baz",
-    data = [ new jubatus.classifier.types.LabeledDatum(label, datum) ];
+const datum = new jubatus.common.types.Datum().addString("foo", "bar").addNumber("quux", 0.1);
+const labeledDatum = new jubatus.classifier.types.LabeledDatum("baz", datum);
+const data = [labeledDatum];
 
 classifier.train(data).then(([ result ]) => {
     console.error(result);
