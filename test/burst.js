@@ -72,6 +72,36 @@ describe('burst#get_result', () => {
     });
 });
 
+describe('burst#get_result_at', () => {
+    it('get_result_at', done => {
+        const keyword = 'foo';
+        const keywordParams = new jubatus.burst.types.KeywordWithParams(keyword, 1.001, 0.001);
+        const documents = [
+            new jubatus.burst.types.Document(0, 'foo'),
+            new jubatus.burst.types.Document(3, 'bar'),
+            new jubatus.burst.types.Document(6, 'baz')
+        ];
+        client.clear().then(([ result ]) => {
+            expect(result).to.equal(true);
+
+            return client.addKeyword(keywordParams);
+        }).then(([ result ]) => {
+            expect(result).to.equal(true);
+
+            return client.addDocuments(documents);
+        }).then(([ result ]) => {
+            expect(result).to.equal(3);
+
+            return client.getResultAt(keyword, 0);
+        }).then(([ result ]) => {
+            debug(result);
+            expect(result).to.be.a('Window')
+                .and.to.deep.equal(jubatus.burst.types.Window.fromTuple([ -20, [ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 3, 1, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ] ]));
+            done();
+        }).catch(done);
+    });
+});
+
 describe('burst#get_all_bursted_results', () => {
     it('get_all_bursted_results', done => {
         const keyword = 'foo';
