@@ -1,13 +1,13 @@
 import * as rpc from "msgpack-rpc-lite"
 
-namespace common {
+declare namespace common {
   namespace types {
     type stringValues = [[string, string]];
     type numValues = [[string, number]];
     type binaryValues = [[string, Buffer]];
     type DatumTuple = [stringValues, numValues, binaryValues];
 
-    export interface DatumConstructor {
+    interface DatumConstructor {
       new(stringValues?: stringValues, numValues?: numValues, binaryValues?: binaryValues): Datum;
       fromTuple(typle: DatumTuple): Datum;
       readonly prototype: Datum;
@@ -18,7 +18,7 @@ namespace common {
      * 
      * You can change internal values of a datum with these methods.
      */
-    export interface Datum {
+    interface Datum {
       /**
        * Add a string value.
        * @param key {string} The key of the value to add. Cannot contain “$”.
@@ -146,7 +146,7 @@ namespace common {
   }
 }
 
-namespace classifier {
+declare namespace classifier {
   namespace types {
     type EstimateResultTuple = [string, number];
 
@@ -169,7 +169,7 @@ namespace classifier {
        */
       score: number;
       toTuple(): EstimateResultTuple;
-    };
+    }
 
     export const EstimateResult: EstimateResultConstructor;
 
