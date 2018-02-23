@@ -95,41 +95,41 @@ declare namespace common {
        * @param id {string} file name to save
        * @returns {Promise<[object, number]>} Path to the saved model for each server. The key of the map is in form of ipaddr_portnumber.
        */
-      save(id: string): Promise<[object, number]>;
+      save(id: string): Promise<object>;
       /**
        * Restore the saved model from local disk at ALL servers.
        * 
        * @param id {string} file name to load
        * @returns {<[boolean, number]>} True if this function loads files successfully at all servers
        */
-      load(id: string): Promise<[boolean, number]>;
+      load(id: string): Promise<boolean>;
       /**
        * Completely clears the model at ALL servers.
        * @returns {Promise<[boolean, number]>} True when the model was cleared successfully
        */
-      clear(): Promise<[boolean, number]>;
+      clear(): Promise<boolean>;
       /** 
        * Returns server configuration from a server. For format of configuration, see API reference of each services.
        * @returns {Promise<[string, number]>} server configuration set on initialization
        */
-      getConfig(): Promise<[string, number]>;
+      getConfig(): Promise<string>;
       /** 
        * Returns server status from ALL servers. Each server is represented by a pair of IP address and port.
        * @returns Internal state for each servers. The key of most outer map is in form of ipaddr_portnumber. 
        */
-      getStatus(): Promise<[object, number]>;
+      getStatus(): Promise<object>;
       /** 
        * Force cluster to fire mix. Call this RPC to Jubatus server directly. When you call this to proxy, RPC error will be raised.
        * @returns {Promise<[boolean, number]>} True when model mixed successfully
        */
-      doMix(): Promise<[boolean, number]>;
+      doMix(): Promise<boolean>;
       /** 
        * Returns proxy status.
        * 
        * This is an RPC method for proxy. When you use this for server, RPC error will be raised.
        * @returns {Promise<[object, number]>}	Internal state for proxy. The key of most outer map is in form of ipaddr_portnumber.
        */
-      getProxyStatus(): Promise<[object, number]>;
+      getProxyStatus(): Promise<object>;
     }
 
     /**
@@ -210,31 +210,31 @@ declare namespace classifier {
        * @param {types.LabeledDatum[]} data list of tuple of label and datum
        * @returns {Promise<[number, number]>} Number of trained datum (i.e., the length of the data)
        */
-      train(data: types.LabeledDatum[]): Promise<[number, number]>;
+      train(data: types.LabeledDatum[]): Promise<number>;
 
       /**
        * Estimates labels from given data. This API is designed to accept bulk classification with list of datum.
        * @param {common.Datum[]} data list of datum to classify
        * @returns {Promise<[[EstimateResult[]], number]>} List of list of estimate_result, in order of given datum
        */
-      classify(data: common.types.Datum[]): Promise<[[types.EstimateResult[]], number]>;
+      classify(data: common.types.Datum[]): Promise<[types.EstimateResult[]]>;
       /**
        * Returns the number of trained data for each label. If method is NN , the number of trained data that are deleted by unlearner is not include in this count.
        * @returns {Promise<[object, number]>} Pairs of label and the number of trained data
        */
-      getLabels(): Promise<[object, number]>;
+      getLabels(): Promise<object>;
       /**
        * Append new label. If the label is already exist, it fails. New label is add when label found in train method argument, too.
        * @param newLabel {string} name of new label
        * @returns {Promise<[boolean, number]>} True if the new label was not exist. False if the label already exists.
        */
-      setLabel(newLabel: string): Promise<[boolean, number]>;
+      setLabel(newLabel: string): Promise<boolean>;
       /**
        * Deleting label. True if jubatus success to delete. False if the label is not exists.
        * @param targetLabel {string} deleting label name
        * @returns {Promise<[boolean, number]>} True if jubatus success to delete label. False if the label is not exists.
        */
-      deleteLabel(targetLabel: string): Promise<[boolean, number]>;
+      deleteLabel(targetLabel: string): Promise<boolean>;
     }
 
     export const Classifier: ClassifierConstructor;
