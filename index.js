@@ -122,35 +122,59 @@ function toTuple(value) {
     return value && typeof value['toTuple'] === 'function' ? value.toTuple() : Array.isArray(value) ? value.map(toTuple) : value;
 }
 
-function castType(value, schema, types) {
-    const typeName = schema.type || 'object';
-    if ('$ref' in schema) {
-        return resolveType(schema['$ref'], types).fromTuple(value);
-    } else if (typeName === 'array') {
-        if (Array.isArray(schema.items)) {
-            return value.map((e, i) => castType(e, schema.items[i], types));
-        } else {
-            return value.map(e => castType(e, schema.items, types));
+function CastingHandler(schema, type, responsible, executor) {
+    let nextHandler;
+    return {
+        setNext: function (next) {
+            nextHandler = next;
+            return next;
+        },
+        handle: function (value) {
+            return responsible(schema) ? executor(value, schema, type) : nextHandler.handle(value);
         }
-    } else if (typeName === 'object' && ('properties' in schema || 'patternProperties' in schema)) {
-        const properties = Object.keys(schema.properties || {})
-            .map(propertyName => ({ propertyName, schema: schema.properties[propertyName] }));
-        const patternProperties = Object.keys(schema.patternProperties || {})
-            .map(propertyName => ({ propertyName, schema: schema.patternProperties[propertyName] }));
-        return Object.keys(value)
-            .map(key => ({ key, value: value[key] }))
-            .map(({ key, value }) => {
-                const schemas = []
-                    .concat(properties.filter(({ propertyName }) => propertyName === key))
-                    .concat(patternProperties.filter(({ pattern }) => (new RegExp(pattern).test(key))))
-                    .map(({ schema }) => schema);
-                const typedValue = schemas.reduce((value, schema) => castType(value, schema, types), value);
-                return { [key]: typedValue };
-            })
-            .reduce((accumulator, current) => Object.assign(accumulator, current), {});
-    } else {
-        return value;
-    }
+    };
+}
+
+function castType(value, schema, types) {
+    const castingHandlers = [
+        {
+            responsible: (schema) => '$ref' in schema,
+            executor: (value) => resolveType(schema['$ref'], types).fromTuple(value)
+        },
+        {
+            responsible: (schema) => schema.type === 'array',
+            executor: (value) => {
+                const nextItems = Array.isArray(schema.items) ? (items, index) => items[index] : (items) => items;
+                return value.map((e, index) => castType(e, nextItems(schema.items, index), types));
+            }
+        },
+        {
+            responsible: (schema) => (schema.type || 'object') === 'object',
+            executor: (value) => {
+                const properties = Object.keys(schema.properties || {})
+                    .map(propertyName => ({ propertyName, schema: schema.properties[propertyName] }));
+                const patternProperties = Object.keys(schema.patternProperties || {})
+                    .map(propertyName => ({ propertyName, schema: schema.patternProperties[propertyName] }));
+                return Object.keys(value)
+                    .map(key => ({ key, value: value[key] }))
+                    .map(({ key, value }) => {
+                        const schemas = []
+                            .concat(properties.filter(({ propertyName }) => propertyName === key))
+                            .concat(patternProperties.filter(({ pattern }) => (new RegExp(pattern).test(key))))
+                            .map(({ schema }) => schema);
+                        const typedValue = schemas.reduce((value, schema) => castType(value, schema, types), value);
+                        return { [key]: typedValue };
+                    })
+                    .reduce((accumulator, current) => Object.assign(accumulator, current), {});
+            }
+        },
+        { responsible: () => true, executor: (value) => value }
+    ];
+    const handler = CastingHandler(schema, types, () => false, () => {});
+    castingHandlers.reduce((accumulator, { responsible, executor }) => {
+        return accumulator.setNext(CastingHandler(schema, types, responsible, executor));
+    }, handler);
+    return handler.handle(value);
 }
 
 function createTypes(definitions, ignoreKeys) {
@@ -165,7 +189,7 @@ function createTypes(definitions, ignoreKeys) {
                 .concat(`[Symbol.toStringTag]: { value: '${name}' }`).join(',');
             const functionBody = `Object.defineProperties(this, {${properties}})`;
             const args = items.map(item => ({ 'default': item['default'], argument: toCamelCase(item.title) }))
-                .map(({ 'default': defaultValue, argument}) => defaultValue !== undefined ? `${argument}=${JSON.stringify(defaultValue)}` : argument)
+                .map(({ 'default': defaultValue, argument }) => defaultValue !== undefined ? `${argument}=${JSON.stringify(defaultValue)}` : argument)
                 .join(',');
             const constructor = new Function(args, functionBody);
             constructor.prototype.toTuple = function () {
@@ -200,6 +224,23 @@ function defineFromTupleFunction(types, definitions, commonTypes) {
     }).reduce((accumulator, current) => Object.assign(accumulator, current), {});
 }
 
+function defineDatumPrototypeFunction(datumFunction) {
+    const prototype = datumFunction.prototype;
+    prototype.addString = function (key, value) {
+        this.stringValues.push([key, value]);
+        return this;
+    };
+    prototype.addNumber = function (key, value) {
+        this.numValues.push([key, value]);
+        return this;
+    };
+    prototype.addBinary = function (key, value) {
+        this.binaryValues.push([key, value]);
+        return this;
+    };
+    return prototype;
+}
+
 const dirname = path.resolve(__dirname, './api/');
 const services = fs.readdirSync(dirname)
     .map(file => path.resolve(dirname, file))
@@ -223,21 +264,10 @@ const schemas = Object.keys(services)
 const commonConstructor = createClientConstructor('Common', common, createSuperConstructor());
 const commonDefinitionKeys = Object.keys(common.definitions);
 const commonTypes = defineFromTupleFunction(createTypes(common.definitions, []), common.definitions, {});
-if ('Datum' in commonTypes) {
-    const Datum = commonTypes.Datum;
-    Datum.prototype.addString = function (key, value) {
-        this.stringValues.push([key, value]);
-        return this;
-    };
-    Datum.prototype.addNumber = function (key, value) {
-        this.numValues.push([key, value]);
-        return this;
-    };
-    Datum.prototype.addBinary = function (key, value) {
-        this.binaryValues.push([key, value]);
-        return this;
-    };
-}
+Object.keys(commonTypes)
+    .filter(typeName => typeName === 'Datum')
+    .map(typeName => commonTypes[typeName])
+    .forEach(defineDatumPrototypeFunction);
 module.exports['common'] = { types: commonTypes, toTuple };
 Object.keys(schemas).forEach(function (className) {
     const schema = schemas[className];
