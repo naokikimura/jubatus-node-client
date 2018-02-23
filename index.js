@@ -100,7 +100,10 @@ function buildMethods(schema, constructor, types) {
                     }));
                 } else {
                     return client.request.apply(client, [rpcName].concat(params))
-                        .then(([result]) => castTypeFunction(result));
+                        .then(([result]) => {
+                            assertReturn(result);
+                            return castTypeFunction(result);
+                        });
                 }
             };
             return constructor;

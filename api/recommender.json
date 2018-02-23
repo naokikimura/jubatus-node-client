@@ -129,7 +129,7 @@
           "description": "row IDs that are most similar to the row id",
           "type": "array",
           "items": {
-            "$ref": "id_with_score"
+            "$ref": "#/definitions/id_with_score"
           }
         },
         "arguments": {
@@ -160,7 +160,7 @@
           "description": "row IDs that are most similar to the row id",
           "type": "array",
           "items": {
-            "$ref": "id_with_score"
+            "$ref": "#/definitions/id_with_score"
           }
         },
         "arguments": {
@@ -191,7 +191,7 @@
           "description": "row IDs that are most similar to the row id",
           "type": "array",
           "items": {
-            "$ref": "id_with_score"
+            "$ref": "#/definitions/id_with_score"
           }
         },
         "arguments": {
@@ -222,7 +222,7 @@
           "description": "rows that most have a similar datum to row",
           "type": "array",
           "items": {
-            "$ref": "id_with_score"
+            "$ref": "#/definitions/id_with_score"
           }
         },
         "arguments": {
@@ -253,7 +253,7 @@
           "description": "rows that most have a similar datum to row",
           "type": "array",
           "items": {
-            "$ref": "id_with_score"
+            "$ref": "#/definitions/id_with_score"
           }
         },
         "arguments": {
@@ -284,7 +284,7 @@
           "description": "rows that most have a similar datum to row",
           "type": "array",
           "items": {
-            "$ref": "id_with_score"
+            "$ref": "#/definitions/id_with_score"
           }
         },
         "arguments": {
