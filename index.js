@@ -92,24 +92,14 @@ function buildMethods(schema, constructor, types) {
         })
         .reduce((constructor, [rpcName, methodName, assertParams, assertReturn, castTypeFunction]) => {
             constructor.prototype[methodName] = function (...args) {
-                const self = this,
-                    client = self.getClient(),
-                    callback = (typeof args[args.length - 1] === 'function') && args.pop();
+                const { client, name } = this;
                 const params = toTuple(args);
                 assertParams(params);
-                params.unshift(self.getName());
-                if (callback) {
-                    client.request.apply(client, [rpcName].concat(params, (error, result, msgid) => {
-                        if (!error) { assertReturn(result); }
-                        callback.call(self, error, error ? result : castTypeFunction(result), msgid);
-                    }));
-                } else {
-                    return client.request.apply(client, [rpcName].concat(params))
-                        .then(([result]) => {
-                            assertReturn(result);
-                            return castTypeFunction(result);
-                        });
-                }
+                return client.request.apply(client, [rpcName].concat(name, params))
+                    .then(([result]) => {
+                        assertReturn(result);
+                        return castTypeFunction(result);
+                    });
             };
             return constructor;
         }, constructor);

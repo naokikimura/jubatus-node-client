@@ -58,15 +58,11 @@ describe('common#load', () => {
 
 describe('common#clear', () => {
     it('clear', done => {
-        client.clear((error, result) => {
-            if (error) {
-                done(error);
-            } else {
-                debug(result);
-                expect(result).to.be.a('boolean');
-                done();
-            }
-        });
+        client.clear().then(result => {
+            debug(result);
+            expect(result).to.be.a('boolean');
+            done();
+        }).catch(done);
     });
 });
 
@@ -106,16 +102,14 @@ describe('common#do_mix', () => {
 
 describe('common#get_proxy_status', () => {
     it('get_proxy_status', done => {
-        client.getProxyStatus((error, result) => {
-            if (error) {
-                debug(error);
-                expect(error).to.be.ok;
-                done();
-            } else {
-                debug(result);
-                expect(result).to.be.a('object');
-                done();
-            }
+        client.getProxyStatus().then(result => {
+            debug(result);
+            expect(result).to.be.a('object');
+            done();
+        }).catch(error => {
+            debug(error);
+            expect(error).to.be.ok;
+            done();
         });
     });
 });
