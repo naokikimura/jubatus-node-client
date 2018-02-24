@@ -19,6 +19,9 @@
         "-g",
         ".*"
       ],
+      "env": {
+        "NODE_ENV": ""
+      },
       "internalConsoleOptions": "openOnSessionStart"
     }
   ]
