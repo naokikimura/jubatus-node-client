@@ -181,7 +181,7 @@ function castType(value, schema, types) {
 function createTypes(definitions, ignoreKeys) {
     return toPairs(definitions)
         .filter(([key]) => !ignoreKeys.includes(key))
-        .map(([key, definition]) => ([toCamelCase('_' + definition.title), definition.items]))
+        .map(([, definition]) => ([toCamelCase('_' + definition.title), definition.items]))
         .map(([name, items]) => {
             const args = items.map(item => ({ 'default': item['default'], argument: toCamelCase(item.title) }))
                 .map(({ 'default': defaultValue, argument }) => defaultValue !== undefined ? `${argument}=${JSON.stringify(defaultValue)}` : argument)
@@ -246,7 +246,7 @@ const commonDefinitionKeys = Object.keys(common.definitions);
 const commonTypes = defineFromTupleFunction(createTypes(common.definitions, []), common.definitions, {});
 toPairs(commonTypes)
     .filter(([typeName]) => typeName === 'Datum')
-    .forEach(([name, constractor]) => defineDatumPrototypeFunction(constractor));
+    .forEach(([, constractor]) => defineDatumPrototypeFunction(constractor));
 module.exports['common'] = { types: commonTypes, toTuple };
 toPairs(services).filter(([serviceName]) => serviceName !== 'Common').forEach(([className, schema]) => {
     debug(className, schema);
