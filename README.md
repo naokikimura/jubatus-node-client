@@ -28,7 +28,7 @@ const datum = new jubatus.common.types.Datum().addString("foo", "bar").addNumber
 const labeledDatum = new jubatus.classifier.types.LabeledDatum("baz", datum);
 const data = [labeledDatum];
 
-classifier.train(data).then(([ result ]) => {
+classifier.train(data).then(result => {
     console.error(result);
 }).catch(error => {
     console.error(error);
@@ -43,7 +43,7 @@ var stringValues = [ [ "foo", "qux" ] ],
     datum = new jubatus.common.types.Datum(stringValues, numValues),
     data = [ datum ];
 
-classifier.classify(data).then(([ result ]) => {
+classifier.classify(data).then(result => {
     result.forEach(estimateResults => {
         var mostLikely = estimateResults
                 .reduce((previous, current) => previous.score > current.score ? previous : current);
