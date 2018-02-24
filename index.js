@@ -128,7 +128,7 @@ function createClientConstructor(className, schema, superConstructor, types) {
     Object.defineProperties(constructor, {
         name: { configurable: true, value: className }
     });
-util.inherits(constructor, superConstructor);
+    util.inherits(constructor, superConstructor);
     return buildMethods(schema, constructor, types);
 }
 
