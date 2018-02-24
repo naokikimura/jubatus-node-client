@@ -72,34 +72,37 @@ function createSuperConstructor() {
     return constructor;
 }
 
-function buildMethods(schema, constructor, types) {
+const handler = (value, handle) => handle ? handle(value) : value;
+
+function definePrototypeMethods(schema, constructor, types) {
     return Object.keys(schema.properties)
         .map(method => ([method, schema.properties[method]]))
         .map(([rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
             const validator = new jsonschema.Validator();
-            const methodName = toCamelCase(rpcName),
-                assertParams = isProduct ? () => { } : params => {
-                    const result = validator.validate(params, argumentsSchema);
-                    assert.ok(result.valid, util.format('%j', result.errors));
-                },
-                assertReturn = isProduct ? () => { } : returnValue => {
-                    const result = validator.validate(returnValue, returnSchema);
-                    assert.ok(result.valid, util.format('%j', result.errors));
-                };
+            const methodName = toCamelCase(rpcName);
+            const assertParams = params => {
+                const result = validator.validate(params, argumentsSchema);
+                assert.ok(result.valid, util.format('%j', result.errors));
+                return params;
+            };
+            const assertReturn = returnValue => {
+                const result = validator.validate(returnValue, returnSchema);
+                assert.ok(result.valid, util.format('%j', result.errors));
+                return returnValue;
+            };
             const castTypeFunction = (value) => castType(value, returnSchema, types);
-            return [rpcName, methodName, assertParams, assertReturn, castTypeFunction];
+            const argumentsHandles = [toTuple, !isProduct && assertParams];
+            const returnHandles = [!isProduct && assertReturn, castTypeFunction];
+            return [rpcName, methodName, argumentsHandles, returnHandles];
         })
-        .reduce((constructor, [rpcName, methodName, assertParams, assertReturn, castTypeFunction]) => {
+        .reduce((constructor, [rpcName, methodName, argumentsHandles, returnHandles]) => {
             constructor.prototype[methodName] = function (...args) {
                 const { client, name } = this;
-                const params = toTuple(args);
-                assertParams(params);
-                return client.request.apply(client, [rpcName].concat(name, params))
-                    .then(([result]) => {
-                        assertReturn(result);
-                        return castTypeFunction(result);
-                    });
+                const params = argumentsHandles.reduce(handler, args);
+                return client.request.apply(client, [rpcName].concat(name, params)).then(([result]) => {
+                    return returnHandles.reduce(handler, result);
+                });
             };
             return constructor;
         }, constructor);
@@ -119,7 +122,7 @@ function createClientConstructor(className, schema, superConstructor, types) {
         name: { configurable: true, value: className }
     });
     util.inherits(constructor, superConstructor);
-    return buildMethods(schema, constructor, types);
+    return definePrototypeMethods(schema, constructor, types);
 }
 
 function toTuple(value) {
