@@ -8,6 +8,11 @@ const jsonschema = require('jsonschema');
 const debug = require('./lib/debug')('jubatus-node-client');
 const rpc = require('msgpack-rpc-lite');
 
+// Hack
+jsonschema.Validator.prototype.types.number = function (instance) {
+    return typeof instance === 'number';
+};
+
 const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 
 function toCamelCase(value) {

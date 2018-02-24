@@ -35,25 +35,25 @@ describe('anomaly#clear_row', () => {
     });
 });
 
-describe('anomaly#add_bulk', () => {
-    it('add_bulk', done => {
-        const data = [ 'foo', 'bar', 'baz' ].map((key, index) => ([ [], [ [ key, index ] ], [] ]));
-        client.addBulk(data).then(result => {
-            debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ '0', '1', '2' ]);
-            done();
-        }).catch(done);
-    });
-});
-
 describe('anomaly#add', () => {
     it('add', done => {
         const datum = new jubatus.common.types.Datum([['foo', 'bar']], [['qux', 1.1]], []);
         client.add(datum).then(result => {
             debug(result);
             expect(result).to.be.a('IdWithScore')
-                .and.to.have.property('id', '3')
+                .and.to.have.property('id', '0')
+            done();
+        }).catch(done);
+    });
+});
+
+describe('anomaly#add_bulk', () => {
+    it('add_bulk', done => {
+        const data = [ 'foo', 'bar', 'baz' ].map((key, index) => ([ [], [ [ key, index ] ], [] ]));
+        client.addBulk(data).then(result => {
+            debug(result);
+            expect(result).to.be.a('array');
+            expect(result).to.deep.equal([ '1', '2', '3' ]);
             done();
         }).catch(done);
     });
@@ -103,7 +103,7 @@ describe('anomaly#get_all_rows', () => {
         client.getAllRows().then(result => {
             debug(result);
             expect(result).to.be.a('array')
-                .and.to.have.members([ '1', '2', '3', '4', '5' ]);
+                .and.to.have.members([ '0', '2', '3', '4', '5' ]);
             done();
         }).catch(done);
     });
