@@ -34,7 +34,7 @@ function toOptions(args) {
 }
 
 function createSuperConstructor() {
-    const constructor = function constructor(...args) {
+    const constructor = function JubatusClientBase(...args) {
         const options = toOptions(args);
         const { port = 9199, host = 'localhost', timeoutSeconds = 0, rpcClient } = options;
         let { name = '' } = options;
@@ -116,13 +116,19 @@ function buildMethods(schema, constructor, types) {
 }
 
 function createClientConstructor(className, schema, superConstructor, types) {
-    const constructor = function constructor(...args) {
+    const constructor = function JubatusClient(...args) {
         assert(this instanceof constructor, `${className} is constructor.`);
 
         superConstructor.apply(this, args);
+        Object.defineProperties(this, {
+            [Symbol.toStringTag]: { configurable: true, value: className }
+        });
         return this;
     };
-    util.inherits(constructor, superConstructor);
+    Object.defineProperties(constructor, {
+        name: { configurable: true, value: className }
+    });
+util.inherits(constructor, superConstructor);
     return buildMethods(schema, constructor, types);
 }
 
@@ -200,6 +206,9 @@ function createTypes(definitions, ignoreKeys) {
                 .map(({ 'default': defaultValue, argument }) => defaultValue !== undefined ? `${argument}=${JSON.stringify(defaultValue)}` : argument)
                 .join(',');
             const constructor = new Function(args, functionBody);
+            Object.defineProperties(constructor, {
+                name: { configurable: true, value: name }
+            });
             constructor.prototype.toTuple = function () {
                 const self = this;
                 return keys.map(key => self[key]).filter(value => value !== undefined).map(toTuple);
