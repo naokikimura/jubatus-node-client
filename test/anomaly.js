@@ -41,7 +41,7 @@ describe('anomaly#add', () => {
         client.add(datum).then(result => {
             debug(result);
             expect(result).to.be.a('IdWithScore')
-                .and.to.have.property('id', '0')
+                .and.to.have.property('id', '0');
             done();
         }).catch(done);
     });
