@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "urn:x-jubatus:api:classifier",
   "definitions": {
     "estimate_result": {
       "title": "estimate_result",
@@ -36,7 +37,7 @@
         {
           "title": "data",
           "description": "Represents a datum.",
-          "$ref": "#/definitions/datum"
+          "$ref": "urn:x-jubatus:api:common#/definitions/datum"
         }
       ],
       "additionalItems": false
@@ -94,7 +95,7 @@
               "description": "list of datum to classify",
               "type": "array",
               "items": {
-                "$ref": "#/definitions/datum"
+                "$ref": "urn:x-jubatus:api:common#/definitions/datum"
               }
             }
           ],

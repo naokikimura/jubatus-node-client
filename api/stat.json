@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "urn:x-jubatus:api:stat",
   "definitions": {},
   "title": "stat",
   "properties": {

@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "urn:x-jubatus:api:nearest_neighbor",
   "definitions": {
     "id_with_score": {
       "title": "id_with_score",
@@ -45,7 +46,7 @@
             {
               "title": "d",
               "description": "datum for the row",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -102,7 +103,7 @@
             {
               "title": "query",
               "description": "datum for nearest neighbor search",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             },
             {
               "title": "size",
@@ -164,7 +165,7 @@
             {
               "title": "query",
               "description": "datum for nearest neighbor search",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             },
             {
               "title": "ret_num",

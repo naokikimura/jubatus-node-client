@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "urn:x-jubatus:api:recommender",
   "definitions": {
     "id_with_score": {
       "title": "id_with_score",
@@ -68,7 +69,7 @@
             {
               "title": "row",
               "description": "datum for the row",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -81,7 +82,7 @@
       "properties": {
         "return": {
           "description": "datum stored in id row with missing value completed by predicted value",
-          "$ref": "#/definitions/datum"
+          "$ref": "urn:x-jubatus:api:common#/definitions/datum"
         },
         "arguments": {
           "type": "array",
@@ -104,7 +105,7 @@
       "properties": {
         "return": {
           "description": "datum constructed from the given datum with missing value completed by predicted value",
-          "$ref": "#/definitions/datum"
+          "$ref": "urn:x-jubatus:api:common#/definitions/datum"
         },
         "arguments": {
           "type": "array",
@@ -114,7 +115,7 @@
             {
               "title": "row",
               "description": "original datum to be completed (possibly some values are missing)",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -233,7 +234,7 @@
             {
               "title": "row",
               "description": "datum to find similar rows",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             },
             {
               "title": "size",
@@ -264,7 +265,7 @@
             {
               "title": "row",
               "description": "datum to find similar rows",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             },
             {
               "title": "score",
@@ -295,7 +296,7 @@
             {
               "title": "row",
               "description": "datum to find similar rows",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             },
             {
               "title": "rate",
@@ -313,7 +314,7 @@
       "properties": {
         "return": {
           "description": "datum for the given row id",
-          "$ref": "#/definitions/datum"
+          "$ref": "urn:x-jubatus:api:common#/definitions/datum"
         },
         "arguments": {
           "type": "array",
@@ -366,12 +367,12 @@
             {
               "title": "lhs",
               "description": "datum",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             },
             {
               "title": "rhs",
               "description": "another datum",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -394,7 +395,7 @@
             {
               "title": "row",
               "description": "datum",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false

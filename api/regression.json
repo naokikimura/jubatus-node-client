@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "urn:x-jubatus:api:regression",
   "definitions": {
     "scored_datum": {
       "title": "scored_datum",
@@ -16,7 +17,7 @@
         {
           "title": "data",
           "description": "Represents a datum.",
-          "$ref": "#/definitions/datum"
+          "$ref": "urn:x-jubatus:api:common#/definitions/datum"
         }
       ],
       "additionalItems": false
@@ -71,7 +72,7 @@
               "description": "list of datum to estimate",
               "type": "array",
               "items": {
-                "$ref": "#/definitions/datum"
+                "$ref": "urn:x-jubatus:api:common#/definitions/datum"
               }
             }
           ],

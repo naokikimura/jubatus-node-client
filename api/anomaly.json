@@ -63,7 +63,7 @@
             {
               "title": "row",
               "description": "datum for the point",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -91,7 +91,7 @@
               "description": "List of datum for the points",
               "type": "array",
               "items": {
-                "$ref": "#/definitions/datum"
+                "$ref": "urn:x-jubatus:api:common#/definitions/datum"
               }
             }
           ],
@@ -120,7 +120,7 @@
             {
               "title": "row",
               "description": "new datum for the point",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -148,7 +148,7 @@
             {
               "title": "row",
               "description": "new datum for the point",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -171,7 +171,7 @@
             {
               "title": "row",
               "description": "datum",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false

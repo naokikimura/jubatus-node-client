@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "urn:x-jubatus:api:weight",
   "definitions": {
     "feature": {
       "title": "feature",
@@ -43,7 +44,7 @@
             {
               "title": "d",
               "description": "datum to extract feature",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
@@ -69,7 +70,7 @@
             {
               "title": "d",
               "description": "datum to extract feature",
-              "$ref": "#/definitions/datum"
+              "$ref": "urn:x-jubatus:api:common#/definitions/datum"
             }
           ],
           "additionalItems": false
