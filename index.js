@@ -108,7 +108,7 @@ function createClientConstructor(className, superConstructor, types, schema, sub
     return definePrototypeMethods(constructor, types, schema, subSchema);
 }
 
-function defineDatumPrototypeFunction(datumFunction) {
+function defineDatumPrototypeFunctions(datumFunction) {
     const prototype = datumFunction.prototype;
     prototype.addString = function (key, value) {
         this.stringValues.push([key, value]);
@@ -136,7 +136,7 @@ const commonTypes = typing.createTypes(commonSchema.definitions, {});
 const commonConstructor = createClientConstructor('Common', createSuperConstructor(), commonTypes, commonSchema);
 _.toPairs(commonTypes)
     .filter(([typeName]) => typeName === 'Datum')
-    .forEach(([, constractor]) => defineDatumPrototypeFunction(constractor));
+    .forEach(([, constractor]) => defineDatumPrototypeFunctions(constractor));
 module.exports['common'] = { types: commonTypes, toTuple: typing.toTuple };
 _.toPairs(services).filter(([serviceName]) => serviceName !== 'Common').forEach(([className, schema]) => {
     debug(className, schema);
