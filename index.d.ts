@@ -151,7 +151,7 @@ declare namespace classifier {
     type EstimateResultTuple = [string, number];
 
     interface EstimateResultConstructor {
-      new(label: string, score: number): EstimateResult
+      new(label: string, score: number): EstimateResult;
       fromTuple(tuple: EstimateResultTuple): EstimateResult;
       readonly prototype: EstimateResult;
     }
@@ -176,7 +176,7 @@ declare namespace classifier {
     type LabeledDatumTuple = [string, common.types.DatumTuple];
 
     interface LabeledDatumConstructor {
-      new(label: string, data: common.types.Datum): LabeledDatum
+      new(label: string, data: common.types.Datum): LabeledDatum;
       fromTuple(tuple: LabeledDatumTuple): LabeledDatum;
       readonly prototype: LabeledDatum;
     }
@@ -245,7 +245,7 @@ declare namespace regression {
   namespace types {
     type ScoredDatumTuple = [number, common.types.DatumTuple];
     interface ScoredDatumConstructor {
-      new(score: number, data: common.types.Datum): ScoredDatum
+      new(score: number, data: common.types.Datum): ScoredDatum;
       fromTuple(tuple: ScoredDatumTuple): ScoredDatum;
       readonly prototype: ScoredDatum;
     }
@@ -285,5 +285,140 @@ declare namespace regression {
       estimate(data: common.types.Datum[]): Promise<number[]>;
     }
     export const Regression: RegressionConstructor;
+  }
+}
+
+declare namespace recommender {
+  namespace types {
+    type IdWithScoreTuple = [string, number];
+    interface IdWithScoreConstructor {
+      new(id: string, score: number): IdWithScore;
+      fromTuple(tuple: IdWithScoreTuple): IdWithScore;
+      readonly prototype: IdWithScore;
+    }
+    /**
+     * Represents ID with its score.
+     */
+    interface IdWithScore {
+      /**
+       * Data ID.
+       */
+      id: string;
+      /** 
+       * Score. Range of scores is 0 <= score <= 1 (less than or equal to -0 when using euclid_lsh).
+       */
+      score: number;
+      toTuple(): IdWithScoreTuple;
+    }
+  }
+  namespace client {
+    interface RecommenderConstructor extends common.client.CommonConstructor<Recommender> {
+      readonly prototype: Recommender;
+    }
+    interface Recommender extends common.client.Common {
+      /**
+       * Removes the given row id from the recommendation table.
+       * @param id row ID to be removed
+       * @returns True when the row was cleared successfully
+       */
+      clearRow(id: string): Promise<boolean>;
+      /**
+       * Updates the row whose id is id with given row.
+       * 
+       * If the row with the same id already exists, the row is differential updated with row.
+       * Otherwise, new row entry will be created.
+       * If the server that manages the row and the server that received this RPC request are same, this operation is reflected instantly.
+       * If not, update operation is reflected after mix.
+       * @param id row ID
+       * @param row datum for the row
+       * @returns True if this function updates models successfully
+       */
+      updateRow(id: string, row: common.types.Datum): Promise<boolean>;
+      /**
+       * Returns the datum for the row id, with missing value completed by predicted value.
+       * @param id row ID
+       * @returns datum stored in id row with missing value completed by predicted value
+       */
+      completeRowFromId(id: string): Promise<common.types.Datum>;
+      /**
+       * Returns the datum constructed from row, with missing value completed by predicted value.
+       * @param row original datum to be completed (possibly some values are missing)
+       * @returns datum constructed from the given datum with missing value completed by predicted value
+       */
+      completeRowFromDatum(row: common.types.Datum): Promise<common.types.Datum>;
+      /**
+       * Returns size rows (at maximum) which are most similar to the row id.
+       * @param id row ID
+       * @param size number of rows to be returned
+       * @returns row IDs that are most similar to the row id
+       */
+      similarRowFromId(id: string, size: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns rows which are most similar to the row id and have a greater similarity score than score.
+       * @param id row ID
+       * @param score threshold of similarity score
+       * @returns row IDs that are most similar to the row id
+       */
+      similarRowFromIdAndScore(id: string, score: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns the top rate of all the rows which are most similar to the row id.
+       * 
+       * For example, return the top 40% of all the rows when 0.4 is specified as rate.
+       * @param id row ID
+       * @param rate rate of all the rows to be returned (Range 0 < rate <= 1)
+       * @returns row IDs that are most similar to the row id
+       */
+      similarRowFromIdAndRate(id: string, rate: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns size rows (at maximum) that most have similar datum to row.
+       * @param row datum to find similar rows
+       * @param size number of rows to be returned
+       * @returns rows that most have a similar datum to row
+       */
+      similarRowFromDatum(row: common.types.Datum, size: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns rows which are most similar to row and have a greater similarity score than score.
+       * @param row datum to find similar rows
+       * @param score threshold of similarity score
+       * @returns rows that most have a similar datum to row
+       */
+      similarRowFromDatumAndScore(row: common.types.Datum, score: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns the top rate of all the rows which are most similar to row.
+       * 
+       * For example, return the top 40% of all the rows when 0.4 is specified as rate.
+       * @param row datum to find similar rows
+       * @param rate rate of all the rows to be returned (Range 0 < rate <= 1)
+       * @returns rows that most have a similar datum to row
+       */
+      similarRowFromDatumAndRate(row: common.types.Datum, rate: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns the datum in the row id.
+       * 
+       * Note that irreversibly converted datum (processed by fv_converter) will not be decoded.
+       * @param id row ID
+       * @returns datum for the given row id
+       */
+      decodeRow(id: string): Promise<common.types.Datum>;
+      /**
+       * Returns the list of all row IDs.
+       * @returns list of all row IDs
+       */
+      getAllRows(): Promise<string[]>;
+      /**
+       * Returns the similarity score (see score member of id_with_score) between two datum.
+       * @param lhs datum
+       * @param rhs another datum
+       * @returns similarity between lhs and rhs
+       */
+      calcSimilarity(lhs: common.types.Datum, rhs: common.types.Datum): Promise<number>;
+      /**
+       * Returns the value of L2 norm for the row.
+       * @param row datum
+       * @returns L2 norm for the given row
+       */
+      calcL2norm(row: common.types.Datum): Promise<number>;
+    }
+    export const Recommender: RecommenderConstructor;
   }
 }
