@@ -263,6 +263,7 @@ declare namespace regression {
       data: common.types.Datum;
       toTuple(): ScoredDatumTuple;
     }
+    export const ScoredDatum: ScoredDatumConstructor;
   }
   namespace client {
     interface RegressionConstructor extends common.client.CommonConstructor<Regression> {
@@ -310,6 +311,7 @@ declare namespace recommender {
       score: number;
       toTuple(): IdWithScoreTuple;
     }
+    export const IdWithScore: IdWithScoreConstructor;
   }
   namespace client {
     interface RecommenderConstructor extends common.client.CommonConstructor<Recommender> {
@@ -420,5 +422,84 @@ declare namespace recommender {
       calcL2norm(row: common.types.Datum): Promise<number>;
     }
     export const Recommender: RecommenderConstructor;
+  }
+}
+
+declare namespace nearestneighbor {
+  namespace types {
+    type IdWithScoreTuple = [string, number];
+    interface IdWithScoreConstructor {
+      new(id: string, score: number): IdWithScore;
+      fromTuple(tuple: IdWithScoreTuple): IdWithScore;
+      readonly prototype: IdWithScore;
+    }
+    /**
+     * Represents ID with its score.
+     */
+    interface IdWithScore {
+      /**
+       * Data ID.
+       */
+      id: string;
+      /** 
+       * Score.
+       */
+      score: number;
+      toTuple(): IdWithScoreTuple;
+    }
+    export const IdWithScore: IdWithScoreConstructor;
+  }
+  namespace client {
+    interface NearestNeighborConstructor extends common.client.CommonConstructor<NearestNeighbor> {
+      readonly prototype: NearestNeighbor;
+    }
+    interface NearestNeighbor extends common.client.Common {
+      /**
+       * Updates the row whose id is id with given row.
+       * 
+       * If the row with the same id already exists, the row is overwritten with row (note that this behavior is different from that of recommender).
+       * Otherwise, new row entry will be created.
+       * If the server that manages the row and the server that received this RPC request are same, this operation is reflected instantly.
+       * If not, update operation is reflected after mix.
+       * @param id row ID
+       * @param d datum for the row
+       * @returns True if this function updates models successfully
+       */
+      setRow(id: string, d: common.types.Datum): Promise<boolean>;
+      /**
+       * Returns size rows (at maximum) that have most similar datum to id and their distance values.
+       * @param id row ID in the nearest neighbor search table
+       * @param size number of rows to be returned
+       * @returns row IDs that are the nearest to the row id and their distance values
+       */
+      neighborRowRromId(id: string, size: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns size rows (at maximum) of which datum are most similar to query and their distance values.
+       * @param query datum for nearest neighbor search
+       * @param size number of rows to be returned
+       * @returns row IDs that are the nearest to query and their distance values
+       */
+      neighborRowFromDatum(query: common.types.Datum, size: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns ret_num rows (at maximum) that have most similar datum to id and their similarity values.
+       * @param id row ID in the nearest neighbor search table
+       * @param retNum number of rows to be returned
+       * @returns row IDs that are the nearest to the row id and their similarity values
+       */
+      similarRowFromId(id: string, retNum: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns ret_num rows (at maximum) of which datum are most similar to query and their similarity values.
+       * @param query datum for nearest neighbor search
+       * @param retNum number of rows to be returned
+       * @returns row IDs that are the nearest to query and their similarity values
+       */
+      similarRowFromDatum(query: common.types.Datum, retNum: number): Promise<types.IdWithScore[]>;
+      /**
+       * Returns the list of all row IDs.
+       * @returns list of all row IDs
+       */
+      getAllRows(): Promise<string[]>;
+    }
+    export const NearestNeighbor: NearestNeighborConstructor;
   }
 }
