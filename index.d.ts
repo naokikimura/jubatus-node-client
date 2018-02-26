@@ -173,7 +173,7 @@ declare namespace classifier {
 
     export const EstimateResult: EstimateResultConstructor;
 
-    type LabeledDatumTuple = [[string, common.types.DatumTuple]];
+    type LabeledDatumTuple = [string, common.types.DatumTuple];
 
     interface LabeledDatumConstructor {
       new(label: string, data: common.types.Datum): LabeledDatum
@@ -238,5 +238,52 @@ declare namespace classifier {
     }
 
     export const Classifier: ClassifierConstructor;
+  }
+}
+
+declare namespace regression {
+  namespace types {
+    type ScoredDatumTuple = [number, common.types.DatumTuple];
+    interface ScoredDatumConstructor {
+      new(score: number, data: common.types.Datum): ScoredDatum
+      fromTuple(tuple: ScoredDatumTuple): ScoredDatum;
+      readonly prototype: ScoredDatum;
+    }
+    /** 
+     * Represents a datum with its label.
+     */
+    interface ScoredDatum {
+      /** 
+       * Represents a label of this datum.
+       */
+      score: number;
+      /**
+       * Represents a datum.
+       */
+      data: common.types.Datum;
+      toTuple(): ScoredDatumTuple;
+    }
+  }
+  namespace client {
+    interface RegressionConstructor extends common.client.CommonConstructor<Regression> {
+      readonly prototype: Regression;
+    }
+    interface Regression extends common.client.Common {
+      /**
+       * Trains and updates the model. This function is designed to allow bulk update with list of scored_datum.
+       * 
+       * @param data list of tuple of label and datum
+       * @returns Number of trained datum (i.e., the length of the train_data)
+       */
+      train(data: types.ScoredDatum[]): Promise<number>;
+      /**
+       * Estimates the value from given estimate_data. This API is designed to allow bulk estimation with list of datum.
+       * 
+       * @param data list of datum to estimate
+       * @returns List of estimated values, in order of given datum
+       */
+      estimate(data: common.types.Datum[]): Promise<number[]>;
+    }
+    export const Regression: RegressionConstructor;
   }
 }
