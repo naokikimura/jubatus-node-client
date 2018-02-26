@@ -503,3 +503,82 @@ declare namespace nearestneighbor {
     export const NearestNeighbor: NearestNeighborConstructor;
   }
 }
+
+declare namespace anomaly {
+  namespace types {
+    type IdWithScoreTuple = [string, number];
+    interface IdWithScoreConstructor {
+      new(id: string, score: number): IdWithScore;
+      fromTuple(tuple: IdWithScoreTuple): IdWithScore;
+      readonly prototype: IdWithScore;
+    }
+    /**
+     * Represents ID with its score.
+     */
+    interface IdWithScore {
+      /**
+       * Data ID.
+       */
+      id: string;
+      /** 
+       * Score for the data. Negative (normal) data are scored around 1.0. Higher score means higher abnormality.
+       */
+      score: number;
+      toTuple(): IdWithScoreTuple;
+    }
+    export const IdWithScore: IdWithScoreConstructor;
+  }
+  namespace client {
+    interface AnomalyConstructor extends common.client.CommonConstructor<Anomaly> {
+      readonly prototype: Anomaly;
+    }
+    interface Anomaly extends common.client.Common {
+      /**
+       * Clears a point data with ID id.
+       * @param id point ID to be removed
+       * @returns True when the point was cleared successfully
+       */
+      clearRow(id: string): Promise<boolean>;
+      /**
+       * Adds a point data row.
+       * @param row datum for the point
+       * @returns Tuple of the point ID and the anomaly measure value
+       */
+      add(row: common.types.Datum): Promise<types.IdWithScore>;
+      /**
+       * Adds a bulk of points. In contrast to add, this API doesn’t return anomaly measure values.
+       * @param data List of datum for the points
+       * @returns The list of successfully added IDs.
+       */
+      addBulk(data: common.types.Datum[]): Promise<string[]>;
+      /**
+       * Updates the point id with the data row.
+       * @param id point ID to update
+       * @param row new datum for the point
+       * @returns Anomaly measure value
+       */
+      update(id: string, row: common.types.Datum): Promise<number>;
+      /**
+       * Overwrites the point id with the data row.
+       * @param id point ID to update
+       * @param row new datum for the point
+       * @returns Anomaly measure value
+       */
+      overwrite(id: string, row: common.types.Datum): Promise<number>;
+      /**
+       * Calculates an anomaly measure value for the point data row without adding a point.
+       * 
+       * At this time, extremely large numbers can be returned. For the detail, please refer to FAQs:anomaly detection .
+       * @param row datum
+       * @returns Anomaly measure value for given row
+       */
+      calcScore(row: common.types.Datum): Promise<number>;
+      /**
+       * Returns the list of all point IDs.
+       * @returns List of all point IDs
+       */
+      getAllRows(): Promise<string[]>;
+    }
+    export const Anomaly: AnomalyConstructor;
+  }
+}
