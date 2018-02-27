@@ -63,16 +63,14 @@ function definePrototypeMethods(constructor, types, schema, subSchema = {}) {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
             const validator = new jsonschema.Validator();
             validator.addSchema(subSchema);
-            const assertParams = params => {
-                const result = validator.validate(params, argumentsSchema);
-                assert.ok(result.valid, util.format('%j', result.errors));
-                return params;
-            };
-            const assertReturn = returnValue => {
-                const result = validator.validate(returnValue, returnSchema);
-                assert.ok(result.valid, util.format('%j', result.errors));
-                return returnValue;
-            };
+            const createAssertWith = (assert, validator, schema) => 
+                value => {
+                    const result = validator.validate(value, schema);
+                    assert.ok(result.valid, util.format('%j', result.errors));
+                    return value;
+                };
+            const assertParams = createAssertWith(assert, validator, argumentsSchema);
+            const assertReturn = createAssertWith(assert, validator, returnSchema);
             const castTypeFunction = (value) => typing.castType(value, returnSchema, types);
             const argumentsHandles = [typing.toTuple, !isProduct && assertParams];
             const returnHandles = [!isProduct && assertReturn, castTypeFunction];
@@ -134,11 +132,9 @@ const services = fs.readdirSync(dirname)
 const { Common: commonSchema } = services;
 const commonTypes = typing.createTypes(commonSchema.definitions, {});
 const commonConstructor = createClientConstructor('Common', createSuperConstructor(), commonTypes, commonSchema);
-_.toPairs(commonTypes)
-    .filter(([typeName]) => typeName === 'Datum')
-    .forEach(([, constractor]) => defineDatumPrototypeFunctions(constractor));
+_.at(commonTypes, 'Datum').forEach(defineDatumPrototypeFunctions);
 module.exports['common'] = { types: commonTypes, toTuple: typing.toTuple };
-_.toPairs(services).filter(([serviceName]) => serviceName !== 'Common').forEach(([className, schema]) => {
+_.toPairs(_.omit(services, 'Common')).forEach(([className, schema]) => {
     debug(className, schema);
     const types = typing.createTypes(schema.definitions, commonTypes);
     const typeReference = Object.assign({}, types, commonTypes);
