@@ -582,3 +582,90 @@ declare namespace anomaly {
     export const Anomaly: AnomalyConstructor;
   }
 }
+
+declare namespace clustering {
+  namespace types {
+    type WeightedDatumTuple = [number, common.types.Datum];
+    interface WeightedDatumConstructor {
+      new(weight: number, point: common.types.Datum): WeightedDatum;
+      fromTuple(tuple: WeightedDatumTuple): WeightedDatum;
+      readonly prototype: WeightedDatum;
+    }
+    interface WeightedDatum {
+      weight: number;
+      point: common.types.Datum;
+      toTuple(): WeightedDatumTuple;
+    }
+    export const WeightedDatum: WeightedDatumConstructor;
+    type IndexedPointTuple = [string, common.types.Datum];
+    interface IndexedPointConstructor {
+      new(id: string, point: common.types.Datum): IndexedPoint;
+      fromTuple(tuple: IndexedPointTuple): IndexedPoint;
+      readonly prototype: IndexedPoint;
+    }
+    interface IndexedPoint {
+      id: string;
+      point: common.types.Datum;
+      toTuple(): IndexedPointTuple;
+    }
+    export const IndexedPoint: IndexedPointConstructor;
+    type WeightedIndexTuple = [number, string];
+    interface WeightedIndexConstructor {
+      new(weight: number, id: string): WeightedIndex;
+      fromTuple(tuple: WeightedIndexTuple): WeightedIndex;
+      readonly prototype: WeightedIndex;
+    }
+    interface WeightedIndex {
+      weight: number;
+      id: string;
+      toTuple(): IndexedPointTuple;
+    }
+    export const WeightedIndex: WeightedIndexConstructor;
+  }
+  namespace client {
+    interface ClusteringConstructor extends common.client.CommonConstructor<Clustering> {
+      readonly prototype: Clustering;
+    }
+    interface Clustering extends common.client.Common {
+      /**
+       * Adds points.
+       * @param points list of indexed_point for the points. indexed_point is a tuple of string id and datum
+       * @returns True when the point was added successfully
+       */
+      push(points: types.IndexedPoint[]): Promise<boolean>;
+      /**
+       * Return revesion of cluster.
+       * @returns revision of cluster
+       */
+      getRevision(): Promise<number>;
+      /**
+       * Returns coreset of cluster in datum. This method is not supported in dbscan.
+       * @returns coreset of cluster
+       */
+      getCoreMembers(): Promise<types.WeightedDatum[][]>;
+      /**
+       * Returns coreset of cluster in index. This method is not supported in dbscan.
+       * @returns coreset of cluster
+       */
+      getCoreMembersLight(): Promise<types.WeightedIndex[][]>;
+      /**
+       * Returns k cluster centers.
+       * @returns cluster centers
+       */
+      getKCenter(): Promise<common.types.Datum[]>;
+      /**
+       * Returns nearest summary of cluster(coreset) from point. Its format is a list of tuples of weight and datum. This method is not supported in dbscan.
+       * @param point datum
+       * @returns coreset
+       */
+      getNearestMembers(point: common.types.Datum): Promise<types.WeightedDatum[]>;
+      /**
+       * Returns nearest summary of cluster(coreset) from point. Its format is a list of tuples of weight and id. This method is not supported in dbscan.
+       * @param point datum
+       * @returns coreset
+       */
+      getNearestMembersLight(point: common.types.Datum): Promise<types.WeightedIndex[]>;
+    }
+    export const Clustering: ClusteringConstructor;
+  }
+}
