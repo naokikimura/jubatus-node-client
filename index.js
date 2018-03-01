@@ -71,9 +71,9 @@ function definePrototypeMethods(constructor, types, schema, subSchema = {}) {
                 };
             const assertParams = createAssertWith(assert, validator, argumentsSchema);
             const assertReturn = createAssertWith(assert, validator, returnSchema);
-            const castTypeFunction = (value) => typing.castType(value, returnSchema, types);
+            const castFunction = (value) => typing.castTupleConvertibleType(value, returnSchema, types);
             const argumentsHandles = [typing.toTuple, !isProduct && assertParams];
-            const returnHandles = [!isProduct && assertReturn, castTypeFunction];
+            const returnHandles = [!isProduct && assertReturn, castFunction];
             return [rpcName, typing.toCamelCase(rpcName), argumentsHandles, returnHandles];
         })
         .reduce((constructor, [rpcName, methodName, argumentsHandles, returnHandles]) => {
@@ -120,7 +120,7 @@ function defineDatumPrototypeFunctions(datumFunction) {
         this.binaryValues.push([key, value]);
         return this;
     };
-    return prototype;
+    return datumFunction;
 }
 
 const dirname = path.resolve(__dirname, './api/');
@@ -130,13 +130,13 @@ const services = fs.readdirSync(dirname)
     .map(file => ({ [typing.toPascalCase(path.basename(file, '.json'))]: JSON.parse(fs.readFileSync(file)) }))
     .reduce((accumulator, current) => Object.assign(accumulator, current), {});
 const { Common: commonSchema } = services;
-const commonTypes = typing.createTypes(commonSchema.definitions, {});
+const commonTypes = typing.createTupleConvertibleTypes(commonSchema.definitions, {});
 const commonConstructor = createClientConstructor('Common', createSuperConstructor(), commonTypes, commonSchema);
 _.at(commonTypes, 'Datum').forEach(defineDatumPrototypeFunctions);
 module.exports['common'] = { types: commonTypes, toTuple: typing.toTuple };
 _.toPairs(_.omit(services, 'Common')).forEach(([className, schema]) => {
     debug(className, schema);
-    const types = typing.createTypes(schema.definitions, commonTypes);
+    const types = typing.createTupleConvertibleTypes(schema.definitions, commonTypes);
     const typeReference = Object.assign({}, types, commonTypes);
     const clientConstructor = createClientConstructor(className, commonConstructor, typeReference, schema, commonSchema);
     module.exports[className.toLowerCase()] = { client: { [className]: clientConstructor }, types };
