@@ -4,6 +4,7 @@ const typing = require('../lib/typing');
 describe('typing#toCamelCase', () => {
     it('sould return lower-camelcase', done => {
         expect(typing.toCamelCase('train')).to.equal('train');
+        expect(typing.toCamelCase('get_k_center')).to.equal('getKCenter');
         expect(typing.toCamelCase('calc_l2norm')).to.equal('calcL2norm');
 
         expect(typing.toCamelCase('foo')).to.equal('foo');
@@ -47,31 +48,6 @@ describe('typing#toPascalCase', () => {
     });
 });
 
-describe('typing#toSnakeCase', () => {
-    it('sould return snakelcase', done => {
-        expect(typing.toSnakeCase('NearestNeighbor')).to.equal('nearest_neighbor');
-        expect(typing.toSnakeCase('Anomaly')).to.equal('anomaly');
-        expect(typing.toSnakeCase('train')).to.equal('train');
-        expect(typing.toSnakeCase('calcL2norm')).to.equal('calc_l2norm');
-
-        expect(typing.toSnakeCase('foo')).to.equal('foo');
-        expect(typing.toSnakeCase('Foo')).to.equal('foo');
-        expect(typing.toSnakeCase('FOO')).to.equal('foo');
-        expect(typing.toSnakeCase('fOo')).to.equal('f_oo');
-        expect(typing.toSnakeCase('foO')).to.equal('fo_o');
-        expect(typing.toSnakeCase('fOO')).to.equal('f_oo');
-        expect(typing.toSnakeCase('foo_bar')).to.equal('foo_bar');
-        expect(typing.toSnakeCase('Foo_Bar')).to.equal('foo_bar');
-        expect(typing.toSnakeCase('FOO_BAR')).to.equal('foo_bar');
-        expect(typing.toSnakeCase('foo-bar')).to.equal('foo_bar');
-        expect(typing.toSnakeCase('foo bar')).to.equal('foo_bar');
-        expect(typing.toSnakeCase('fooBar')).to.equal('foo_bar');
-        expect(typing.toSnakeCase('FooBar')).to.equal('foo_bar');
-
-        done();
-    });
-});
-
 describe('typing#castTupleConvertibleType', () => {
     it('sould return tuple convertible object', done => {
         const definitions = {
@@ -89,8 +65,8 @@ describe('typing#castTupleConvertibleType', () => {
                 ]
             }
         };
-        const types = typing.createTupleConvertibleTypes(definitions);
-        const cast = (value, schema) => typing.castTupleConvertibleType(value, schema, types);
+        const [types, typeReference] = typing.createTupleConvertibleTypes({ definitions });
+        const cast = (value, schema) => typing.castTupleConvertibleType(value, { schema }, typeReference);
         expect(cast(0, { type: 'number', definitions })).to.equal(0);
         expect(cast('', { type: 'string', definitions })).to.equal('');
         expect(cast(null, { type: 'null', definitions })).to.equal(null);
@@ -98,7 +74,8 @@ describe('typing#castTupleConvertibleType', () => {
         expect(cast(void 0, { type: 'null', definitions })).to.equal(undefined);
         expect(cast({}, { type: 'object', definitions })).to.deep.equal({});
         expect(cast([], { type: 'array', definitions })).to.deep.equal([]);
-        expect(cast([undefined, -1], { '$ref': '#/definitions/foo', definitions })).to.deep.equal(new types.Foo());
+        const object = cast([undefined, -1], { '$ref': '#/definitions/foo', definitions });
+        expect(object).to.deep.equal(new types.Foo());
         done();
     });
 });
@@ -129,7 +106,7 @@ describe('typing#toTuple', () => {
                 }
             }
         };
-        const types = typing.createTupleConvertibleTypes(schema.definitions);
+        const [types] = typing.createTupleConvertibleTypes(schema);
         const object = new types.Foo();
         expect(typing.toTuple(object)).to.deep.equal(object.toTuple());
         const objects = new Array(2).map(() => new types.Foo());
@@ -157,7 +134,7 @@ describe('typing#createTupleConvertibleTypes', () => {
                 }
             }
         };
-        const types = typing.createTupleConvertibleTypes(schema.definitions);
+        const [types] = typing.createTupleConvertibleTypes(schema);
         expect(types).to.have.property('Foo').that.is.a('function')
             .and.to.have.property('fromTuple').that.is.a('function');
         const Type = types.Foo;

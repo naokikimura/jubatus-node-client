@@ -57,7 +57,7 @@ function createSuperConstructor() {
     return constructor;
 }
 
-function definePrototypeMethods(constructor, types, schema, subSchema = {}) {
+function definePrototypeMethods(constructor, typeReference, schema, subSchema = {}) {
     return _.toPairs(schema.properties)
         .map(([rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
@@ -71,7 +71,8 @@ function definePrototypeMethods(constructor, types, schema, subSchema = {}) {
                 };
             const assertParams = createAssertWith(assert, validator, argumentsSchema);
             const assertReturn = createAssertWith(assert, validator, returnSchema);
-            const castFunction = (value) => typing.castTupleConvertibleType(value, returnSchema, types);
+            const contextSchema = { base: schema.id, schema: returnSchema };
+            const castFunction = (value) => typing.castTupleConvertibleType(value, contextSchema, typeReference);
             const argumentsHandles = [typing.toTuple, !isProduct && assertParams];
             const returnHandles = [!isProduct && assertReturn, castFunction];
             return [rpcName, typing.toCamelCase(rpcName), argumentsHandles, returnHandles];
@@ -130,14 +131,13 @@ const services = fs.readdirSync(dirname)
     .map(file => ({ [typing.toPascalCase(path.basename(file, '.json'))]: JSON.parse(fs.readFileSync(file)) }))
     .reduce((accumulator, current) => Object.assign(accumulator, current), {});
 const { Common: commonSchema } = services;
-const commonTypes = typing.createTupleConvertibleTypes(commonSchema.definitions, {});
-const commonConstructor = createClientConstructor('Common', createSuperConstructor(), commonTypes, commonSchema);
+const [commonTypes, commonTypeReference] = typing.createTupleConvertibleTypes(commonSchema, {});
+const commonConstructor = createClientConstructor('Common', createSuperConstructor(), commonTypeReference, commonSchema);
 _.at(commonTypes, 'Datum').forEach(defineDatumPrototypeFunctions);
 module.exports['common'] = { types: commonTypes, toTuple: typing.toTuple };
 _.toPairs(_.omit(services, 'Common')).forEach(([className, schema]) => {
     debug(className, schema);
-    const types = typing.createTupleConvertibleTypes(schema.definitions, commonTypes);
-    const typeReference = Object.assign({}, types, commonTypes);
+    const [types, typeReference] = typing.createTupleConvertibleTypes(schema, commonTypeReference);
     const clientConstructor = createClientConstructor(className, commonConstructor, typeReference, schema, commonSchema);
     module.exports[className.toLowerCase()] = { client: { [className]: clientConstructor }, types };
 });
