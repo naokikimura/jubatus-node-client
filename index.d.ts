@@ -1151,3 +1151,49 @@ declare namespace bandit {
     export const Bandit: BanditConstructor;
   }
 }
+
+declare namespace weight {
+  namespace types {
+    type FeatureTuple = [string, number];
+    interface FeatureConstructor {
+      new(key: string, value: number): Feature;
+      fromTuple(tuple: FeatureTuple): Feature;
+      readonly prototype: Feature;
+    }
+    /**
+     * Represents a dimension of feature vector.
+     */
+    interface Feature {
+      /**
+       * Represents a name for the dimension of the feature vector.
+       */
+      key: string;
+      /**
+       * Represents a weight for the dimension of the feature vector.
+       */
+      value: number;
+      toTuple(): FeatureTuple;
+    }
+    export const Feature: FeatureConstructor;
+  }
+  namespace client {
+    interface WeightConstructor extends common.client.CommonConstructor<Weight> {
+      readonly prototype: Weight;
+    }
+    interface Weight extends common.client.Common {
+      /**
+       * Updates the weight using d, then returns the result of feature conversion of d using updated weight.
+       * @param d datum to extract feature
+       * @returns Extarcted feature vector
+       */
+      update(d: common.types.Datum): Promise<types.Feature[]>;
+      /**
+       * Returns the result of feature conversion of d without updating the weight.
+       * @param d datum to extract feature
+       * @returns Extarcted feature vector
+       */
+      calcWeight(d: common.types.Datum): Promise<types.Feature[]>;
+    }
+    export const Weight: WeightConstructor;
+  }
+}
