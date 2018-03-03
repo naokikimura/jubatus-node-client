@@ -824,3 +824,53 @@ declare namespace burst {
     export const Burst: BurstConstructor;
   }
 }
+
+declare namespace stat {
+  namespace types {}
+  namespace client {
+    interface StatConstructor extends common.client.CommonConstructor<Stat> {
+      readonly prototype: Stat;
+    }
+    interface Stat extends common.client.Common {
+      /**
+       * Adds value val to the attribute key.
+       * @param key 
+       * @param value 
+       */
+      push(key: string, value: number): Promise<boolean>;
+      /**
+       * Returns the sum of values in the attribute key.
+       * @param key 
+       */
+      sum(key: string): Promise<number>;
+      /**
+       * Returns the standard deviation of values in the attribute key.
+       * @param key 
+       */
+      stddev(key: string): Promise<number>;
+      /**
+       * Returns the maximum value of values in the attribute key.
+       * @param key 
+       */
+      max(key: string): Promise<number>;
+      /**
+       * Returns the minimum value of values in the attribute key.
+       * @param key 
+       */
+      min(key: string): Promise<number>;
+      /**
+       * Returns the entropy of values in the attribute key.
+       * @param key 
+       */
+      entropy(key: string): Promise<number>;
+      /**
+       * Returns the degree-th moment about center of values in the attribute key.
+       * @param key 
+       * @param degree 
+       * @param center 
+       */
+      moment(key: string, degree: number, center: number): Promise<number>;
+    }
+    export const Stat: StatConstructor;
+  }
+}
