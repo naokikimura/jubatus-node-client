@@ -874,3 +874,208 @@ declare namespace stat {
     export const Stat: StatConstructor;
   }
 }
+
+declare namespace graph {
+  namespace types {
+    type NodeTuple = [MapLike<string>, number[], number[]];
+    interface NodeConstructor {
+      new(property: MapLike<string>, inEdges: number[], outEdges: number[]): Node;
+      fromTuple(tuple: NodeTuple): Node;
+      readonly prototype: Node;
+    }
+    /**
+     * Represents the node information.
+     */
+    interface Node {
+      /**
+       * Property information for the node.
+       */
+      property: MapLike<string>;
+      /**
+       * List of ID of incoming edges.
+       */
+      inEdges: number[];
+      /**
+       * List of ID of outgoing edges.
+       */
+      outEdges: number[];
+      toTuple(): NodeTuple;
+    }
+    export const Node: NodeConstructor;
+    type QueryTuple = [string, string];
+    interface QueryConstructor {
+      new(fromId: string, toId: string): Query;
+      fromTuple(tuple: QueryTuple): Query;
+      readonly prototype: Query;
+    }
+    /**
+     * Represents a query.
+     */
+    interface Query {
+      fromId: string;
+      toId: string;
+      toTuple(): QueryTuple;
+    }
+    export const Query: QueryConstructor;
+    type PresetQueryTuple = [Query[], Query[]];
+    interface PresetQueryConstructor {
+      new(edgeQuery: Query[], nodeQuery: Query[]): PresetQuery;
+      fromTuple(tuple: PresetQueryTuple): PresetQuery;
+      readonly prototype: PresetQuery;
+    }
+    /**
+     * Represents a preset query. See the description below for details.
+     */
+    interface PresetQuery {
+      edgeQuery: Query[];
+      nodeQuery: Query[];
+      toTuple(): PresetQueryTuple;
+    }
+    export const PresetQuery: PresetQueryConstructor;
+    type EdgeTuple = [Query[], Query[]];
+    interface EdgeConstructor {
+      new(property: MapLike<string>, source: string, target: string): Edge;
+      fromTuple(tuple: EdgeTuple): Edge;
+      readonly prototype: Edge;
+    }
+    /**
+     * Represents the edge information.
+     */
+    interface Edge {
+      /**
+       * Property information for the edge.
+       */
+      property: MapLike<string>;
+      /**
+       * ID of the source node that the edge connects.
+       */
+      source: string;
+      /**
+       * ID of the target node that the edge connects.
+       */
+      target: string;
+      toTuple(): EdgeTuple;
+    }
+    export const Edge: EdgeConstructor;
+    type ShortestPathQueryTuple = [string, string, number, PresetQuery];
+    interface ShortestPathQueryConstructor {
+      new(source: string, target: string, maxHop: number, query: PresetQuery): ShortestPathQuery;
+      fromTuple(tuple: ShortestPathQueryTuple): ShortestPathQuery;
+      readonly prototype: ShortestPathQuery;
+    }
+    /**
+     * Represents a preset query. See the description below for details.
+     */
+    interface ShortestPathQuery {
+      source: string;
+      target: string;
+      maxHop: number;
+      query: PresetQuery;
+      toTuple(): PresetQueryTuple;
+    }
+    export const ShortestPathQuery: ShortestPathQueryConstructor;
+  }
+  namespace client {
+    interface GraphConstructor extends common.client.CommonConstructor<Graph> {
+      readonly prototype: Graph;
+    }
+    interface Graph extends common.client.Common {
+      /**
+       * Creates a node on the graph. Returns a node ID as string.
+       */
+      createNode(): Promise<string>;
+      /**
+       * Removes a node node_id from the graph.
+       * @param nodeId 
+       */
+      removeNode(nodeId: string): Promise<boolean>;
+      /**
+       * Updates the property of the node node_id to property.
+       * @param nodeId 
+       * @param property 
+       */
+      updateNode(nodeId: string, property: MapLike<string>): Promise<boolean>;
+      /**
+       * Creates a link from e.source to e.target. Returns a edge ID as an unsigned long integer.
+       * 
+       * The link has a direction. For any two nodes, multiple links with the same direction can be created. In this case, property e.property can be associated to each link (see edge).
+       * node_id must be the same value as e.source.
+       * @param nodeId 
+       * @param e 
+       */
+      createEdge(nodeId: string, e: types.Edge): Promise<number>;
+      /**
+       * Updates an existing edge edge_id with information e. Property will be replaced.
+       * 
+       * node_id must be the same value as e.source.
+       * @param nodeId 
+       * @param edgeId 
+       * @param e 
+       */
+      updateEdge(nodeId: string, edgeId: number, e: types.Edge): Promise<boolean>;
+      /**
+       * Removes an edge edge_id. node_id must be an ID for the source node of the edge edge_id.
+       * @param nodeId 
+       * @param edgeId 
+       * @param e 
+       */
+      removeEdge(nodeId: string, edgeId: number, e: types.Edge): Promise<boolean>;
+      /**
+       * Calculates (gets the computed value) the centrality over the edges that match the preset query query. The query must be registered beforehand by using add_centrality_query.
+       * 
+       * centrality_type is a type of centrality. Currently, only 0 (PageRank centrality) can be specified.
+       * Centrality is computed when mix runs, thus there may be a gap between the exact value of centrality and the computed value if there’re updates not mixed. See also the description of update_index.
+       * @param nodeId 
+       * @param centralityType 
+       * @param query 
+       */
+      getCentrality(nodeId: string, centralityType: number, query: types.PresetQuery): Promise<number>;
+      /**
+       * Adds a preset query query to the graph for centrality calculation.
+       * @param query 
+       */
+      addCentralityQuery(query: types.PresetQuery): Promise<number>;
+      /**
+       * Adds a preset query query to the graph for shortest path calculation.
+       * @param query 
+       */
+      addShortestPathQuery(query: types.PresetQuery): Promise<number>;
+      /**
+       * Removes a preset query query from the graph.
+       * @param query 
+       */
+      removeCentralityQuery(query: types.PresetQuery): Promise<number>;
+      /**
+       * Removes a preset query query from the graph.
+       * @param query 
+       */
+      removeShortestPathQuery(query: types.PresetQuery): Promise<number>;
+      /**
+       * Calculates (from the precomputed data) a shortest path from query.source to query.target that matches the preset query. The query must be registered beforehand by using add_shortest_path_query. Returns a list of node IDs that represents a path from query.source to query.target.
+       * 
+       * If the shortest path from query.source to query.target cannot be found within query.max_hop hops, the result will be truncated.
+       * Path-index tree may have a gap between the exact path and the computed path when in a distributed setup. See also the description of update_index.
+       * @param query 
+       */
+      getShortestPath(query: types.ShortestPathQuery): Promise<string[]>;
+      /**
+       * Runs mix locally. Do not use in distributed mode.
+       * 
+       * Some functions like get_centrality and get_shortest_path uses an index that is updated in the mix operation. In a standalone mode, mix is not automatically called thus users must call this API by themselves.
+       */
+      updateIndex(): Promise<boolean>;
+      /**
+       * Gets the node for a node node_id.
+       * @param nodeId 
+       */
+      getNode(nodeId: string): Promise<types.Node>;
+      /**
+       * Gets the edge of an edge edge_id. node_id is an ID for the source node of the edge edge_id.
+       * @param nodeId 
+       * @param edgeId 
+       */
+      getEdge(nodeId: string, edgeId: number): Promise<types.Edge>;
+    }
+    export const Graph: GraphConstructor;
+  }
+}
