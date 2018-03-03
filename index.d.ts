@@ -1,4 +1,5 @@
 import * as rpc from "msgpack-rpc-lite"
+import { MapLike } from "typescript";
 
 declare namespace common {
   namespace types {
@@ -667,5 +668,159 @@ declare namespace clustering {
       getNearestMembersLight(point: common.types.Datum): Promise<types.WeightedIndex[]>;
     }
     export const Clustering: ClusteringConstructor;
+  }
+}
+
+declare namespace burst {
+  namespace types {
+    type KeywordWithParamsTuple = [string, number, number];
+    interface KeywordWithParamsConstructor {
+      new(keyword: string, scalingParam: number, gamma: number): KeywordWithParams;
+      fromTuple(tuple: KeywordWithParamsTuple): KeywordWithParams;
+      readonly prototype: KeywordWithParams;
+    }
+    /**
+     * Represents the keyword and its parameters to be detected as burst.
+     */
+    interface KeywordWithParams {
+      /**
+       * The keyword to be burst-detected.
+       */
+      keyword: string;
+      /**
+       * A scaling parameter applied for this keyword.
+       */
+      scalingParam: number;
+      /**
+       * A γ value applied for this keyword. The higher value reduces the burst detection sensitivity.
+       */
+      gamma: number;
+      toTuple(): KeywordWithParamsTuple;
+    }
+    export const KeywordWithParams: KeywordWithParamsConstructor;
+    type BatchTuple = [number, number, number];
+    interface BatchConstructor {
+      new(allDataCount: number, relevantDataCount: number, burstWeight: number): Batch;
+      fromTuple(tuple: BatchTuple): Batch;
+      readonly prototype: Batch;
+    }
+    /**
+     * Represents the burst detection result for one batch range.
+     */
+    interface Batch {
+      /**
+       * Number of total documents in this batch.
+       */
+      allDataCount: number;
+      /**
+       * Number of documents that contains the keyword in this batch.
+       */
+      relevantDataCount: number;
+      /**
+       * Burst level of this batch. Burst level is a relative value that cannot be compared between keywords.
+       */
+      burstWeight: number;
+      toTuple(): BatchTuple;
+    }
+    export const Batch: BatchConstructor;
+    type WindowTuple = [number, Batch[]];
+    interface WindowConstructor {
+      new(startPos: number, batches: Batch[]): Window;
+      fromTuple(tuple: WindowTuple): Window;
+      readonly prototype: Window;
+    }
+    /**
+     * Represents the burst detection result.
+     */
+    interface Window {
+      /**
+       * Starting position of this window.
+       */
+      startPos: number;
+      /**
+       * Batches that composes this window.
+       */
+      batches: Batch[];
+      toTuple(): WindowTuple;
+    }
+    export const Window: WindowConstructor;
+    type DocumentTuple = [number, string];
+    interface DocumentConstructor {
+      new(pos: number, text: string): Document;
+      fromTuple(tuple: DocumentTuple): Document;
+      readonly prototype: Document;
+    }
+    /**
+     * Represents the document used for burst detection.
+     */
+    interface Document {
+      /**
+       * Position (time in many cases) of this document.
+       */
+      pos: number;
+      /**
+       * Contents of this document. Keyword matching runs against this data using partial match.
+       */
+      text: string;
+      toTuple(): DocumentTuple;
+    }
+    export const Document: DocumentConstructor;
+  }
+  namespace client {
+    interface BurstConstructor extends common.client.CommonConstructor<Burst> {
+      readonly prototype: Burst;
+    }
+    interface Burst extends common.client.Common {
+      /**
+       * Register the document for burst detection. This This API is designed to accept bulk update with list of document.
+       * You need to register the keyword via add_keyword method before adding documents.
+       * A document whose location (pos) is out of range of the current window cannot be registered.
+       * @param data list of documents to be added
+       * @returns number of documents successfully registered (will be the length of data if all documents are registered successfully)
+       */
+      addDocuments(data: types.Document[]): Promise<number>;
+      /**
+       * Returns the burst detection result of the current window for pre-registered keyword keyword.
+       * @param keyword keyword to get burst detection result
+       * @returns burst detection result
+       */
+      getResult(keyword: string): Promise<types.Window>;
+      /**
+       * Returns the burst detection result at the specified position pos for pre-registered keyword keyword.
+       * @param keyword keyword to get burst detection result
+       * @param pos position
+       * @returns burst detection result
+       */
+      getResultAt(keyword: string, pos: number): Promise<types.Window>;
+      /**
+       * Returns the burst detection result at the specified position pos for all pre-registered keywords.
+       * @param pos position
+       * @returns pairs of keyword and its burst detection result
+       */
+      getAllBurstedResults(pos: number): Promise<MapLike<types.Window>>;
+      /**
+       * Returns the list of keywords registered for burst detection.
+       * @returns list of keyword and its parameters
+       */
+      getAllKeywords(): Promise<types.KeywordWithParams[]>;
+      /**
+       * Registers the keyword keyword for burst detection.
+       * @param keyword keyword and parameters to be added
+       * @returns True if Jubatus succeed to add the keyword
+       */
+      addKeyword(keyword: types.KeywordWithParams): Promise<boolean>;
+      /**
+       * Removes the keyword keyword from burst detection.
+       * @param keyword keyword to be removed
+       * @returns True if Jubatus succeed to delete the keyword
+       */
+      removeKeyword(keyword: string): Promise<boolean>;
+      /**
+       * Removes all the keywords from burst detection.
+       * @returns True if Jubatus succeed to delete keywords
+       */
+      removeAllKeywords(): Promise<boolean>;
+    }
+    export const Burst: BurstConstructor;
   }
 }
