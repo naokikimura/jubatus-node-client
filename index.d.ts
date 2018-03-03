@@ -1079,3 +1079,75 @@ declare namespace graph {
     export const Graph: GraphConstructor;
   }
 }
+
+declare namespace bandit {
+  namespace types {
+    type ArmInfoTuple = [number, number];
+    interface ArmInfoConstructor {
+      new(trialCount: number, weight: number): ArmInfo;
+      fromTuple(tuple: ArmInfoTuple): ArmInfo;
+      readonly prototype: ArmInfo;
+    }
+    /**
+     * The state of an arm.
+     */
+    interface ArmInfo {
+      /**
+       * Number of times of an arm being selected.
+       */
+      trialCount: number;
+      /**
+       * The weight of an arm.
+       */
+      weight: number;
+      toTuple(): ArmInfoTuple;
+    }
+    export const ArmInfo: ArmInfoConstructor;
+  }
+  namespace client {
+    interface BanditConstructor extends common.client.CommonConstructor<Bandit> {
+      readonly prototype: Bandit;
+    }
+    interface Bandit extends common.client.Common {
+      /**
+       * Register a new arm with the name of arm_id.
+       * @param armId ID of the new arm to be registered
+       * @returns True if succeeded in registering the arm. False if failed to register the arm.
+       */
+      registerArm(armId: string): Promise<boolean>;
+      /**
+       * Delete an arm with the name of arm_id.
+       * @param armId ID of the arm to be deleted
+       * @returns True if succeeded in deleting the arm. False if failed to delete the arm.
+       */
+      deleteArm(armId: string): Promise<boolean>;
+      /**
+       * Select player’s arm according to current state.
+       * @param playerId ID of the player whose arm is to be selected
+       * @returns arm_id selected by bandit algorithm.
+       */
+      selectArm(playerId: string): Promise<string>;
+      /**
+       * Register rewards with specified player’s specified arm.
+       * @param playerId ID of the player whose arm gets rewards
+       * @param armId ID of the arm which rewards are registered with
+       * @param reward amount of rewards
+       * @returns True if succeeded in registering reward. False if failed to register rewards. 
+       */
+      registerReward(playerId: string, armId: string, reward: number): Promise<boolean>;
+      /**
+       * Get all arms information of specified player.
+       * @param playerId ID of the player
+       * @returns arm information of specified player
+       */
+      getArmInfo(playerId: string): Promise<MapLike<types.ArmInfo>>;
+      /**
+       * Reset all arms information of specified player.
+       * @param playerId ID of the user whose arms are to be reset.
+       * @returns True if succeeded in resetting the arm. False if failed to reset.
+       */
+      reset(playerId: string): Promise<boolean>;
+    }
+    export const Bandit: BanditConstructor;
+  }
+}
