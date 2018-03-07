@@ -2,18 +2,19 @@ import * as rpc from "msgpack-rpc-lite"
 import { MapLike } from "typescript";
 
 declare namespace common {
+
+  export function toTuple(object: any): any;
+
   namespace types {
     type stringValues = [[string, string]];
     type numValues = [[string, number]];
     type binaryValues = [[string, Buffer]];
     type DatumTuple = [stringValues, numValues, binaryValues];
-
     interface DatumConstructor {
       new(stringValues?: stringValues, numValues?: numValues, binaryValues?: binaryValues): Datum;
       fromTuple(typle: DatumTuple): Datum;
       readonly prototype: Datum;
     }
-
     /**
      * Represents a set of data used for machine learning in Jubatus. See Data Conversion for details.
      * 
@@ -55,7 +56,6 @@ declare namespace common {
       binaryValues: binaryValues;
       toTuple(): DatumTuple;
     }
-
     export const Datum: DatumConstructor;
   }
 
