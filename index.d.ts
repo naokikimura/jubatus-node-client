@@ -139,7 +139,7 @@ declare namespace common {
      * timeout_sec is a length of timeout between the RPC method invocation and response.
      */
     interface CommonConstructor<T> {
-      new(port: number, host?: string, timeoutSeconds?: number): T;
+      new(port: number, host?: string, name?: string, timeoutSeconds?: number): T;
       new(rpcClient: rpc.Client): T;
       new(options: ConstructorOptions): T;
       readonly prototype: T;
