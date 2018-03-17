@@ -1,7 +1,7 @@
 {
   "$schema": "https://schemastore.azurewebsites.net/schemas/json/package.json",
   "name": "jubatus",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "homepage": "https://github.com/naokikimura/jubatus-node-client",
   "main": "./index.js",
   "directories": {
