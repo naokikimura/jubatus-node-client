@@ -10,6 +10,8 @@ before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -y --allow-unauthenticated jubatus
 - source /opt/jubatus/profile
+after_success:
+- ./node_modules/.bin/codacy-coverage < ./coverage/lcov.info
 deploy:
   provider: npm
   email: n.kimura.cap@gmail.com
@@ -21,5 +23,3 @@ deploy:
 notifications:
   slack:
     secure: IITJQkQ+Qm94EX37KaEEDUO14SQ1J9e16Y5qA25JZrNcF7LHeRHd2v6CQI4QVf94LJz9finZ7sLoFzgAJJnYwf0vy5/a7Cq3ZanSE8Krn1WPuj7nhTeRsMsh8cpicS1f0jxsSy5wJwmuDnYOEgQbIO2+pK8x/SP1Wdhz++Jhfgg=
-script:
-    - npm test -- --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage && rm -rf ./coverage

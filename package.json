@@ -35,7 +35,7 @@
     "portfinder": "^1.0.13"
   },
   "scripts": {
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha"
+    "test": "istanbul cover _mocha"
   },
   "config": {
     "test": {
