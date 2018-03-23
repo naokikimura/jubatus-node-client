@@ -1,0 +1,7 @@
+{
+  "all": true,
+  "reporter": [
+    "lcovonly",
+    "text"
+  ]
+}
