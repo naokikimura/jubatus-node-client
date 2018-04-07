@@ -82,7 +82,7 @@ function definePrototypeMethods(constructor, typeReference, schema, subSchema = 
             constructor.prototype[methodName] = function (...args) {
                 const { client, name } = this;
                 const params = argumentsHandles.reduce(handler, args);
-                return client.request.apply(client, [rpcName].concat(name, params)).then(([result]) => {
+                return client.request(rpcName, name, ...params).then(([result]) => {
                     return returnHandles.reduce(handler, result);
                 });
             };
