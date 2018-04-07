@@ -132,7 +132,6 @@
           "type": "array",
           "minItems": 0,
           "maxItems": 0,
-          "items": [],
           "additionalItems": false
         }
       }
@@ -149,7 +148,6 @@
           "type": "array",
           "minItems": 0,
           "maxItems": 0,
-          "items": [],
           "additionalItems": false
         }
       }
@@ -166,7 +164,6 @@
           "type": "array",
           "minItems": 0,
           "maxItems": 0,
-          "items": [],
           "additionalItems": false
         }
       }
@@ -183,7 +180,6 @@
           "type": "array",
           "minItems": 0,
           "maxItems": 0,
-          "items": [],
           "additionalItems": false
         }
       }
@@ -200,7 +196,6 @@
           "type": "array",
           "minItems": 0,
           "maxItems": 0,
-          "items": [],
           "additionalItems": false
         }
       }
