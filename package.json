@@ -19,7 +19,7 @@
     "jubatus": "~1.0.7"
   },
   "dependencies": {
-    "jsonschema": "^1.2.3",
+    "ajv": "^6.4.0",
     "lodash": "^4.17.5",
     "msgpack-rpc-lite": "^0.2.1"
   },

@@ -3,15 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const _ = require('lodash');
-const jsonschema = require('jsonschema');
+const ajv = require('ajv');
 const rpc = require('msgpack-rpc-lite');
 const debug = require('./lib/debug')('jubatus-node-client');
 const typing = require('./lib/typing');
-
-// Hack
-jsonschema.Validator.prototype.types.number = function (instance) {
-    return typeof instance === 'number';
-};
 
 const isProduct = process.env.NODE_ENV && (/production/).test(process.env.NODE_ENV);
 
@@ -61,16 +56,21 @@ function definePrototypeMethods(constructor, typeReference, schema, subSchema = 
     return _.toPairs(schema.properties)
         .map(([rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
-            const validator = new jsonschema.Validator();
-            validator.addSchema(subSchema);
-            const createAssertWith = (assert, validator, schema) => 
+            const ajvOptions = { logger: false, schemaId: 'id', validateSchema: false };
+            const argumentsValidate = ajv(ajvOptions)
+                .addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'))
+                .addSchema(subSchema, 'sub').compile(argumentsSchema);
+            const returnValidate = ajv(ajvOptions)
+                .addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'))
+                .addSchema(subSchema, 'sub').compile(returnSchema);
+            const createAssertWith = (assert, validate) =>
                 value => {
-                    const result = validator.validate(value, schema);
-                    assert.ok(result.valid, util.format('%j', result.errors));
+                    const valid = validate(value);
+                    assert.ok(valid, util.format('%j', validate.errors));
                     return value;
                 };
-            const assertParams = createAssertWith(assert, validator, argumentsSchema);
-            const assertReturn = createAssertWith(assert, validator, returnSchema);
+            const assertParams = createAssertWith(assert, argumentsValidate);
+            const assertReturn = createAssertWith(assert, returnValidate);
             const contextSchema = { base: schema.id, schema: returnSchema };
             const castFunction = (value) => typing.castTupleConvertibleType(value, contextSchema, typeReference);
             const argumentsHandles = [typing.toTuple, !isProduct && assertParams];
