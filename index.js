@@ -56,13 +56,14 @@ function definePrototypeMethods(constructor, typeReference, schema, subSchema = 
     return _.toPairs(schema.properties)
         .map(([rpcName, { properties: { 'arguments': argumentsSchema, 'return': returnSchema } }]) => {
             argumentsSchema.definitions = returnSchema.definitions = schema.definitions;
-            const ajvOptions = { logger: false, schemaId: 'id', validateSchema: false };
-            const argumentsValidate = ajv(ajvOptions)
-                .addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'))
-                .addSchema(subSchema, 'sub').compile(argumentsSchema);
-            const returnValidate = ajv(ajvOptions)
-                .addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'))
-                .addSchema(subSchema, 'sub').compile(returnSchema);
+            const ajvOptions = {
+                logger: debug.enabled && { log: debug, warn: debug, error: debug },
+                schemaId: 'id',
+                validateSchema: debug.enabled
+            };
+            const validator = ajv(ajvOptions).addSchema(subSchema, 'sub');
+            const argumentsValidate = validator.compile(argumentsSchema);
+            const returnValidate = validator.compile(returnSchema);
             const createAssertWith = (assert, validate) =>
                 value => {
                     const valid = validate(value);
