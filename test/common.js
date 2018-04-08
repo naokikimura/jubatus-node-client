@@ -43,6 +43,14 @@ describe('common#save', () => {
             done();
         }).catch(done);
     });
+
+    it('should throw an error when parameters is incurrect', done => {
+        const id = 1;
+        client.save(id).then(done).catch(error => {
+            expect(error).to.be.an.instanceof(Error);
+            done();
+        });
+    });
 });
 
 describe('common#load', () => {

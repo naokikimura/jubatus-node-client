@@ -81,11 +81,12 @@ function definePrototypeMethods(constructor, typeReference, schema, subSchema = 
         .reduce((constructor, [rpcName, methodName, argumentsHandles, returnHandles]) => {
             const handler = (value, handle) => handle ? handle(value) : value;
             constructor.prototype[methodName] = function (...args) {
-                const { client, name } = this;
-                const params = argumentsHandles.reduce(handler, args);
-                return client.request(rpcName, name, ...params).then(([result]) => {
-                    return returnHandles.reduce(handler, result);
-                });
+                return new Promise(resolve => resolve(argumentsHandles.reduce(handler, args)))
+                    .then(params => {
+                        const { client, name } = this;
+                        return client.request(rpcName, name, ...params)
+                            .then(([result]) => returnHandles.reduce(handler, result));
+                    });
             };
             return constructor;
         }, constructor);
