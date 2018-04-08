@@ -61,7 +61,9 @@ function definePrototypeMethods(constructor, typeReference, schema, subSchema = 
                 schemaId: 'id',
                 validateSchema: debug.enabled
             };
-            const validator = ajv(ajvOptions).addSchema(subSchema, 'sub');
+            const validator = ajv(ajvOptions)
+                .addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'))
+                .addSchema(subSchema, 'sub');
             const argumentsValidate = validator.compile(argumentsSchema);
             const returnValidate = validator.compile(returnSchema);
             const createAssertWith = (assert, validate) =>
