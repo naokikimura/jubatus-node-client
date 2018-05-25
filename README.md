@@ -5,7 +5,7 @@ jubatus-node-client
 [![npm version](https://badge.fury.io/js/jubatus.svg)](https://badge.fury.io/js/jubatus)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5eaec4cefec543a5954dc61d5022f6c4)](https://www.codacy.com/app/n.kimura.cap/jubatus-node-client?utm_source=github.com&utm_medium=referral&utm_content=naokikimura/jubatus-node-client&utm_campaign=badger)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/aa18bb3e6b284c4581068ca070060007)](https://www.codacy.com/app/n.kimura.cap/jubatus-node-client?utm_source=github.com&utm_medium=referral&utm_content=naokikimura/jubatus-node-client&utm_campaign=Badge_Coverage)
-[![Dependency Status](https://beta.gemnasium.com/badges/github.com/naokikimura/jubatus-node-client.svg)](https://beta.gemnasium.com/projects/github.com/naokikimura/jubatus-node-client)
+[![Known Vulnerabilities](https://snyk.io/test/github/naokikimura/jubatus-node-client/badge.svg?targetFile=package.json)](https://snyk.io/test/github/naokikimura/jubatus-node-client?targetFile=package.json)
 
 Jubatus client for Node.js (unofficial)
 
