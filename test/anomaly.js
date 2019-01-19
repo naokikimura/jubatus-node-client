@@ -25,10 +25,13 @@ after(done => {
 
 describe('anomaly#clear_row', () => {
     it('clear_row', done => {
-        const id = 'foo';
-        client.clearRow(id).then(result => {
+        const row = new jubatus.common.types.Datum([['foo', 'bar']], [['qux', 1.1]], []);
+        client.add(row).then(result => {
+            expect(result).to.be.a('IdWithScore');
+
+            return client.clearRow(result.id);
+        }).then(result => {
             debug(result);
-            expect(result).to.be.a('boolean');
             expect(result).to.equal(true);
             done();
         }).catch(done);
@@ -40,8 +43,7 @@ describe('anomaly#add', () => {
         const datum = new jubatus.common.types.Datum([['foo', 'bar']], [['qux', 1.1]], []);
         client.add(datum).then(result => {
             debug(result);
-            expect(result).to.be.a('IdWithScore')
-                .and.to.have.property('id', '0');
+            expect(result).to.be.a('IdWithScore');
             done();
         }).catch(done);
     });
@@ -49,11 +51,10 @@ describe('anomaly#add', () => {
 
 describe('anomaly#add_bulk', () => {
     it('add_bulk', done => {
-        const data = [ 'foo', 'bar', 'baz' ].map((key, index) => ([ [], [ [ key, index ] ], [] ]));
+        const data = [ 'foo', 'bar', 'baz' ].map((key, index) => ([ [], [ [ key, index + 0.1 ] ], [] ]));
         client.addBulk(data).then(result => {
             debug(result);
-            expect(result).to.be.a('array');
-            expect(result).to.deep.equal([ '1', '2', '3' ]);
+            expect(result).to.be.an('array').and.to.have.lengthOf(3);
             done();
         }).catch(done);
     });
@@ -63,8 +64,8 @@ describe('anomaly#update', () => {
     it('update', done => {
         const datum = new jubatus.common.types.Datum([], [ [ 'quux', 1.1 ] ], []);
         client.add(datum).then(result => {
-            expect(result, 'add').to.be.an('IdWithScore').and.to.have.property('id', '4');
-            return client.update('4', [ [], [ [ 'quux', Number.MIN_VALUE ] ], [] ]);
+            expect(result, 'add').to.be.an('IdWithScore');
+            return client.update(result.id, [ [], [ [ 'quux', Number.MIN_VALUE ] ], [] ]);
         }).then(result => {
             debug(result);
             expect(result).to.be.a('number');
@@ -77,8 +78,8 @@ describe('anomaly#overwrite', () => {
     it('overwrite', done => {
         const datum = [ [], [ [ 'quuz', 123 ] ], [] ];
         client.add(datum).then(result => {
-            expect(result, 'add').to.be.an('IdWithScore').and.to.have.property('id', '5');
-            return client.overwrite('5', [ [], [ [ 'quuz', Number.MIN_SAFE_INTEGER ] ], [] ]);
+            expect(result, 'add').to.be.an('IdWithScore');
+            return client.overwrite(result.id, [ [], [ [ 'quuz', Number.MIN_SAFE_INTEGER ] ], [] ]);
         }).then(result => {
             debug(result);
             expect(result).to.be.a('number');
@@ -100,10 +101,18 @@ describe('anomaly#calc_score', () => {
 
 describe('anomaly#get_all_rows', () => {
     it('get_all_rows', done => {
-        client.getAllRows().then(result => {
-            debug(result);
-            expect(result).to.be.a('array')
-                .and.to.have.members([ '0', '2', '3', '4', '5' ]);
+        client.clear().then(result => {
+            expect(result).to.equal(true);
+
+            const data = [ 'foo', 'bar', 'baz' ].map((key, index) => ([ [], [ [ key, index + 1 ] ], [] ]));
+            return client.addBulk(data);
+        }).then(rows => {
+            expect(rows).to.be.an('array').and.to.have.lengthOf(3);
+
+            return Promise.all([rows, client.getAllRows()]);
+        }).then(([expected, actual]) => {
+            expect(actual).to.be.an('array')
+                .and.to.have.members(expected);
             done();
         }).catch(done);
     });
