@@ -21,7 +21,8 @@
   "dependencies": {
     "ajv": "^6.4.0",
     "lodash": "^4.17.11",
-    "msgpack-rpc-lite": "^1.0.2"
+    "msgpack-rpc-lite": "^1.0.2",
+    "snyk": "^1.316.1"
   },
   "readme": "README.md",
   "description": "Jubatus client for Node.js (unofficial)",
@@ -36,7 +37,9 @@
     "portfinder": "^1.0.13"
   },
   "scripts": {
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "config": {
     "test": {
@@ -48,5 +51,6 @@
     "jubatus"
   ],
   "author": "Naoki Kimura",
-  "license": "MIT"
+  "license": "MIT",
+  "snyk": true
 }
