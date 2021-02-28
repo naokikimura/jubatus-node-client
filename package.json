@@ -19,8 +19,8 @@
     "jubatus": "~1.0.7"
   },
   "dependencies": {
-    "ajv": "^6.4.0",
-    "lodash": "^4.17.11",
+    "ajv": "^6.12.3",
+    "lodash": "^4.17.21",
     "msgpack-rpc-lite": "^1.0.2"
   },
   "readme": "README.md",
