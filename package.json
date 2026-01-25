@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "ajv": "^6.4.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.23",
     "msgpack-rpc-lite": "^1.0.2"
   },
   "readme": "README.md",
